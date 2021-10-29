@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    crossorigin="anonymous" />
+
+  <style>
+    body {
+      background: #333;
+    }
+
+    .banner {
+      background: #a770ef;
+      background: -webkit-linear-gradient(to right,
+          #a770ef,
+          #cf8bf3,
+          #fdb99b);
+      background: linear-gradient(to right, #a770ef, #cf8bf3, #fdb99b);
+    }
+
+    .game-card:hover {
+      opacity: 0.85;
+    }
+
+    .game-screenshot {
+      object-fit: cover;
+      width: 100%;
+      height: 260px;
+    }
+  </style>
+
+  <title>Nico Games</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="px-lg-5">
+      <div class="row py-5">
+        <div class="col-lg-12 mx-auto">
+          <div class="text-white p-5 shadow-sm rounded banner">
+            <h1 class="display-4">Nico Games</h1>
+            <p class="lead">Games made with Phaser 3. Choose your game!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Gallery item -->
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+          <div class="bg-white rounded game-card">
+            <a href="./src/rocket-mouse-game/dist/index.html">
+              <img src="./src/rocket-mouse-game/screenshots/Screenshot 2021-10-29 at 01.23.54.png" alt="Rocket Mouse"
+                class="img-fluid card-img-top game-screenshot" />
+            </a>
+            <div class="p-4">
+              <h5>
+                <a href="./src/rocket-mouse-game/dist/index.html" class="text-dark">Rocket Mouse</a>
+              </h5>
+              <p class="medium text-muted mb-0">
+                Infinite runner - mouse with a jetpack collecting coins and
+                avoiding lasers
+              </p>
+              <div class="
+                    d-flex
+                    align-items-center
+                    justify-content-between
+                    rounded-pill
+                    bg-light
+                    px-3
+                    py-2
+                    mt-4
+                  ">
+                <p class="small mb-0">
+                  <i class="fa fa-user mr-2"></i><span class="font-weight-bold">Single player</span>
+                </p>
+                <div class="
+                      badge badge-danger
+                      px-3
+                      rounded-pill
+                      font-weight-normal
+                    ">
+                  Runner
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End -->
+
+        <!-- Gallery item -->
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+          <div class="bg-white rounded game-card">
+            <a href="./src/bunny-jump/index.html"><img
+                src="./src/bunny-jump/screenshots/Screenshot 2021-10-29 at 01.44.22.png" alt="Bunny Jump"
+                class="img-fluid card-img-top game-screenshot" /></a>
+            <div class="p-4">
+              <h5>
+                <a href="./src/bunny-jump/index.html" class="text-dark">Bunny Jump</a>
+              </h5>
+              <p class="medium text-muted mb-0">
+                Infinite Jumper - Bunny jumping over platforms to collect
+                carrots
+              </p>
+              <div class="
+                    d-flex
+                    align-items-center
+                    justify-content-between
+                    rounded-pill
+                    bg-light
+                    px-3
+                    py-2
+                    mt-4
+                  ">
+                <p class="small mb-0">
+                  <i class="fa fa-user mr-2"></i><span class="font-weight-bold">Single player</span>
+                </p>
+                <div class="
+                      badge badge-primary
+                      px-3
+                      rounded-pill
+                      font-weight-normal
+                    ">
+                  Jumper
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End -->
+
+        <!-- Gallery item -->
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+          <div class="bg-white rounded game-card">
+            <a href="./src/survival-island/index.html"><img
+                src="./src/survival-island/screenshots/Screenshot 2021-10-29 at 02.40.27.png" alt="Survival Island"
+                class="img-fluid card-img-top game-screenshot" /></a>
+            <div class="p-4">
+              <h5><a href="./src/survival-island/index.html" class="text-dark">Survival Island</a></h5>
+              <p class="medium text-muted mb-0">
+                RPG demo with 3 characters alone in an island - no challenges, demo only
+              </p>
+              <div class="
+                    d-flex
+                    align-items-center
+                    justify-content-between
+                    rounded-pill
+                    bg-light
+                    px-3
+                    py-2
+                    mt-4
+                  ">
+                <p class="small mb-0">
+                  <i class="fa fa-users mr-2"></i><span class="font-weight-bold">Multiple Players</span>
+                </p>
+                <div class="
+                      badge badge-warning
+                      px-3
+                      rounded-pill
+                      font-weight-normal
+                      text-white
+                    ">
+                  RPG
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End -->
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
