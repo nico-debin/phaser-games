@@ -3,6 +3,8 @@ import TextureKeys from '~/consts/TextureKeys'
 import Player from '../game/Player'
 import SceneKeys from '../consts/SceneKeys'
 
+import { sceneEvents } from '../events/EventsCenter'
+
 // Distance between one pipe and another
 const PIPE_DISTANCE = 150 * 2
 
@@ -18,6 +20,8 @@ export default class Game extends Phaser.Scene {
   init() {}
 
   create() {
+    this.scene.run(SceneKeys.GameUI)
+
     const width = this.scale.width
     const height = this.scale.height
 
@@ -142,7 +146,9 @@ export default class Game extends Phaser.Scene {
   ) {
     const player = obj1 as Player
     console.log('PIPE COLLIDE')
-    player.loseLife()
+    player.handleDamage()
+
+    sceneEvents.emit('player-health-changed', player.lives)
   }
 
   generateRandomVerticalPositionPipesCoordinates() {

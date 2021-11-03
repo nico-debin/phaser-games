@@ -74,7 +74,7 @@ export default class Player extends Phaser.GameObjects.Container {
     return this.livesCount
   }
 
-  loseLife() {
+  handleDamage() {
     if (this.playerState === PlayerState.Dead) return
     if (this.playerState === PlayerState.Recovering) return
     if (this.playerState === PlayerState.Flying) {
