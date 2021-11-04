@@ -12,7 +12,7 @@ export default class Game extends Phaser.Scene {
   private background!: Phaser.GameObjects.TileSprite
   private player!: Player
   private pipes!: Phaser.Physics.Arcade.StaticGroup
-  private playerPipesCollider!: Phaser.Physics.Arcade.Collider
+  private playerPipesOverlap!: Phaser.Physics.Arcade.Collider
 
   constructor() {
     super(SceneKeys.Game)
@@ -34,11 +34,16 @@ export default class Game extends Phaser.Scene {
 
     // Create player
     this.player = new Player(this, 200, 200)
+
+    // Create Pipes
+    this.createPipes()
+
+    // Add player
     this.add.existing(this.player)
 
     // Show Game Over scene when player dies
     this.player.onDead(() => {
-      this.playerPipesCollider.destroy()
+      this.playerPipesOverlap.destroy()
 
       this.scene.run(SceneKeys.GameOver)
 
@@ -48,14 +53,10 @@ export default class Game extends Phaser.Scene {
       })
     })
 
-    // Create Pipes
-    this.createPipes()
-
-    // Collide Player with pipes
-    this.playerPipesCollider = this.physics.add.collider(
+    this.playerPipesOverlap = this.physics.add.overlap(
       this.player,
       this.pipes,
-      this.handlePlayerPipeCollide,
+      this.handlePlayerPipeOverlap,
       undefined,
       this,
     )
@@ -63,10 +64,10 @@ export default class Game extends Phaser.Scene {
     // Disable Player-Pipes collider when blinking
     this.player.onBlinking({
       startCallback: () => {
-        this.playerPipesCollider.active = false
+        this.playerPipesOverlap.active = false
       },
       stopCallback: () => {
-        this.playerPipesCollider.active = true
+        this.playerPipesOverlap.active = true
       },
     })
 
@@ -135,10 +136,10 @@ export default class Game extends Phaser.Scene {
       const scrollX = this.cameras.main.scrollX
 
       if (pipe.x + pipe.displayWidth / 2 < scrollX) {
-        const {
-          topY,
-          bottomY,
-        } = this.generateRandomVerticalPositionPipesCoordinates()
+        // const {
+        //   topY,
+        //   bottomY,
+        // } = this.generateRandomVerticalPositionPipesCoordinates()
 
         // TODO: how to tell if current pipe is top or bottom pipe?
         // How to encapsulate that logic? maybe a static group for each column?
@@ -163,7 +164,7 @@ export default class Game extends Phaser.Scene {
     return maxX
   }
 
-  handlePlayerPipeCollide(
+  handlePlayerPipeOverlap(
     obj1: Phaser.GameObjects.GameObject,
     obj2: Phaser.GameObjects.GameObject,
   ) {

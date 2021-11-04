@@ -60,8 +60,7 @@ export default class Player extends Phaser.GameObjects.Container {
     scene.physics.add.existing(this)
 
     const body = this.body as Phaser.Physics.Arcade.Body
-    body.setSize(this.bird.width * scale, this.bird.height * scale)
-    body.setOffset(-this.bird.displayWidth / 2, -this.bird.displayHeight)
+    body.setCircle(this.bird.displayWidth * 0.5 * 0.7, -this.bird.displayWidth * 0.5 * 0.7 + 5, -this.bird.displayHeight * 0.7 - 20)
 
     // Cursors keys
     this.cursors = scene.input.keyboard.createCursorKeys()
@@ -72,7 +71,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     if (this.playerState !== PlayerState.Dead) {
       if (this.cursors.space?.isDown) {
-        body.setVelocity(this.FLYING_VELOCITY, -400)
+        body.setVelocity(this.FLYING_VELOCITY, -250)
       }
     }
   }

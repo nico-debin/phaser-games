@@ -16,10 +16,10 @@ const config: Phaser.Types.Core.GameConfig = {
 		default: 'arcade',
 		arcade: {
 			gravity: { y: 2000 },
-			debug: true
+			debug: true,
 		}
 	},
 	scene: [Preloader, Game, GameUI, GameOver],
 }
 
-export default new Phaser.Game(config)
+export default new Phaser.Game(config) 
