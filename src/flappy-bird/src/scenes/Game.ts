@@ -4,6 +4,7 @@ import Player from '../game/Player'
 import SceneKeys from '../consts/SceneKeys'
 
 import { sceneEvents } from '../events/EventsCenter'
+import PipeColumn from '~/game/PipeColumn'
 
 // Distance between one pipe and another
 const PIPE_DISTANCE = 150 * 2
@@ -34,6 +35,8 @@ export default class Game extends Phaser.Scene {
 
     // Create player
     this.player = new Player(this, 200, 200)
+
+    // this.add.existing(new PipeColumn(this, width * 0.5))
 
     // Create Pipes
     this.createPipes()
@@ -84,34 +87,12 @@ export default class Game extends Phaser.Scene {
   }
 
   createPipes() {
-    this.pipes = this.physics.add.staticGroup()
+    this.pipes = this.physics.add.staticGroup({
+      classType: PipeColumn,
+    })
     for (let i = 1; i <= 6; ++i) {
       const x = 500 + PIPE_DISTANCE * i
-      const {
-        bottomY,
-        topY,
-      } = this.generateRandomVerticalPositionPipesCoordinates()
-
-      const platformBottom = this.pipes.create(
-        x,
-        bottomY,
-        TextureKeys.Pipe,
-      ) as Phaser.Physics.Arcade.Sprite
-      platformBottom.setOrigin(0.5, 0)
-
-      const bodyBottom = platformBottom.body as Phaser.Physics.Arcade.StaticBody
-      bodyBottom.setOffset(0, platformBottom.displayHeight / 2)
-
-      // Create Top pipes
-      const platformTop = this.pipes.create(
-        x,
-        topY,
-        TextureKeys.Pipe,
-      ) as Phaser.Physics.Arcade.Sprite
-      platformTop.setOrigin(0.5, 1).setFlipY(true)
-
-      const bodyTop = platformTop.body as Phaser.Physics.Arcade.StaticBody
-      bodyTop.setOffset(0, -platformTop.displayHeight / 2)
+      this.pipes.add(new PipeColumn(this, x))
     }
   }
 
@@ -129,36 +110,27 @@ export default class Game extends Phaser.Scene {
   }
 
   wrapPipes() {
-    let cont = 0
-    const maxX = this.getRigthMostPipePosition()
+    const maxX = this.getRightMostPipePosition()
+
     this.pipes.children.iterate((child) => {
-      const pipe = child as Phaser.Physics.Arcade.Sprite
+      const pipeColumn = child as PipeColumn
       const scrollX = this.cameras.main.scrollX
 
-      if (pipe.x + pipe.displayWidth / 2 < scrollX) {
-        // const {
-        //   topY,
-        //   bottomY,
-        // } = this.generateRandomVerticalPositionPipesCoordinates()
-
-        // TODO: how to tell if current pipe is top or bottom pipe?
-        // How to encapsulate that logic? maybe a static group for each column?
-
-        pipe.x = maxX + PIPE_DISTANCE
-        pipe.body.updateFromGameObject()
+      if (pipeColumn.x + pipeColumn.displayWidth / 2 < scrollX) {
+        pipeColumn.wrapPipes(maxX + PIPE_DISTANCE)
       }
     })
   }
 
   // Find the max X of all pipes
-  getRigthMostPipePosition() {
-    const firstPipe = this.pipes.getChildren()[0] as Phaser.Physics.Arcade.Sprite
-    let maxX = firstPipe.x
+  getRightMostPipePosition() {
+    const firstPipeColumn = this.pipes.getChildren()[0] as PipeColumn
+    let maxX = firstPipeColumn.x
     this.pipes.children.iterate((child) => {
-      const pipe = child as Phaser.Physics.Arcade.Sprite
+      const pipeColumn = child as PipeColumn
 
-      if (pipe.x > maxX) {
-        maxX = pipe.x
+      if (pipeColumn.x > maxX) {
+        maxX = pipeColumn.x
       }
     })
     return maxX
@@ -168,6 +140,7 @@ export default class Game extends Phaser.Scene {
     obj1: Phaser.GameObjects.GameObject,
     obj2: Phaser.GameObjects.GameObject,
   ) {
+    console.log('OVERLAP')
     const player = obj1 as Player
     player.handleDamage()
 
