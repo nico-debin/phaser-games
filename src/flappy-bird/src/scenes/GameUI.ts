@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import TextureKeys from '~/consts/TextureKeys'
+import Player from '~/game/Player'
 import SceneKeys from '../consts/SceneKeys'
 
 import { sceneEvents } from '../events/EventsCenter'
@@ -9,7 +10,6 @@ export default class GameUI extends Phaser.Scene {
 
   constructor() {
     super({ key: SceneKeys.GameUI })
-    console.log(`running ${SceneKeys.GameUI}`)
   }
 
   create() {

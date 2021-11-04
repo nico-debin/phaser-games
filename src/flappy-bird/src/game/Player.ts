@@ -2,6 +2,8 @@ import Phaser from 'phaser'
 import AnimationKeys from '~/consts/AnimationKeys'
 import TextureKeys from '~/consts/TextureKeys'
 
+import { sceneEvents } from '../events/EventsCenter'
+
 enum PlayerState {
   // Flying normally
   Flying,
@@ -11,6 +13,11 @@ enum PlayerState {
 
   // Player is dead
   Dead,
+}
+
+interface ToggleFunctionObject {
+  startCallback: Function;
+  stopCallback: Function;
 }
 
 export default class Player extends Phaser.GameObjects.Container {
@@ -81,7 +88,7 @@ export default class Player extends Phaser.GameObjects.Container {
       if (this.lives >= 1) {
         this.livesCount--
       }
-      console.log(`Lives count: ${this.lives}`)
+
       if (this.lives === 0) {
         this.killPlayer()
       } else {
@@ -96,22 +103,37 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   private killPlayer() {
-    console.log('Killing Player')
     this.playerState = PlayerState.Dead
+
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.setVelocityX(0)
+
+    sceneEvents.emit('player-dead')
   }
 
   isDead() {
     return this.playerState === PlayerState.Dead
   }
 
+  onDead(callback: Function) {
+    sceneEvents.once('player-dead', callback)
+  }
+
   private startBlinking() {
+    sceneEvents.emit('player-blinking-start')
     this.blinkIntervalId = setInterval(() => {
       this.bird.setVisible(!this.bird.visible)
     }, 50)
   }
 
   private stopBlinking() {
+    sceneEvents.emit('player-blinking-stop')
     clearInterval(this.blinkIntervalId);
+  }
+
+  onBlinking({startCallback, stopCallback}: ToggleFunctionObject) {
+    sceneEvents.on('player-blinking-start', startCallback)
+    sceneEvents.on('player-blinking-stop', stopCallback)
   }
 
   createAnimations() {

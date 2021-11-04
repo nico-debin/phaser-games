@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import TextureKeys from '~/consts/TextureKeys'
+import TextureKeys from '../consts/TextureKeys'
 import Player from '../game/Player'
 import SceneKeys from '../consts/SceneKeys'
 
@@ -12,6 +12,7 @@ export default class Game extends Phaser.Scene {
   private background!: Phaser.GameObjects.TileSprite
   private player!: Player
   private pipes!: Phaser.Physics.Arcade.StaticGroup
+  private playerPipesCollider!: Phaser.Physics.Arcade.Collider
 
   constructor() {
     super(SceneKeys.Game)
@@ -35,17 +36,39 @@ export default class Game extends Phaser.Scene {
     this.player = new Player(this, 200, 200)
     this.add.existing(this.player)
 
+    // Show Game Over scene when player dies
+    this.player.onDead(() => {
+      this.playerPipesCollider.destroy()
+
+      this.scene.run(SceneKeys.GameOver)
+
+      this.input.keyboard.once('keydown-ENTER', () => {
+        this.scene.stop(SceneKeys.GameOver)
+        this.scene.restart()
+      })
+    })
+
     // Create Pipes
     this.createPipes()
 
-    // Overlap Player with pipes
-    this.physics.add.collider(
+    // Collide Player with pipes
+    this.playerPipesCollider = this.physics.add.collider(
       this.player,
       this.pipes,
       this.handlePlayerPipeCollide,
       undefined,
       this,
     )
+
+    // Disable Player-Pipes collider when blinking
+    this.player.onBlinking({
+      startCallback: () => {
+        this.playerPipesCollider.active = false
+      },
+      stopCallback: () => {
+        this.playerPipesCollider.active = true
+      },
+    })
 
     const body = this.player.body as Phaser.Physics.Arcade.Body
     body.setCollideWorldBounds(true)
@@ -145,7 +168,6 @@ export default class Game extends Phaser.Scene {
     obj2: Phaser.GameObjects.GameObject,
   ) {
     const player = obj1 as Player
-    console.log('PIPE COLLIDE')
     player.handleDamage()
 
     sceneEvents.emit('player-health-changed', player.lives)
