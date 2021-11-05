@@ -72,6 +72,8 @@ export default class Player extends Phaser.GameObjects.Container {
     if (this.playerState !== PlayerState.Dead) {
       if (this.cursors.space?.isDown) {
         body.setVelocity(this.FLYING_VELOCITY, -250)
+      } else if (this.cursors.down?.isDown) {
+        body.setVelocityX(0) // DEBUG
       }
     }
   }
