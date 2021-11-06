@@ -112,8 +112,12 @@ export default class Player extends Phaser.GameObjects.Container {
     sceneEvents.emit('player-dead')
   }
 
-  isDead() {
+  get isDead() {
     return this.playerState === PlayerState.Dead
+  }
+
+  get isFlying() {
+    return this.playerState === PlayerState.Flying
   }
 
   onDead(callback: Function) {

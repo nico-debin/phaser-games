@@ -1,10 +1,11 @@
 import Phaser from 'phaser'
-import TextureKeys from '../consts/TextureKeys'
+import EventKeys from '../consts/EventKeys'
+import Pipe from '../game/Pipe'
 import Player from '../game/Player'
 import SceneKeys from '../consts/SceneKeys'
+import TextureKeys from '../consts/TextureKeys'
 
 import { sceneEvents } from '../events/EventsCenter'
-import Pipe from '~/game/Pipe'
 
 // Distance between one pipe and another
 const PIPE_DISTANCE = 150 * 2
@@ -16,12 +17,15 @@ export default class Game extends Phaser.Scene {
   private player!: Player
   private playerPipesOverlap!: Phaser.Physics.Arcade.Collider
   private playerGroundOverlap!: Phaser.Physics.Arcade.Collider
+  private score!: number
 
   constructor() {
     super(SceneKeys.Game)
   }
 
-  init() {}
+  init() {
+    this.score = 0
+  }
 
   create() {
     this.scene.run(SceneKeys.GameUI)
@@ -91,6 +95,7 @@ export default class Game extends Phaser.Scene {
     this.player.onBlinking({
       startCallback: () => {
         this.playerPipesOverlap.active = false
+        this.updateScore(-1)
       },
       stopCallback: () => {
         this.playerPipesOverlap.active = true
@@ -129,7 +134,7 @@ export default class Game extends Phaser.Scene {
     // Wrap pipes
     this.wrapPipes()
     
-    if (this.player.isDead()) {
+    if (this.player.isDead) {
       const body = this.player.body as Phaser.Physics.Arcade.Body
       body.setCollideWorldBounds(false)
     } else {
@@ -158,8 +163,18 @@ export default class Game extends Phaser.Scene {
         pipe.x = maxX + PIPE_DISTANCE
         pipe.y = pipe.isBottom ? bottomY : topY
         pipe.body.updateFromGameObject()
+
+        this.player.isFlying && this.updateScore(0.5)
       }
     })
+  }
+
+  updateScore(increase: number) {
+    this.score += increase
+    if (this.score < 0) {
+      this.score = 0
+    }
+    sceneEvents.emit(EventKeys.ScoreUpdated, this.score)
   }
 
   // Find the max X of all pipes
@@ -183,7 +198,7 @@ export default class Game extends Phaser.Scene {
     const player = obj1 as Player
     player.handleDamage()
 
-    sceneEvents.emit('player-health-changed', player.lives)
+    sceneEvents.emit(EventKeys.PlayerHealthChanged, player.lives)
   }
 
   generateRandomVerticalPositionPipesCoordinates() {
