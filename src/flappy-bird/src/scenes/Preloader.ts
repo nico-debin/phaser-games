@@ -10,6 +10,7 @@ export default class Preloader extends Phaser.Scene {
   preload() {
     // Images
     this.load.image(TextureKeys.Background, 'sky.jpg')
+    this.load.image(TextureKeys.Ground, 'ground.png')
     this.load.image(TextureKeys.Pipe, 'pipe.png')
     this.load.image(TextureKeys.HeartEmpty, 'ui_heart_empty.png')
     this.load.image(TextureKeys.HeartFull, 'ui_heart_full.png')

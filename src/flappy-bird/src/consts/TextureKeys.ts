@@ -1,9 +1,10 @@
 enum TextureKeys {
   Background = 'background',
-  Player = 'player',
-  Pipe = 'pipe',
+  Ground = 'ground',
   HeartEmpty = 'heart-empty',
   HeartFull = 'heart-full',
+  Pipe = 'pipe',
+  Player = 'player',
 }
 
 export default TextureKeys
