@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import AnimationKeys from '~/consts/AnimationKeys'
+import AudioKeys from '~/consts/AudioKeys'
 import TextureKeys from '~/consts/TextureKeys'
 
 import { sceneEvents } from '../events/EventsCenter'
@@ -33,6 +34,9 @@ export default class Player extends Phaser.GameObjects.Container {
   // Player state
   private playerState!: PlayerState
 
+  // Sound for player damage
+  private damageSound: Phaser.Sound.BaseSound
+
   private blinkIntervalId!: number
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -53,6 +57,8 @@ export default class Player extends Phaser.GameObjects.Container {
     this.playerState = PlayerState.Flying
     this.livesCount = this.MAX_LIVES
 
+    this.damageSound = this.scene.sound.add(AudioKeys.PlayerDamage)
+
     // Add player to the world
     this.add(this.bird)
 
@@ -61,6 +67,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     const body = this.body as Phaser.Physics.Arcade.Body
     body.setCircle(this.bird.displayWidth * 0.5 * 0.7, -this.bird.displayWidth * 0.5 * 0.7 + 5, -this.bird.displayHeight * 0.7 - 20)
+    body.setBounceY(1)
 
     // Cursors keys
     this.cursors = scene.input.keyboard.createCursorKeys()
@@ -89,6 +96,8 @@ export default class Player extends Phaser.GameObjects.Container {
       if (this.lives >= 1) {
         this.livesCount--
       }
+
+      this.damageSound.play()
 
       if (this.lives === 0) {
         this.killPlayer()

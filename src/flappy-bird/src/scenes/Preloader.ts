@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import AudioKeys from '~/consts/AudioKeys'
 import TextureKeys from '~/consts/TextureKeys'
 import SceneKeys from '../consts/SceneKeys'
 
@@ -14,6 +15,10 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(TextureKeys.Pipe, 'pipe.png')
     this.load.image(TextureKeys.HeartEmpty, 'ui_heart_empty.png')
     this.load.image(TextureKeys.HeartFull, 'ui_heart_full.png')
+
+    // Audio
+    this.load.audio(AudioKeys.PlayerDamage, 'sfx/hit.wav')
+    this.load.audio(AudioKeys.Ambience, 'sfx/8_Bit_Overworld_Theme_NoDrums.mp3')
 
     this.load.atlas(
       TextureKeys.Player,

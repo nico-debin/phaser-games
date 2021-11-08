@@ -6,11 +6,13 @@ import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 
 import { sceneEvents } from '../events/EventsCenter'
+import AudioKeys from '~/consts/AudioKeys'
 
 // Distance between one pipe and another
 const PIPE_DISTANCE = 150 * 2
 
 export default class Game extends Phaser.Scene {
+  private ambienceMusic!: Phaser.Sound.BaseSound
   private background!: Phaser.GameObjects.TileSprite
   private ground!: Phaser.GameObjects.TileSprite
   private pipes!: Phaser.Physics.Arcade.StaticGroup
@@ -38,6 +40,10 @@ export default class Game extends Phaser.Scene {
       .tileSprite(0, 0, width, height, TextureKeys.Background)
       .setOrigin(0, 0)
       .setScrollFactor(0, 0)
+
+    // Background music
+    this.ambienceMusic = this.sound.add(AudioKeys.Ambience)
+    this.ambienceMusic.play('', { volume: 0.6, loop: true })
 
     // Create player
     this.player = new Player(this, 200, 200)
