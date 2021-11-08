@@ -1,6 +1,7 @@
 enum AudioKeys {
-  PlayerDamage = 'player-damage',
   Ambience = 'game-theme',
+  PlayerDamage = 'player-damage',
+  PlayerNewLive = 'player-new-live',
 }
 
 export default AudioKeys

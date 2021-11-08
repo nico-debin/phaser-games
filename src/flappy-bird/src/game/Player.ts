@@ -42,7 +42,7 @@ export default class Player extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y)
 
-    const scale = 0.15
+    const scale = 0.10 
 
     this.bird = scene.add
       .sprite(0, 0, TextureKeys.Player)
@@ -66,7 +66,7 @@ export default class Player extends Phaser.GameObjects.Container {
     scene.physics.add.existing(this)
 
     const body = this.body as Phaser.Physics.Arcade.Body
-    body.setCircle(this.bird.displayWidth * 0.5 * 0.7, -this.bird.displayWidth * 0.5 * 0.7 + 5, -this.bird.displayHeight * 0.7 - 20)
+    body.setCircle(this.bird.displayWidth * 0.5 * 0.7, -this.bird.displayWidth * 0.5 * 0.7 + 5, -this.bird.displayHeight * 0.7 - 12)
     body.setBounceY(1)
 
     // Cursors keys
@@ -87,6 +87,10 @@ export default class Player extends Phaser.GameObjects.Container {
 
   get lives() {
     return this.livesCount
+  }
+
+  increaseLive() {
+    this.livesCount += this.lives == this.MAX_LIVES ? 0 : 1
   }
 
   handleDamage() {
@@ -127,6 +131,10 @@ export default class Player extends Phaser.GameObjects.Container {
 
   get isFlying() {
     return this.playerState === PlayerState.Flying
+  }
+
+  get isHurt() {
+    return !this.isDead && this.lives < this.MAX_LIVES
   }
 
   onDead(callback: Function) {

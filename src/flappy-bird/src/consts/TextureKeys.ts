@@ -3,6 +3,7 @@ enum TextureKeys {
   Ground = 'ground',
   HeartEmpty = 'heart-empty',
   HeartFull = 'heart-full',
+  HeartScene = 'heart-scene',
   Pipe = 'pipe',
   Player = 'player',
 }

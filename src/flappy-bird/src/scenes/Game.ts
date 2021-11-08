@@ -15,10 +15,13 @@ export default class Game extends Phaser.Scene {
   private ambienceMusic!: Phaser.Sound.BaseSound
   private background!: Phaser.GameObjects.TileSprite
   private ground!: Phaser.GameObjects.TileSprite
+  private heart!: Phaser.GameObjects.Sprite
   private pipes!: Phaser.Physics.Arcade.StaticGroup
   private player!: Player
-  private playerPipesOverlap!: Phaser.Physics.Arcade.Collider
   private playerGroundOverlap!: Phaser.Physics.Arcade.Collider
+  private playerHeartOverlap!: Phaser.Physics.Arcade.Collider
+  private playerNewLiveMusic!: Phaser.Sound.BaseSound
+  private playerPipesOverlap!: Phaser.Physics.Arcade.Collider
   private score!: number
 
   constructor() {
@@ -45,6 +48,9 @@ export default class Game extends Phaser.Scene {
     this.ambienceMusic = this.sound.add(AudioKeys.Ambience)
     this.ambienceMusic.play('', { volume: 0.6, loop: true })
 
+    // New live sfx
+    this.playerNewLiveMusic = this.sound.add(AudioKeys.PlayerNewLive)
+
     // Create player
     this.player = new Player(this, 200, 200)
 
@@ -56,11 +62,13 @@ export default class Game extends Phaser.Scene {
       .tileSprite(0, height - 112, 335 * 5, 112, TextureKeys.Ground)
       .setOrigin(0, 0)
       .setScrollFactor(0, 0)
-    
+
     this.physics.add.existing(this.ground, true)
 
     // Add player
     this.add.existing(this.player)
+
+    this.createHeart()
 
     // Show Game Over scene when player dies
     this.player.onDead(() => {
@@ -136,10 +144,35 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  createHeart() {
+    this.heart = this.add.sprite(
+      this.scale.width,
+      this.scale.height / 2,
+      TextureKeys.HeartScene,
+    ).setOrigin(0.5, 0)
+
+    this.physics.add.existing(this.heart, true)
+
+    // Overlap player with heart
+    this.playerHeartOverlap = this.physics.add.overlap(
+      this.player,
+      this.heart,
+      this.handlePlayerHeartOverlap,
+      undefined,
+      this,
+    )
+
+    this.heart.setVisible(false)
+    this.playerHeartOverlap.active = false
+  }
+
   update() {
     // Wrap pipes
     this.wrapPipes()
-    
+
+    // Wrap heart
+    this.wrapHeart()
+
     if (this.player.isDead) {
       const body = this.player.body as Phaser.Physics.Arcade.Body
       body.setCollideWorldBounds(false)
@@ -155,7 +188,7 @@ export default class Game extends Phaser.Scene {
   }
 
   wrapPipes() {
-    const maxX = this.getRigthMostPipePosition()
+    const maxX = this.getRightMostPipePosition()
     const {
       topY,
       bottomY,
@@ -175,6 +208,27 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  wrapHeart() {
+    if (!this.player.isHurt) return
+
+    const scrollX = this.cameras.main.scrollX
+
+    // wrap if the heart is at the left of the screen
+    if (this.heart.x + this.heart.width < scrollX) {
+    
+      const newX = this.getRightMostPipePosition() + PIPE_DISTANCE / 2
+      const newY = Phaser.Math.Between(this.heart.displayHeight * 2, this.scale.height * 0.75)
+
+      this.heart.setPosition(newX, newY)
+
+      this.heart.setVisible(true)
+      this.playerHeartOverlap.active = true
+
+      const heartBody = this.heart.body as Phaser.Physics.Arcade.StaticBody
+      heartBody.updateFromGameObject()
+    }
+  }
+
   updateScore(increase: number) {
     this.score += increase
     if (this.score < 0) {
@@ -184,7 +238,7 @@ export default class Game extends Phaser.Scene {
   }
 
   // Find the max X of all pipes
-  getRigthMostPipePosition() {
+  getRightMostPipePosition() {
     const firstPipe = this.pipes.getChildren()[0] as Phaser.Physics.Arcade.Sprite
     let maxX = firstPipe.x
     this.pipes.children.iterate((child) => {
@@ -205,6 +259,23 @@ export default class Game extends Phaser.Scene {
     player.handleDamage()
 
     sceneEvents.emit(EventKeys.PlayerHealthChanged, player.lives)
+  }
+
+  handlePlayerHeartOverlap(
+    obj1: Phaser.GameObjects.GameObject,
+    obj2: Phaser.GameObjects.GameObject,
+  ) {
+    const player = obj1 as Player
+    const heart = obj2 as Phaser.Physics.Arcade.Sprite
+
+    player.increaseLive()
+    heart.setVisible(false)
+
+    sceneEvents.emit(EventKeys.PlayerHealthChanged, player.lives)
+
+    this.playerNewLiveMusic.play()
+
+    this.playerHeartOverlap.active = false
   }
 
   generateRandomVerticalPositionPipesCoordinates() {
