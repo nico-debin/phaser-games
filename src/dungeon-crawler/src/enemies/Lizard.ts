@@ -33,6 +33,7 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
 
     scene.physics.world.on(Phaser.Physics.Arcade.Events.TILE_COLLIDE, this.handleTileCollision, this)
 
+    this.direction = randomDirection(this.direction)
     this.moveEvent = scene.time.addEvent({
       delay: 2000,
       callback: () => {

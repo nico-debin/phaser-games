@@ -50,6 +50,7 @@ export default class Game extends Phaser.Scene {
       },
     })
     lizards.get(256, 128, 'lizard')
+    lizards.get(80, 80, 'lizard')
 
     this.physics.add.collider(this.faune, wallsLayer)
     this.physics.add.collider(lizards, wallsLayer)
