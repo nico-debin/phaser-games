@@ -2,38 +2,38 @@ import Phaser from 'phaser'
 
 const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) => {
   anims.create({
-    key: 'faune-idle-down',
+    key: 'fauna-idle-down',
     frames: [
       {
-        key: 'faune',
+        key: 'fauna',
         frame: 'walk-down-3.png',
       },
     ],
   })
 
   anims.create({
-    key: 'faune-idle-up',
+    key: 'fauna-idle-up',
     frames: [
       {
-        key: 'faune',
+        key: 'fauna',
         frame: 'walk-up-3.png',
       },
     ],
   })
 
   anims.create({
-    key: 'faune-idle-side',
+    key: 'fauna-idle-side',
     frames: [
       {
-        key: 'faune',
+        key: 'fauna',
         frame: 'walk-side-3.png',
       },
     ],
   })
 
   anims.create({
-    key: 'faune-run-down',
-    frames: anims.generateFrameNames('faune', {
+    key: 'fauna-run-down',
+    frames: anims.generateFrameNames('fauna', {
       start: 1,
       end: 8,
       prefix: 'run-down-',
@@ -44,8 +44,8 @@ const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) => {
   })
 
   anims.create({
-    key: 'faune-run-up',
-    frames: anims.generateFrameNames('faune', {
+    key: 'fauna-run-up',
+    frames: anims.generateFrameNames('fauna', {
       start: 1,
       end: 8,
       prefix: 'run-up-',
@@ -56,8 +56,8 @@ const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) => {
   })
 
   anims.create({
-    key: 'faune-run-side',
-    frames: anims.generateFrameNames('faune', {
+    key: 'fauna-run-side',
+    frames: anims.generateFrameNames('fauna', {
       start: 1,
       end: 8,
       prefix: 'run-side-',

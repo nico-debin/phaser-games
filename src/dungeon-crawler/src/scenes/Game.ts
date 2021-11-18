@@ -5,9 +5,14 @@ import { createCharacterAnims } from '../anims/CharacterAnims'
 import { debugDraw } from '../utils/debug'
 
 import Lizard from '../enemies/Lizard'
+import '../characters/Fauna'
+import Fauna from '../characters/Fauna'
+
 export default class Game extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private faune!: Phaser.Physics.Arcade.Sprite
+  private fauna!: Fauna
+
+  private hit = 0
 
   constructor() {
     super('game')
@@ -27,17 +32,14 @@ export default class Game extends Phaser.Scene {
     const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16, 1, 2)
 
     map.createLayer('Ground', tileset)
+    
+    this.fauna = this.add.fauna(128, 128, 'fauna')
+    
     const wallsLayer = map.createLayer('Walls', tileset)
-
     wallsLayer.setCollisionByProperty({ collides: true })
     // debugDraw(wallsLayer, this)
 
-    this.faune = this.physics.add.sprite(128, 128, 'faune', 'walk-down-3.png')
-    this.faune.body.setSize(this.faune.width * 0.5, this.faune.height * 0.8)
-
-    this.faune.anims.play('faune-idle-down')
-
-    this.cameras.main.startFollow(this.faune, true)
+    this.cameras.main.startFollow(this.fauna, true)
 
     const lizards = this.physics.add.group({
       classType: Lizard,
@@ -52,45 +54,34 @@ export default class Game extends Phaser.Scene {
     lizards.get(256, 128, 'lizard')
     lizards.get(80, 80, 'lizard')
 
-    this.physics.add.collider(this.faune, wallsLayer)
+    this.physics.add.collider(this.fauna, wallsLayer)
     this.physics.add.collider(lizards, wallsLayer)
+
+    this.physics.add.collider(lizards, this.fauna, this.handlePlayerLizardCollision, undefined, this)
+  }
+
+  private handlePlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const lizard = obj2 as Lizard
+
+    const dx = this.fauna.x - lizard.x
+    const dy = this.fauna.y - lizard.y
+
+    const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
+
+    // Player gets hit to the opposite direction
+    this.fauna.handleDamage(dir)
+
+    this.hit = 1
   }
 
   update(t: number, dt: number) {
-    if (!this.cursors || !this.faune) {
-      return
+    if (this.hit > 0) {
+        if (++this.hit > 10) {
+            this.hit = 0
+        }
+        return
     }
 
-    const speed = 100
-
-    if (this.cursors.left.isDown) {
-      this.faune.anims.play('faune-run-side', true)
-      this.faune.setVelocity(-speed, 0)
-
-      // Flip sprite to the left
-      this.faune.setFlipX(true)
-    } else if (this.cursors.right.isDown) {
-      this.faune.anims.play('faune-run-side', true)
-      this.faune.setVelocity(speed, 0)
-
-      // Flip sprite to the right
-      this.faune.setFlipX(false)
-    } else if (this.cursors.up.isDown) {
-      this.faune.anims.play('faune-run-up', true)
-      this.faune.setVelocity(0, -speed)
-    } else if (this.cursors.down.isDown) {
-      this.faune.anims.play('faune-run-down', true)
-      this.faune.setVelocity(0, speed)
-    } else {
-      if (this.faune.anims.currentAnim) {
-        const parts = this.faune.anims.currentAnim.key.split('-')
-        parts[1] = 'idle'
-        this.faune.anims.play(parts.join('-'))
-      } else {
-        this.faune.anims.play('faune-idle-down')
-      }
-
-      this.faune.setVelocity(0, 0)
-    }
+    this.fauna.update(this.cursors)
   }
 }
