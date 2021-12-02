@@ -8,6 +8,8 @@ import Lizard from '../enemies/Lizard'
 import '../characters/Fauna'
 import Fauna from '../characters/Fauna'
 
+import { sceneEvents } from '../events/EventCenter'
+
 export default class Game extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private fauna!: Fauna
@@ -23,6 +25,8 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    this.scene.run('game-ui')
+
     createCharacterAnims(this.anims)
     createLizardAnims(this.anims)
 
@@ -32,9 +36,9 @@ export default class Game extends Phaser.Scene {
     const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16, 1, 2)
 
     map.createLayer('Ground', tileset)
-    
+
     this.fauna = this.add.fauna(128, 128, 'fauna')
-    
+
     const wallsLayer = map.createLayer('Walls', tileset)
     wallsLayer.setCollisionByProperty({ collides: true })
     // debugDraw(wallsLayer, this)
@@ -57,10 +61,19 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.fauna, wallsLayer)
     this.physics.add.collider(lizards, wallsLayer)
 
-    this.physics.add.collider(lizards, this.fauna, this.handlePlayerLizardCollision, undefined, this)
+    this.physics.add.collider(
+      lizards,
+      this.fauna,
+      this.handlePlayerLizardCollision,
+      undefined,
+      this,
+    )
   }
 
-  private handlePlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+  private handlePlayerLizardCollision(
+    obj1: Phaser.GameObjects.GameObject,
+    obj2: Phaser.GameObjects.GameObject,
+  ) {
     const lizard = obj2 as Lizard
 
     const dx = this.fauna.x - lizard.x
@@ -71,17 +84,12 @@ export default class Game extends Phaser.Scene {
     // Player gets hit to the opposite direction
     this.fauna.handleDamage(dir)
 
-    this.hit = 1
+    sceneEvents.emit('player-health-changed', this.fauna.health)
   }
 
   update(t: number, dt: number) {
-    if (this.hit > 0) {
-        if (++this.hit > 10) {
-            this.hit = 0
-        }
-        return
+    if (this.fauna) {
+      this.fauna.update(this.cursors)
     }
-
-    this.fauna.update(this.cursors)
   }
 }
