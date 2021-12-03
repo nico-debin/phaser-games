@@ -73,8 +73,10 @@ export default class Game extends Phaser.Scene {
         lizardGameObject.body.onCollide = true
       },
     })
-    this.lizards.get(128, 128, 'lizard')
-    this.lizards.get(80, 80, 'lizard')
+    const lizardsLayer = map.getObjectLayer('Lizards')
+    lizardsLayer.objects.forEach(lizardObj => {
+      this.lizards.get(lizardObj.x! + lizardObj.width! * 0.5, lizardObj.y! + lizardObj.height! * 0.5, 'lizards')
+    })
 
     this.physics.add.collider(this.fauna, wallsLayer)
     this.physics.add.collider(this.lizards, wallsLayer)
