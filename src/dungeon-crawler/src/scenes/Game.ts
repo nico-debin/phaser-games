@@ -44,6 +44,7 @@ export default class Game extends Phaser.Scene {
 
     this.knives = this.physics.add.group({
       classType: Phaser.Physics.Arcade.Image,
+      maxSize: 3
     })
 
     this.fauna = this.add.fauna(256, 128, 'fauna')
