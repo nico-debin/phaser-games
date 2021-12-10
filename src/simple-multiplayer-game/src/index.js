@@ -18,6 +18,8 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html')
 })
 
+setupPhaserServer()
+
 function setupPhaserServer() {
   JSDOM.fromFile(path.join(__dirname, 'server/index.html'), {
     // To run the scripts in the html file
@@ -53,4 +55,3 @@ function setupPhaserServer() {
       console.log(error.message)
     })
 }
-setupPhaserServer()
