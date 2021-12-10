@@ -9,6 +9,8 @@ const { Server } = require('socket.io')
 const io = new Server(server)
 
 const { JSDOM } = jsdom
+const DatauriParser = require('datauri/parser')
+const datauriParser = new DatauriParser()
 
 app.use(express.static(__dirname + '/public'))
 
@@ -26,12 +28,26 @@ function setupAuthoritativePhaser() {
     pretendToBeVisual: true,
   })
     .then((dom) => {
+      // Callback to trigger when phaser has loaded
       dom.window.gameLoaded = () => {
         server.listen(process.env.PORT || 8081, function () {
           console.log(`Listening on ${server.address().port}`)
         })
       }
-      dom.window.io = io;
+
+      // Socket
+      dom.window.io = io
+
+      // JSDOM's "URL.createObjectURL" bugfix
+      dom.window.URL.createObjectURL = (blob) => {
+        if (blob) {
+          return datauriParser.format(
+            blob.type,
+            blob[Object.getOwnPropertySymbols(blob)[0]]._buffer,
+          ).content
+        }
+      }
+      dom.window.URL.revokeObjectURL = (objectURL) => {}
     })
     .catch((error) => {
       console.log(error.message)
