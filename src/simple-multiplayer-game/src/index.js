@@ -12,14 +12,14 @@ const { JSDOM } = jsdom
 const DatauriParser = require('datauri/parser')
 const datauriParser = new DatauriParser()
 
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/client'))
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html')
 })
 
-function setupAuthoritativePhaser() {
-  JSDOM.fromFile(path.join(__dirname, 'authoritative_server/index.html'), {
+function setupPhaserServer() {
+  JSDOM.fromFile(path.join(__dirname, 'server/index.html'), {
     // To run the scripts in the html file
     runScripts: 'dangerously',
     // Also load supported external resources
@@ -53,4 +53,4 @@ function setupAuthoritativePhaser() {
       console.log(error.message)
     })
 }
-setupAuthoritativePhaser()
+setupPhaserServer()
