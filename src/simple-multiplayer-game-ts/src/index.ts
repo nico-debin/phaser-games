@@ -1,14 +1,18 @@
 import express, { Request, Response, Application } from 'express'
+import { Server as HttpServer} from 'http'
+import { Server } from 'socket.io'
 
 const app: Application = express()
+const httpServer = new HttpServer(app)
+
+const io = new Server(httpServer)
 
 const PORT = process.env.PORT || 8081
 
-// app.use(express.static(__dirname + '/client'))
+app.use(express.static(__dirname + '/client/dist'))
 
 app.get('/', (req: Request, res: Response): void => {
-  res.send('Hello Typescript with Node.js!')
-  // res.sendFile(__dirname + '/index.html')
+  res.sendFile(__dirname + '/index.html')
 })
 
 app.listen(PORT, (): void => {
