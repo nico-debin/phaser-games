@@ -10,6 +10,11 @@ const config = {
   },
 }
 function preload() {}
-function create() {}
+
+function create() {
+  this.socket = io()
+}
+
 function update() {}
+
 const game = new Phaser.Game(config)

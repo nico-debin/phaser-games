@@ -5,6 +5,9 @@ const express = require('express')
 const app = express()
 const server = require('http').Server(app)
 
+const { Server } = require('socket.io')
+const io = new Server(server)
+
 const { JSDOM } = jsdom
 
 app.use(express.static(__dirname + '/public'))
@@ -28,11 +31,10 @@ function setupAuthoritativePhaser() {
           console.log(`Listening on ${server.address().port}`)
         })
       }
+      dom.window.io = io;
     })
     .catch((error) => {
       console.log(error.message)
     })
 }
 setupAuthoritativePhaser()
-
-console.log('yey')
