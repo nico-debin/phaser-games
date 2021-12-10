@@ -11,6 +11,7 @@ const config = {
 }
 function preload() {
   this.load.image('ship', 'assets/spaceShips_001.png')
+  this.load.image('otherPlayer', 'assets/enemyBlack5.png');
 }
 
 function create() {
@@ -22,9 +23,23 @@ function create() {
     Object.keys(players).forEach(function (id) {
       if (players[id].playerId === self.socket.id) {
         displayPlayers(self, players[id], 'ship')
+      } else {
+        displayPlayers(self, players[id], 'otherPlayer');
       }
     })
   })
+
+  this.socket.on('newPlayer', function (playerInfo) {
+    displayPlayers(self, playerInfo, 'otherPlayer');
+  });
+
+  this.socket.on('playerDisconnected', function (playerId) {
+    self.players.getChildren().forEach(function (player) {
+      if (playerId === player.playerId) {
+        player.destroy();
+      }
+    });
+  });
 }
 
 function update() {}
