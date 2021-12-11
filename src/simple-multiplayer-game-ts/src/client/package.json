@@ -5,7 +5,7 @@
 	"scripts": {
 		"start": "parcel src/index.html -p 8050",
 		"build": "parcel build src/index.html --out-dir dist && yarn fix-index",
-    "fix-index": "perl -i -pe's/\\/main/.\\/main/g' dist/index.html",
+		"fix-index": "perl -i -pe's/\\/main/.\\/main/g' dist/index.html",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
 	},
@@ -21,7 +21,8 @@
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
-		"phaser": "^3.55.2"
+		"phaser": "^3.55.2",
+		"socket.io-client": "^4.4.0"
 	},
 	"parcelCleanPaths": [
 		"dist"

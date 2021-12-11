@@ -5,7 +5,9 @@ export default class Preloader extends Phaser.Scene {
     super('preloader')
   }
 
-  preload() {}
+  preload() {
+    this.load.image('ship', 'spaceShips_001.png')
+  }
 
   create() {
     this.scene.start('game')

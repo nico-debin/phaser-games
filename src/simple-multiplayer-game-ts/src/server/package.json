@@ -5,13 +5,14 @@
 	"scripts": {
 		"start": "parcel src/index.html -p 8051",
 		"build": "parcel build src/index.html --out-dir dist && yarn fix-index",
-    "fix-index": "perl -i -pe's/\\/main/.\\/main/g' dist/index.html",
+		"fix-index": "perl -i -pe's/\\/main/.\\/main/g' dist/index.html",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
 	},
 	"author": "nicodebin",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/socket.io": "^3.0.2",
 		"@typescript-eslint/eslint-plugin": "^2.29.0",
 		"@typescript-eslint/parser": "^2.29.0",
 		"eslint": "^6.8.0",
