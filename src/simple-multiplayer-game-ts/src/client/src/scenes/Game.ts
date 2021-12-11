@@ -129,7 +129,6 @@ const displayPlayers = (
   playerState: PlayerState,
   sprite: string,
 ) => {
-  console.log(`Adding player with sprite: ${sprite}`)
   const player = new Player(
     scene,
     playerState.x,
