@@ -44,8 +44,6 @@ export default class Game extends Phaser.Scene {
 
     const gameScene: Game = this
 
-    console.log(io)
-
     io.on('connection', (socket) => {
       const playerId: PlayerId = socket.id
 
