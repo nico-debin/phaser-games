@@ -1,16 +1,19 @@
 import Phaser from 'phaser'
 
+import SceneKeys from '../consts/SceneKeys'
+import TextureKeys from '../consts/TextureKeys'
+
 export default class Preloader extends Phaser.Scene {
   constructor() {
-    super('preloader')
+    super(SceneKeys.Preloader)
   }
 
   preload() {
-    this.load.image('ship', 'spaceShips_001.png')
-    this.load.image('otherPlayer', 'enemyBlack5.png')
+    this.load.image(TextureKeys.Ship, 'spaceShips_001.png')
+    this.load.image(TextureKeys.OtherPlayer, 'enemyBlack5.png')
   }
 
   create() {
-    this.scene.start('game')
+    this.scene.start(SceneKeys.Game)
   }
 }

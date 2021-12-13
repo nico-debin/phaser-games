@@ -1,20 +1,26 @@
 import Phaser from 'phaser'
 import { Server } from 'socket.io'
-import Player, { PlayerId } from '../characters/Player';
+
+import SceneKeys from '../consts/SceneKeys'
+import TextureKeys from '../consts/TextureKeys'
+
+import Player, { PlayerId } from '../characters/Player'
 declare global {
-	interface Window { io: Server; }
+  interface Window {
+    io: Server
+  }
 }
 
 interface PlayerState {
-  rotation: number;
-  x: number;
-  y: number;
-  playerId: PlayerId;
-  team: 'red' | 'blue';
+  rotation: number
+  x: number
+  y: number
+  playerId: PlayerId
+  team: 'red' | 'blue'
   input: {
-    left: boolean;
-    right: boolean;
-    up: boolean;
+    left: boolean
+    right: boolean
+    up: boolean
   }
 }
 
@@ -22,9 +28,8 @@ interface PlayersStates {
   [playerId: string]: PlayerState
 }
 
-const io = window.io;
+const io = window.io
 export default class Game extends Phaser.Scene {
-
   // Phaser representation of the players
   players!: Phaser.Physics.Arcade.Group
 
@@ -32,12 +37,12 @@ export default class Game extends Phaser.Scene {
   playersStates: PlayersStates = {}
 
   constructor() {
-    super('game')
+    super(SceneKeys.Game)
   }
 
   create() {
     this.players = this.physics.add.group({
-      classType: Player
+      classType: Player,
     })
 
     this.physics.add.collider(this.players, this.players)
@@ -75,13 +80,13 @@ export default class Game extends Phaser.Scene {
       // Player disconnected handler
       socket.on('disconnect', function () {
         console.log(`user ${playerId} disconnected`)
-  
+
         // remove player from server
         removePlayer(gameScene, playerId)
-  
+
         // remove this player from our players object
         delete gameScene.playersStates[playerId]
-  
+
         // emit a message to all players to remove this player
         io.emit('playerDisconnected', playerId)
       })
@@ -97,7 +102,7 @@ export default class Game extends Phaser.Scene {
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
       const input = this.playersStates[player.id].input
-  
+
       if (input.left) {
         player.setAngularVelocity(-300)
       } else if (input.right) {
@@ -105,7 +110,7 @@ export default class Game extends Phaser.Scene {
       } else {
         player.setAngularVelocity(0)
       }
-  
+
       if (input.up) {
         this.physics.velocityFromRotation(
           player.rotation + 1.5,
@@ -116,22 +121,30 @@ export default class Game extends Phaser.Scene {
       } else {
         player.setAcceleration(0)
       }
-  
+
       this.playersStates[player.id].x = player.x
       this.playersStates[player.id].y = player.y
       this.playersStates[player.id].rotation = player.rotation
     })
-  
+
     this.physics.world.wrap(this.players, 5)
-  
+
     io.emit('playerUpdates', this.playersStates)
   }
 }
 
 const addPlayer = (scene: Game, playerState: PlayerState) => {
-  const player = new Player(scene, playerState.x, playerState.y, 'ship', playerState.playerId).setOrigin(0.5, 0.5).setDisplaySize(53, 40)
+  const player = new Player(
+    scene,
+    playerState.x,
+    playerState.y,
+    TextureKeys.Ship,
+    playerState.playerId,
+  )
+    .setOrigin(0.5, 0.5)
+    .setDisplaySize(53, 40)
   scene.physics.add.existing(player)
-  
+
   player.setDrag(100)
   player.setAngularDrag(100)
   player.setMaxVelocity(200)

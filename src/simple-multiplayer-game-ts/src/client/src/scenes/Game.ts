@@ -1,6 +1,9 @@
 import Phaser from 'phaser'
 import { io, Socket } from 'socket.io-client'
 
+import SceneKeys from '../consts/SceneKeys'
+import TextureKeys from '../consts/TextureKeys'
+
 import Player, { PlayerId } from '../characters/Player'
 
 interface PlayerState {
@@ -30,7 +33,7 @@ export default class Game extends Phaser.Scene {
   private upKeyPressed!: boolean
 
   constructor() {
-    super('game')
+    super(SceneKeys.Game)
   }
 
   get currentPlayerId() {
@@ -49,16 +52,16 @@ export default class Game extends Phaser.Scene {
     this.socket.on('currentPlayers', function (playersStates: PlayersStates) {      
       Object.keys(playersStates).forEach(function (id) {
         if (playersStates[id].playerId === gameScene.currentPlayerId) {
-          displayPlayers(gameScene, playersStates[id], 'ship')
+          displayPlayers(gameScene, playersStates[id], TextureKeys.Ship)
         } else {
-          displayPlayers(gameScene, playersStates[id], 'otherPlayer')
+          displayPlayers(gameScene, playersStates[id], TextureKeys.OtherPlayer)
         }
       })
     })
 
     // A new player has joined the game
     this.socket.on('newPlayer', function (playerState: PlayerState) {
-      displayPlayers(gameScene, playerState, 'otherPlayer')
+      displayPlayers(gameScene, playerState, TextureKeys.OtherPlayer)
     })
 
     // A player has been disconnected
