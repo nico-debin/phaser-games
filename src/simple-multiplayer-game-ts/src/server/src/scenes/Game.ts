@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { Server } from 'socket.io'
 
+import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 
@@ -72,10 +73,10 @@ export default class Game extends Phaser.Scene {
       addPlayer(this, this.playersStates[playerId])
 
       // send the players object to the new player
-      socket.emit('currentPlayers', this.playersStates)
+      socket.emit(NetworkEventKeys.PlayersInitialStatusInfo, this.playersStates)
 
       // update all other players of the new player
-      socket.broadcast.emit('newPlayer', this.playersStates[playerId])
+      socket.broadcast.emit(NetworkEventKeys.PlayersNew, this.playersStates[playerId])
 
       // Player disconnected handler
       socket.on('disconnect', function () {
@@ -88,11 +89,11 @@ export default class Game extends Phaser.Scene {
         delete gameScene.playersStates[playerId]
 
         // emit a message to all players to remove this player
-        io.emit('playerDisconnected', playerId)
+        io.emit(NetworkEventKeys.PlayersLeft, playerId)
       })
 
       // Player input handler: when a player moves, update the player data
-      socket.on('playerInput', function (inputData) {
+      socket.on(NetworkEventKeys.PlayersInput, function (inputData) {
         handlePlayerInput(gameScene, playerId, inputData)
       })
     })
@@ -129,7 +130,7 @@ export default class Game extends Phaser.Scene {
 
     this.physics.world.wrap(this.players, 5)
 
-    io.emit('playerUpdates', this.playersStates)
+    io.emit(NetworkEventKeys.PlayersStatusUpdate, this.playersStates)
   }
 }
 

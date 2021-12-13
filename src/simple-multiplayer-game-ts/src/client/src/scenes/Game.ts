@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { io, Socket } from 'socket.io-client'
 
+import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 
@@ -49,7 +50,7 @@ export default class Game extends Phaser.Scene {
     const gameScene: Game = this
     
     // All players in the game - used when joining a game that already has players
-    this.socket.on('currentPlayers', function (playersStates: PlayersStates) {      
+    this.socket.on(NetworkEventKeys.PlayersInitialStatusInfo, function (playersStates: PlayersStates) {      
       Object.keys(playersStates).forEach(function (id) {
         if (playersStates[id].playerId === gameScene.currentPlayerId) {
           displayPlayers(gameScene, playersStates[id], TextureKeys.Ship)
@@ -60,12 +61,12 @@ export default class Game extends Phaser.Scene {
     })
 
     // A new player has joined the game
-    this.socket.on('newPlayer', function (playerState: PlayerState) {
+    this.socket.on(NetworkEventKeys.PlayersNew, function (playerState: PlayerState) {
       displayPlayers(gameScene, playerState, TextureKeys.OtherPlayer)
     })
 
     // A player has been disconnected
-    this.socket.on('playerDisconnected', function (playerId: PlayerId) {
+    this.socket.on(NetworkEventKeys.PlayersLeft, function (playerId: PlayerId) {
       gameScene.players.getChildren().forEach(function (gameObject) {
         const player = gameObject as Player
         if (playerId === player.id) {
@@ -75,7 +76,7 @@ export default class Game extends Phaser.Scene {
     })
 
     // Update players positions
-    this.socket.on('playerUpdates', function (players: PlayersStates) {
+    this.socket.on(NetworkEventKeys.PlayersStatusUpdate, function (players: PlayersStates) {
       Object.keys(players).forEach(function (id) {
         gameScene.players.getChildren().forEach(function (gameObject) {
           const player = gameObject as Player
@@ -118,7 +119,7 @@ export default class Game extends Phaser.Scene {
       right !== this.rightKeyPressed ||
       up !== this.upKeyPressed
     ) {
-      this.socket.emit('playerInput', {
+      this.socket.emit(NetworkEventKeys.PlayersInput, {
         left: this.leftKeyPressed,
         right: this.rightKeyPressed,
         up: this.upKeyPressed,
