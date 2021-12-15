@@ -2,7 +2,7 @@ import path from 'path'
 import express, { Request, Response, Application } from 'express'
 import { Server as HttpServer } from 'http'
 import { Server } from 'socket.io'
-import { JSDOM } from 'jsdom'
+import { JSDOM, VirtualConsole } from 'jsdom'
 import DatauriParser from 'datauri/parser'
 
 const PORT = process.env.PORT || 8081
@@ -23,6 +23,9 @@ app.get('/', (req: Request, res: Response): void => {
 setupPhaserServer()
 
 function setupPhaserServer() {
+  const virtualConsole = new VirtualConsole()
+  virtualConsole.sendTo(console)
+
   JSDOM.fromFile(path.join(__dirname, 'server/dist/index.html'), {
     // To run the scripts in the html file
     runScripts: 'dangerously',
@@ -32,6 +35,9 @@ function setupPhaserServer() {
 
     // So requestAnimationFrame events fire
     pretendToBeVisual: true,
+
+    // Virtual console to capture console logs from the phaser server
+    virtualConsole
   })
     .then((dom) => {
       // Callback to trigger when phaser has loaded
