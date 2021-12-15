@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const io = window.io
+const io = window.io || {on: () => {}}
 export default class Game extends Phaser.Scene {
   // Phaser representation of the players
   players!: Phaser.Physics.Arcade.Group
@@ -33,11 +33,26 @@ export default class Game extends Phaser.Scene {
       key: 'islands',
     })
 
+    // Tilset are created in the server to handle collisions
+    const tilesetIslandBeach = this.mapIsland.addTilesetImage('tf_beach_tileB', 'tiles-islands-beach', 32, 32, 0, 0)
+    const tilesetIslandShoreline = this.mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
+
+    const islandLayer = this.mapIsland.createLayer('Island 1/Island', [tilesetIslandBeach, tilesetIslandShoreline])
+    const pathsLayer = this.mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach])
+    const vegetationBottomLayer = this.mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach)
+
     this.players = this.physics.add.group({
       classType: Player,
     })
-
     this.physics.add.collider(this.players, this.players)
+
+    // Tileset colliders
+    islandLayer.setCollisionByProperty({ collides: true })
+    pathsLayer.setCollisionByProperty({ collides: true })
+    vegetationBottomLayer.setCollisionByProperty({ collides: true })
+
+    // Collide players with tiles
+    this.physics.add.collider(this.players, [islandLayer, pathsLayer, vegetationBottomLayer])
 
     const gameScene: Game = this
 
@@ -48,7 +63,8 @@ export default class Game extends Phaser.Scene {
 
       // Get player initial location from object layer
       const playersLayer = this.mapIsland.getObjectLayer('Players')
-      const playerObj = playersLayer.objects.pop()
+      const randomPlayerIndex = Phaser.Math.Between(0, playersLayer.objects.length - 1)
+      const playerObj = playersLayer.objects[randomPlayerIndex]
 
       // create a new player and add it to our players object
       this.playersStates[playerId] = {
@@ -87,26 +103,31 @@ export default class Game extends Phaser.Scene {
       })
 
       // Player input handler: when a player moves, update the player data
-      socket.on(NetworkEventKeys.PlayersInput, function (inputData) {
+      socket.on(NetworkEventKeys.PlayersInput, function (inputData: MovementInput) {
         handlePlayerInput(gameScene, playerId, inputData)
       })
     })
   }
 
   update(t: number, dt: number) {
+    let playerHasMoved = false
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
       const input = this.playersStates[player.id].movementInput
 
       player.update(input)
 
+      if (!playerHasMoved) {
+        playerHasMoved = this.playersStates[player.id].x != player.x || this.playersStates[player.id].y != player.y
+      }
+
       this.playersStates[player.id].x = player.x
       this.playersStates[player.id].y = player.y
     })
 
-    this.physics.world.wrap(this.players, 5)
-
-    io.emit(NetworkEventKeys.PlayersStatusUpdate, this.playersStates)
+    if (playerHasMoved) {
+      io.emit(NetworkEventKeys.PlayersStatusUpdate, this.playersStates)
+    }
   }
 }
 

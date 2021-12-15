@@ -6,7 +6,7 @@ import { MovementInput, PlayerId } from '../types/playerTypes'
 export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: PlayerId) {
     super(scene, x, y, texture)
     this.playerId = playerId
   }

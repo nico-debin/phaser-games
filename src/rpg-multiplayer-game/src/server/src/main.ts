@@ -9,6 +9,7 @@ declare global {
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.HEADLESS,
+	// type: Phaser.AUTO,
 	autoFocus: false,
 	width: 800,
 	height: 600,
@@ -23,4 +24,4 @@ const config: Phaser.Types.Core.GameConfig = {
 
 export default new Phaser.Game(config)
 
-window.gameLoaded()
+window.gameLoaded && window.gameLoaded()
