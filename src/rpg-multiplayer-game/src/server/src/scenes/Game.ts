@@ -105,6 +105,7 @@ export default class Game extends Phaser.Scene {
     )
   }
 
+  /*** START: Player handlers ***/
   addPlayerFromState(playerState: PlayerState) {
     // add player to our players states object
     this.playersStates[playerState.playerId] = playerState
@@ -148,7 +149,7 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  update(t: number, dt: number) {
+  private handlePlayerMovementUpdate() {
     let playerHasMoved = false
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
@@ -170,9 +171,14 @@ export default class Game extends Phaser.Scene {
       io.emit(NetworkEventKeys.PlayersStatusUpdate, this.playersStates)
     }
   }
+  /*** END: Player handlers ***/
+
+  update(t: number, dt: number) {
+    this.handlePlayerMovementUpdate()
+  }
 }
 
-/*** Socket Handlers ***/
+/*** START: Socket Handlers ***/
 const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   const playerId: PlayerId = socket.id
 
@@ -233,3 +239,4 @@ const handleSocketDisconnect = (gameScene: Game, playerId: PlayerId) => {
   // emit a message to all players to remove this player
   io.emit(NetworkEventKeys.PlayersLeft, playerId)
 }
+/*** END: Socket Handlers ***/
