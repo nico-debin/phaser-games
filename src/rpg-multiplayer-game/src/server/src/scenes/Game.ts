@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io'
 import settings from '~/settings'
 
 import NetworkEventKeys from '../consts/NetworkEventKeys'
+import SocketIOEventKeys from '../consts/SocketIOEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 
@@ -15,7 +16,7 @@ import {
 } from '../types/playerTypes'
 
 import Player from '../characters/Player'
-import SocketIOEventKeys from '~/consts/SocketIOEventKeys'
+
 declare global {
   interface Window {
     io: Server
@@ -99,7 +100,9 @@ export default class Game extends Phaser.Scene {
 
   private createSocketHandlers() {
     const gameScene: Game = this
-    io.on(SocketIOEventKeys.Connection, (socket: Socket) => handleSocketConnect(socket, gameScene))
+    io.on(SocketIOEventKeys.Connection, (socket: Socket) =>
+      handleSocketConnect(socket, gameScene),
+    )
   }
 
   addPlayerFromState(playerState: PlayerState) {
@@ -119,9 +122,30 @@ export default class Game extends Phaser.Scene {
 
     // Add player to physics
     this.physics.add.existing(player)
-  
+
     // Add player to group
     this.players.add(player)
+  }
+
+  removePlayer = (playerId: PlayerId) => {
+    this.players.getChildren().forEach((gameObject) => {
+      const player = gameObject as Player
+      if (playerId === player.id) {
+        player.destroy()
+      }
+    })
+
+    // remove this player from our players object
+    delete this.playersStates[playerId]
+  }
+
+  handlePlayerMovementInput(playerId: PlayerId, input: MovementInput) {
+    this.players.getChildren().forEach((gameObject) => {
+      const player = gameObject as Player
+      if (playerId === player.id) {
+        this.playersStates[player.id].movementInput = input
+      }
+    })
   }
 
   update(t: number, dt: number) {
@@ -148,30 +172,6 @@ export default class Game extends Phaser.Scene {
   }
 }
 
-
-
-const removePlayer = (scene: Game, playerId: PlayerId) => {
-  scene.players.getChildren().forEach((gameObject) => {
-    const player = gameObject as Player
-    if (playerId === player.id) {
-      player.destroy()
-    }
-  })
-}
-
-const handlePlayerInput = (
-  scene: Game,
-  playerId: PlayerId,
-  input: MovementInput,
-) => {
-  scene.players.getChildren().forEach((gameObject) => {
-    const player = gameObject as Player
-    if (playerId === player.id) {
-      scene.playersStates[player.id].movementInput = input
-    }
-  })
-}
-
 /*** Socket Handlers ***/
 const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   const playerId: PlayerId = socket.id
@@ -195,14 +195,17 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       right: false,
       up: false,
       down: false,
-    }, 
+    },
   }
 
   // add player to server
   gameScene.addPlayerFromState(newPlayerState)
 
   // send the players object to the new player
-  socket.emit(NetworkEventKeys.PlayersInitialStatusInfo, gameScene.playersStates)
+  socket.emit(
+    NetworkEventKeys.PlayersInitialStatusInfo,
+    gameScene.playersStates,
+  )
 
   // update all other players of the new player
   socket.broadcast.emit(
@@ -211,24 +214,21 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   )
 
   // Player disconnected handler
-  socket.on(SocketIOEventKeys.Disconnect, () => handleSocketDisconnect(gameScene, playerId))
+  socket.on(SocketIOEventKeys.Disconnect, () =>
+    handleSocketDisconnect(gameScene, playerId),
+  )
 
   // Player input handler: when a player moves, update the player data
-  socket.on(NetworkEventKeys.PlayersInput, function (
-    inputData: MovementInput,
-  ) {
-    handlePlayerInput(gameScene, playerId, inputData)
-  })
+  socket.on(NetworkEventKeys.PlayersInput, (inputData: MovementInput) =>
+    gameScene.handlePlayerMovementInput(playerId, inputData),
+  )
 }
 
 const handleSocketDisconnect = (gameScene: Game, playerId: PlayerId) => {
   console.log(`user ${playerId} disconnected`)
 
   // remove player from server
-  removePlayer(gameScene, playerId)
-
-  // remove this player from our players object
-  delete gameScene.playersStates[playerId]
+  gameScene.removePlayer(playerId)
 
   // emit a message to all players to remove this player
   io.emit(NetworkEventKeys.PlayersLeft, playerId)

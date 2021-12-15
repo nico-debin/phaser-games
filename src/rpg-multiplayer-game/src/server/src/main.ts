@@ -2,14 +2,14 @@ import Phaser from 'phaser'
 
 import Preloader from './scenes/Preloader'
 import Game from './scenes/Game'
+import settings from './settings'
 
 declare global {
 	interface Window { gameLoaded: () => void; }
 }
 
 const config: Phaser.Types.Core.GameConfig = {
-	type: Phaser.HEADLESS,
-	// type: Phaser.AUTO,
+	type: settings.debugMode ? Phaser.AUTO : Phaser.HEADLESS,
 	autoFocus: false,
 	width: 800,
 	height: 600,
