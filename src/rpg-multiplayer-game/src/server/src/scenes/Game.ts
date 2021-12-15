@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 
 import settings from '~/settings'
 
@@ -99,55 +99,29 @@ export default class Game extends Phaser.Scene {
 
   private createSocketHandlers() {
     const gameScene: Game = this
+    io.on(SocketIOEventKeys.Connection, (socket: Socket) => handleSocketConnect(socket, gameScene))
+  }
 
-    io.on(SocketIOEventKeys.Connection, (socket) => {
-      const playerId: PlayerId = socket.id
+  addPlayerFromState(playerState: PlayerState) {
+    // add player to our players states object
+    this.playersStates[playerState.playerId] = playerState
 
-      console.log(`user ${playerId} connected`)
+    // Create player object
+    const player = new Player(
+      this,
+      playerState.x,
+      playerState.y,
+      TextureKeys.Ship,
+      playerState.playerId,
+    )
+      .setOrigin(0.5, 0.5)
+      .setDisplaySize(53, 40)
 
-      // Get player initial location from object layer
-      const playersLayer = this.mapIsland.getObjectLayer('Players')
-      const randomPlayerIndex = Phaser.Math.Between(
-        0,
-        playersLayer.objects.length - 1,
-      )
-      const playerObj = playersLayer.objects[randomPlayerIndex]
-
-      // create a new player and add it to our players object
-      this.playersStates[playerId] = {
-        playerId,
-        x: playerObj?.x!,
-        y: playerObj?.y!,
-        movementInput: {
-          left: false,
-          right: false,
-          up: false,
-          down: false,
-        },
-      }
-
-      // add player to server
-      addPlayer(this, this.playersStates[playerId])
-
-      // send the players object to the new player
-      socket.emit(NetworkEventKeys.PlayersInitialStatusInfo, this.playersStates)
-
-      // update all other players of the new player
-      socket.broadcast.emit(
-        NetworkEventKeys.PlayersNew,
-        this.playersStates[playerId],
-      )
-
-      // Player disconnected handler
-      socket.on(SocketIOEventKeys.Disconnect, () => handleSocketDisconnect(gameScene, playerId))
-
-      // Player input handler: when a player moves, update the player data
-      socket.on(NetworkEventKeys.PlayersInput, function (
-        inputData: MovementInput,
-      ) {
-        handlePlayerInput(gameScene, playerId, inputData)
-      })
-    })
+    // Add player to physics
+    this.physics.add.existing(player)
+  
+    // Add player to group
+    this.players.add(player)
   }
 
   update(t: number, dt: number) {
@@ -174,20 +148,7 @@ export default class Game extends Phaser.Scene {
   }
 }
 
-const addPlayer = (scene: Game, playerState: PlayerState) => {
-  const player = new Player(
-    scene,
-    playerState.x,
-    playerState.y,
-    TextureKeys.Ship,
-    playerState.playerId,
-  )
-    .setOrigin(0.5, 0.5)
-    .setDisplaySize(53, 40)
-  scene.physics.add.existing(player)
 
-  scene.players.add(player)
-}
 
 const removePlayer = (scene: Game, playerId: PlayerId) => {
   scene.players.getChildren().forEach((gameObject) => {
@@ -212,6 +173,54 @@ const handlePlayerInput = (
 }
 
 /*** Socket Handlers ***/
+const handleSocketConnect = (socket: Socket, gameScene: Game) => {
+  const playerId: PlayerId = socket.id
+
+  console.log(`user ${playerId} connected`)
+
+  // Get player initial location from object layer
+  const playersLayer = gameScene.mapIsland.getObjectLayer('Players')
+  const randomPlayerIndex = Phaser.Math.Between(
+    0,
+    playersLayer.objects.length - 1,
+  )
+  const playerObj = playersLayer.objects[randomPlayerIndex]
+
+  const newPlayerState: PlayerState = {
+    playerId,
+    x: playerObj?.x!,
+    y: playerObj?.y!,
+    movementInput: {
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+    }, 
+  }
+
+  // add player to server
+  gameScene.addPlayerFromState(newPlayerState)
+
+  // send the players object to the new player
+  socket.emit(NetworkEventKeys.PlayersInitialStatusInfo, gameScene.playersStates)
+
+  // update all other players of the new player
+  socket.broadcast.emit(
+    NetworkEventKeys.PlayersNew,
+    gameScene.playersStates[playerId],
+  )
+
+  // Player disconnected handler
+  socket.on(SocketIOEventKeys.Disconnect, () => handleSocketDisconnect(gameScene, playerId))
+
+  // Player input handler: when a player moves, update the player data
+  socket.on(NetworkEventKeys.PlayersInput, function (
+    inputData: MovementInput,
+  ) {
+    handlePlayerInput(gameScene, playerId, inputData)
+  })
+}
+
 const handleSocketDisconnect = (gameScene: Game, playerId: PlayerId) => {
   console.log(`user ${playerId} disconnected`)
 
