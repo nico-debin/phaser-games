@@ -133,7 +133,6 @@ export default class Game extends Phaser.Scene {
     player.body.setOffset(DEFAULT_SIZE.width * 0.31, DEFAULT_SIZE.height * 0.45)
     
     console.log(`body player: `, { width: player.body.width, heigth: player.body.height, originX: player.originX, originY: player.originY })
-    
 
     // Add player to group
     this.players.add(player)
@@ -152,15 +151,12 @@ export default class Game extends Phaser.Scene {
   }
 
   handlePlayerMovementInput(playerId: PlayerId, input: MovementInput) {
-    let found = false
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
       if (playerId === player.id) {
-        found = true
         this.playersStates[player.id].movementInput = input
       }
     })
-    debugger
   }
 
   private handlePlayerMovementUpdate() {

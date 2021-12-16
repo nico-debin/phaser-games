@@ -18,14 +18,14 @@ class SocketMock {
   }
 
   emit(event: string, ...args: any[]) {
-    console.log(`SocketMock emit "${event}" with args:`, { ...args })
+    // console.log(`SocketMock emit "${event}" with args:`, { ...args })
     this.eventEmitter.emit(event, ...args)
   }
   
   on(event: string, callback: Function) {
-    console.log(`SocketMock on "${event}" received`)
+    // console.log(`SocketMock on "${event}" received`)
     const newCallback = (...args: any[]) => {
-      console.log(`SocketMock executing "${event}" callback with args:`, { ...args })
+      // console.log(`SocketMock executing "${event}" callback with args:`, { ...args })
       callback(...args)
     }
     this.eventEmitter.on(event, newCallback)
@@ -40,9 +40,9 @@ class SocketIoServerMock {
   }
 
   on(event: string, callback: Function) {
-    console.log(`SocketServerMock on "${event}" received`)
+    // console.log(`SocketServerMock on "${event}" received`)
     const newCallback = (...args: any[]) => {
-      console.log(`SocketServerMock executing "${event}" callback with args:`, { ...args })      
+      // console.log(`SocketServerMock executing "${event}" callback with args:`, { ...args })      
       const socketMock = new SocketMock(this.networkEventsMock)
       callback(socketMock, ...args)
     }
@@ -50,7 +50,7 @@ class SocketIoServerMock {
   }
 
   emit(event: string, ...args: any[]) {
-    console.log(`SocketServerMock emit "${event}" with args:`, { ...args })
+    // console.log(`SocketServerMock emit "${event}" with args:`, { ...args })
     this.networkEventsMock.emit(event, ...args)
   }
 }

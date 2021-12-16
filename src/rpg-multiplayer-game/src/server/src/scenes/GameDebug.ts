@@ -42,10 +42,13 @@ export default class GameDebug extends Phaser.Scene {
     )
 
     // Follow the player
-    this.gameScene.cameras.main.startFollow(
-      this.gameScene.players.getChildren().pop()!,
-      true,
-    )
+    const players = this.gameScene.players.getChildren()
+    if (players.length > 0) {
+      this.gameScene.cameras.main.startFollow(
+        players[0],
+        true,
+      )
+    }
 
     const tilesetIslandBeach = this.gameScene.mapIsland.getTileset(
       'tf_beach_tileB',
@@ -106,8 +109,6 @@ export default class GameDebug extends Phaser.Scene {
       up !== this.lastMovementInput.up ||
       down !== this.lastMovementInput.down
     ) {
-      // debugger
-      console.log(this.lastMovementInput)
       socketIoServerMock.emit(NetworkEventKeys.PlayersInput, this.lastMovementInput)
 
       // this.currentPlayer.update(this.lastMovementInput)
