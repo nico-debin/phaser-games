@@ -4,12 +4,15 @@ import { socketIoServerMock } from '../debug/SocketIoServerMock'
 
 import SceneKeys from '../consts/SceneKeys'
 import SocketIOEventKeys from '../consts/SocketIOEventKeys'
+import NetworkEventKeys from '../consts/NetworkEventKeys'
 
 import Game from './Game'
+import { MovementInput } from '../types/playerTypes'
 
 export default class GameDebug extends Phaser.Scene {
   private gameScene!: Game
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
+  private lastMovementInput!: MovementInput
 
   constructor() {
     super(SceneKeys.GameDebug)
@@ -51,29 +54,63 @@ export default class GameDebug extends Phaser.Scene {
       'tf_beach_tileA1',
     )
 
+    // Load Ocean and Vegetation Top layers
     this.gameScene.mapIsland
       .createLayer('Ocean', tilesetIslandShoreline)
       .setDepth(-10)
     this.gameScene.mapIsland
       .createLayer('Island 1/Vegetation top', tilesetIslandBeach)
       .setDepth(10)
+
+    this.lastMovementInput = {
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+    }
   }
 
   update(t: number, dt: number) {
-    if (this.cursors.up.isDown) {
-      this.gameScene.cameras.main.y += 4
-    } else if (this.cursors.down.isDown) {
-      this.gameScene.cameras.main.y -= 4
-    }
+    // Capture last movement to compare what changed
+    const { left, right, up, down } = this.lastMovementInput
 
     if (this.cursors.left.isDown) {
-      this.gameScene.cameras.main.x += 4
+      this.lastMovementInput.left = true
+      // this.gameScene.cameras.main.y += 4
     } else if (this.cursors.right.isDown) {
-      this.gameScene.cameras.main.x -= 4
+      this.lastMovementInput.right = true
+      // this.gameScene.cameras.main.y -= 4
+    } else {
+      this.lastMovementInput.left = false
+      this.lastMovementInput.right = false
+    }
+
+    if (this.cursors.up.isDown) {
+      this.lastMovementInput.up = true
+      // this.gameScene.cameras.main.x += 4
+    } else if (this.cursors.down.isDown) {
+      this.lastMovementInput.down = true
+      // this.gameScene.cameras.main.x -= 4
+    } else {
+      this.lastMovementInput.up = false
+      this.lastMovementInput.down = false
     }
 
     if (this.cursors.space.isDown) {
       debugger
+    }
+
+    if (
+      left !== this.lastMovementInput.left ||
+      right !== this.lastMovementInput.right ||
+      up !== this.lastMovementInput.up ||
+      down !== this.lastMovementInput.down
+    ) {
+      // debugger
+      console.log(this.lastMovementInput)
+      socketIoServerMock.emit(NetworkEventKeys.PlayersInput, this.lastMovementInput)
+
+      // this.currentPlayer.update(this.lastMovementInput)
     }
   }
 }

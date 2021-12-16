@@ -152,12 +152,15 @@ export default class Game extends Phaser.Scene {
   }
 
   handlePlayerMovementInput(playerId: PlayerId, input: MovementInput) {
+    let found = false
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
       if (playerId === player.id) {
+        found = true
         this.playersStates[player.id].movementInput = input
       }
     })
+    debugger
   }
 
   private handlePlayerMovementUpdate() {
