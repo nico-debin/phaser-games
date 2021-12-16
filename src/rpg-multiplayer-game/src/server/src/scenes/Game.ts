@@ -6,7 +6,6 @@ import settings from '~/settings'
 import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SocketIOEventKeys from '../consts/SocketIOEventKeys'
 import SceneKeys from '../consts/SceneKeys'
-import TextureKeys from '../consts/TextureKeys'
 
 import {
   MovementInput,
@@ -109,20 +108,26 @@ export default class Game extends Phaser.Scene {
   addPlayerFromState(playerState: PlayerState) {
     // add player to our players states object
     this.playersStates[playerState.playerId] = playerState
-
+    
     // Create player object
     const player = new Player(
       this,
       playerState.x,
       playerState.y,
-      TextureKeys.Ship,
       playerState.playerId,
     )
-      .setOrigin(0.5, 0.5)
-      .setDisplaySize(53, 40)
-
+      // .setOrigin(0.5, 0.5)
+      
     // Add player to physics
     this.physics.add.existing(player)
+    
+    // This setting works only for Fauna character
+    // TODO: handle different characters with different sizes
+    player.body.setSize(DEFAULT_SIZE.width * 0.41, DEFAULT_SIZE.height * 0.4, false)
+    player.body.setOffset(DEFAULT_SIZE.width * 0.31, DEFAULT_SIZE.height * 0.45)
+    
+    console.log(`body player: `, { width: player.body.width, heigth: player.body.height, originX: player.originX, originY: player.originY })
+    
 
     // Add player to group
     this.players.add(player)

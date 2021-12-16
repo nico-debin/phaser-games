@@ -162,18 +162,29 @@ const displayPlayers = (
   playerState: PlayerState,
   isMainPlayer = true,
 ) => {
-  const player = isMainPlayer
-    ? new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
-    : new Lizard(scene, playerState.x, playerState.y, playerState.playerId)
-    // : new Player(scene, playerState.x, playerState.y, '', playerState.playerId)
-  // .setOrigin(0.5, 0.5)
-  // .setDisplaySize(53, 40)
+  // const player = isMainPlayer
+  //   ? new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
+  //   : new Lizard(scene, playerState.x, playerState.y, playerState.playerId)
+  const player = new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
+  // player.setOrigin(0.5, 0.5)
 
   if (isMainPlayer) {
     scene.currentPlayer = player
+  } else {
+    player.setTint(0xff0000)
   }
+
+  // DEBUG
+  scene.physics.add.existing(player)
+  const size = 32
+  // This setting works only for Fauna character
+  // TODO: handle different characters with different sizes
+  player.body.setSize(size * 0.41, size * 0.4, false)
+  player.body.setOffset(size * 0.31, size * 0.45)
+  console.log(`body player: `, { width: player.body.width, heigth: player.body.height, originX: player.originX, originY: player.originY })
 
   scene.add.existing(player)
 
   scene.players.add(player)
+
 }

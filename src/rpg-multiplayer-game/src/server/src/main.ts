@@ -5,7 +5,9 @@ import Game from './scenes/Game'
 import settings from './settings'
 
 declare global {
-	interface Window { gameLoaded: () => void; }
+  interface Window {
+    gameLoaded: () => void
+  }
 }
 
 const config: Phaser.Types.Core.GameConfig = {

@@ -1,14 +1,17 @@
 import Phaser from 'phaser'
 import { MovementInput, PlayerId } from '../types/playerTypes'
 
-
-
+export const DEFAULT_SIZE = {
+  height: 32,
+  width: 32,
+}
 export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: PlayerId) {
-    super(scene, x, y, texture)
+  constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
+    super(scene, x, y, '')
     this.playerId = playerId
+    this.scale = 2
   }
 
   get id (){

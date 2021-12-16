@@ -16,7 +16,6 @@ export default class Fauna extends Player {
   ) {
     super(scene, x, y, TextureKeys.Fauna, playerId)
     this.scale = 2
-    this.setOrigin(0.4, 0.93)
 
     console.log('Playing fauna animation')
     this.anims.play('fauna-idle-down')
