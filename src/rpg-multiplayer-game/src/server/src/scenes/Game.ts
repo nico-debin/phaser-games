@@ -23,12 +23,8 @@ declare global {
   }
 }
 
-let io
-if (settings.debugMode) {
-  io = socketIoServerMock
-} else {
-  io = window.io || { on: () => {} }
-}
+const io = (settings.debugMode) ? socketIoServerMock : window.io
+
 export default class Game extends Phaser.Scene {
   // Phaser representation of the players
   players!: Phaser.Physics.Arcade.Group
@@ -37,9 +33,6 @@ export default class Game extends Phaser.Scene {
   playersStates: PlayersStates = {}
 
   mapIsland!: Phaser.Tilemaps.Tilemap
-
-  // For Debugging
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
 
   constructor() {
     super(SceneKeys.Game)
@@ -51,13 +44,7 @@ export default class Game extends Phaser.Scene {
     this.createSocketHandlers()
 
     if (settings.debugMode) {
-      // Start new connection
-      socketIoServerMock.emit(SocketIOEventKeys.Connection)
-    
-      this.cursors = this.input.keyboard.createCursorKeys()
-
-      this.cameras.main.setBounds(0, 0, this.mapIsland.widthInPixels, this.mapIsland.heightInPixels);
-      this.cameras.main.startFollow(this.players.getChildren().pop()!, true)
+      this.scene.run(SceneKeys.GameDebug)
     }
   }
 
@@ -91,9 +78,6 @@ export default class Game extends Phaser.Scene {
       0,
     )
 
-    if (settings.debugMode) {
-      this.mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
-    }
     const islandLayer = this.mapIsland.createLayer('Island 1/Island', [
       tilesetIslandBeach,
       tilesetIslandShoreline,
@@ -105,11 +89,6 @@ export default class Game extends Phaser.Scene {
       'Island 1/Vegetation bottom',
       tilesetIslandBeach,
     )
-    if (settings.debugMode) {
-      this.mapIsland
-        .createLayer('Island 1/Vegetation top', tilesetIslandBeach)
-        .setDepth(10)
-    }
 
     // Tileset colliders
     islandLayer.setCollisionByProperty({ collides: true })
@@ -135,7 +114,7 @@ export default class Game extends Phaser.Scene {
   addPlayerFromState(playerState: PlayerState) {
     // add player to our players states object
     this.playersStates[playerState.playerId] = playerState
-    
+
     // Create player object
     const player = new Player(
       this,
@@ -207,24 +186,6 @@ export default class Game extends Phaser.Scene {
 
   update(t: number, dt: number) {
     this.handlePlayerMovementUpdate()
-
-    if (settings.debugMode) {
-      if (this.cursors.up.isDown) {
-        this.cameras.main.y += 4
-      } else if (this.cursors.down.isDown) {
-        this.cameras.main.y -= 4
-      }
-
-      if (this.cursors.left.isDown) {
-        this.cameras.main.x += 4
-      } else if (this.cursors.right.isDown) {
-        this.cameras.main.x -= 4
-      }
-
-      if (this.cursors.space.isDown) {
-        debugger
-      }
-    }
   }
 }
 

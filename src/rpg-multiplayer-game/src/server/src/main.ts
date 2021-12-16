@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 
 import Preloader from './scenes/Preloader'
 import Game from './scenes/Game'
+import GameDebug from './scenes/GameDebug'
 import settings from './settings'
 
 declare global {
@@ -9,6 +10,8 @@ declare global {
     gameLoaded: () => void
   }
 }
+
+const defaultScenes = [Preloader, Game]
 
 const config: Phaser.Types.Core.GameConfig = {
   type: settings.debugMode ? Phaser.AUTO : Phaser.HEADLESS,
@@ -22,7 +25,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: settings.debugMode,
     },
   },
-  scene: [Preloader, Game],
+  scene: defaultScenes,
 }
 
 if (settings.debugMode) {
@@ -30,6 +33,7 @@ if (settings.debugMode) {
 		mode: Phaser.Scale.FIT,
 		zoom: 2
 	}
+	config.scene = [...defaultScenes, GameDebug]
 }
 
 export default new Phaser.Game(config)
