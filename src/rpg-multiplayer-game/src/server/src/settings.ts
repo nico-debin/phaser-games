@@ -1,3 +1,3 @@
 export default {
-  debugMode: true,
+  debugMode: false,
 }
