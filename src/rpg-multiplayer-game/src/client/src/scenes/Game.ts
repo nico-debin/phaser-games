@@ -18,10 +18,18 @@ import Fauna from '../characters/Fauna'
 import Lizard from '../characters/Lizard'
 
 export default class Game extends Phaser.Scene {
+  // All players in the game
   players!: Phaser.GameObjects.Group
+
+  // Current player from this client
   currentPlayer!: Player
 
+
+  // SocketIO client
   private socket!: Socket
+  // Flag to check if it was previosly connected (to check reconnections)
+  private disconnectedFromServer = false
+
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private lastMovementInput!: MovementInput
 
@@ -34,7 +42,6 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
-
     // Socket to communicate with the server
     this.socket = io()
 
@@ -70,6 +77,8 @@ export default class Game extends Phaser.Scene {
     this.socket.on(NetworkEventKeys.PlayersInitialStatusInfo, function (
       playersStates: PlayersStates,
     ) {
+      gameScene.handleServerReconnect()
+
       Object.keys(playersStates).forEach(function (id) {
         if (playersStates[id].playerId === gameScene.currentPlayerId) {
           displayPlayers(gameScene, playersStates[id])
@@ -111,6 +120,14 @@ export default class Game extends Phaser.Scene {
           }
         })
       })
+    })
+
+    this.socket.on('disconnect', () => {
+      console.error('Disconnected from server')
+      this.disconnectedFromServer = true
+      
+      // Paint all players in color red
+      this.players.setTint(0xff0000)
     })
 
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -155,6 +172,15 @@ export default class Game extends Phaser.Scene {
       this.currentPlayer.update(this.lastMovementInput)
     }
   }
+
+  handleServerReconnect() {
+    const isServerReconnect = this.disconnectedFromServer
+    if (isServerReconnect) {
+      console.log('Reconnecting - Destroying players')
+      this.disconnectedFromServer = false
+      this.players.clear(true, true)
+    }
+  }
 }
 
 const displayPlayers = (
@@ -171,7 +197,8 @@ const displayPlayers = (
   if (isMainPlayer) {
     scene.currentPlayer = player
   } else {
-    player.setTint(0xff0000)
+    const randomTint = Math.random() * 0xffffff
+    player.setTint(randomTint)
   }
 
   // DEBUG
