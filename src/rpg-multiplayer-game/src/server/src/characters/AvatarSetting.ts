@@ -32,6 +32,21 @@ export const avatarSettings: AvatarSetting[] = [
       },
     },
   },
+  {
+    name: 'lizard',
+    body: {
+      sizeFactor: 1,
+      size: {
+        width: 16 * 0.8,
+        height: 28 * 0.5,
+        center: true,
+      },
+      offset: {
+        x: 2,
+        y: 12,
+      },
+    },
+  },
 ]
 
 export const noOpAvatar: AvatarSetting = {
