@@ -1,20 +1,38 @@
 import Phaser from 'phaser'
-import { MovementInput, PlayerId } from '../types/playerTypes'
+import { MovementInput, PlayerId, PlayerState } from '../types/playerTypes'
+import { AvatarSetting, avatarSettings } from './AvatarSetting'
 
-export const DEFAULT_SIZE = {
-  height: 32,
-  width: 32,
+declare global {
+  namespace Phaser.GameObjects {
+    interface GameObjectFactory {
+      player(x: number, y: number, playerId: PlayerId): Player
+
+      playerFromState(playerState: PlayerState): Player
+    }
+  }
 }
+
+const getRandomAvatarSetting = () => {
+  const randomIndex = Phaser.Math.Between(0, avatarSettings.length - 1)
+  return avatarSettings[randomIndex]
+}
+
 export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId
+  readonly avatarSetting: AvatarSetting
 
   constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
     super(scene, x, y, '')
     this.playerId = playerId
     this.scale = 2
+    this.avatarSetting = getRandomAvatarSetting()
   }
 
-  get id (){
+  static fromPlayerState(scene: Phaser.Scene, playerState: PlayerState) {
+    return new Player(scene, playerState.x, playerState.y, playerState.playerId)
+  }
+
+  get id() {
     return this.playerId
   }
 
@@ -34,3 +52,39 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     }
   }
 }
+
+Phaser.GameObjects.GameObjectFactory.register('player', function (
+  this: Phaser.GameObjects.GameObjectFactory,
+  x: number,
+  y: number,
+  playerId: PlayerId,
+) {
+  const player = new Player(this.scene, x, y, playerId)
+
+  this.scene.physics.world.enableBody(
+    player,
+    Phaser.Physics.Arcade.DYNAMIC_BODY,
+  )
+
+  const { avatarSetting } = player
+  const { sizeFactor } = avatarSetting.body
+
+  player.body.setSize(
+    sizeFactor * avatarSetting.body.size.width,
+    sizeFactor * avatarSetting.body.size.height,
+    avatarSetting.body.size.center,
+  )
+  player.body.setOffset(
+    sizeFactor * avatarSetting.body.offset.width,
+    sizeFactor * avatarSetting.body.offset.height,
+  )
+
+  return player
+})
+
+Phaser.GameObjects.GameObjectFactory.register('playerFromState', function (
+  this: Phaser.GameObjects.GameObjectFactory,
+  playerState: PlayerState,
+) {
+  return this.scene.add.player(playerState.x, playerState.y, playerState.playerId)
+})

@@ -192,7 +192,6 @@ const displayPlayers = (
   //   ? new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
   //   : new Lizard(scene, playerState.x, playerState.y, playerState.playerId)
   const player = new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
-  // player.setOrigin(0.5, 0.5)
 
   if (isMainPlayer) {
     scene.currentPlayer = player
@@ -201,17 +200,25 @@ const displayPlayers = (
     player.setTint(randomTint)
   }
 
-  // DEBUG
+  /******************** DEBUG ********************/
   scene.physics.add.existing(player)
-  const size = 32
-  // This setting works only for Fauna character
-  // TODO: handle different characters with different sizes
-  player.body.setSize(size * 0.41, size * 0.4, false)
-  player.body.setOffset(size * 0.31, size * 0.45)
-  console.log(`body player: `, { width: player.body.width, heigth: player.body.height, originX: player.originX, originY: player.originY })
+
+  const avatarSetting = playerState.avatar
+  const { sizeFactor } = avatarSetting.body
+
+  const playerBody = player.body as Phaser.Physics.Arcade.Body
+  playerBody.setSize(
+    sizeFactor * avatarSetting.body.size.width,
+    sizeFactor * avatarSetting.body.size.height,
+    avatarSetting.body.size.center,
+  )
+  playerBody.setOffset(
+    sizeFactor * avatarSetting.body.offset.width,
+    sizeFactor * avatarSetting.body.offset.height,
+  )
+  console.log(`body player: `, { width: playerBody.width, heigth: playerBody.height, originX: player.originX, originY: player.originY })
+  /****************** END DEBUG ******************/
 
   scene.add.existing(player)
-
   scene.players.add(player)
-
 }

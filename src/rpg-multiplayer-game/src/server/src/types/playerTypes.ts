@@ -1,3 +1,5 @@
+import { AvatarSetting } from "~/characters/AvatarSetting";
+
 export type MovementInput = {
   left: boolean;
   right: boolean;
@@ -12,6 +14,7 @@ export interface PlayerState {
   y: number
   playerId: PlayerId
   movementInput: MovementInput
+  avatar: AvatarSetting
 }
 
 export interface PlayersStates {

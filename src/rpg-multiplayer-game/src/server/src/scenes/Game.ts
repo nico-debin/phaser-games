@@ -15,7 +15,8 @@ import {
   PlayerState,
 } from '../types/playerTypes'
 
-import Player, { DEFAULT_SIZE } from '../characters/Player'
+import Player from '../characters/Player'
+import { noOpAvatar } from '~/characters/AvatarSetting'
 
 declare global {
   interface Window {
@@ -23,7 +24,7 @@ declare global {
   }
 }
 
-const io = (settings.debugMode) ? socketIoServerMock : window.io
+const io = settings.debugMode ? socketIoServerMock : window.io
 
 export default class Game extends Phaser.Scene {
   // Phaser representation of the players
@@ -112,27 +113,35 @@ export default class Game extends Phaser.Scene {
 
   /*** START: Player handlers ***/
   addPlayerFromState(playerState: PlayerState) {
+    // Create player object
+    const player = this.add.playerFromState(playerState)
+    // .setOrigin(0.5, 0.5)
+
+    playerState.avatar = player.avatarSetting
+
     // add player to our players states object
     this.playersStates[playerState.playerId] = playerState
 
-    // Create player object
-    const player = new Player(
-      this,
-      playerState.x,
-      playerState.y,
-      playerState.playerId,
-    )
-      // .setOrigin(0.5, 0.5)
-      
+
     // Add player to physics
-    this.physics.add.existing(player)
-    
+    // this.physics.add.existing(player)
+
+    // const avatarSetting = player.avatarSetting
+
     // This setting works only for Fauna character
     // TODO: handle different characters with different sizes
-    player.body.setSize(DEFAULT_SIZE.width * 0.41, DEFAULT_SIZE.height * 0.4, false)
-    player.body.setOffset(DEFAULT_SIZE.width * 0.31, DEFAULT_SIZE.height * 0.45)
-    
-    console.log(`body player: `, { width: player.body.width, heigth: player.body.height, originX: player.originX, originY: player.originY })
+    // player.body.setSize(DEFAULT_SIZE.width * 0.41, DEFAULT_SIZE.height * 0.4, false)
+    // player.body.setOffset(DEFAULT_SIZE.width * 0.31, DEFAULT_SIZE.height * 0.45)
+
+    // player.body.setSize(avatarSetting.body.sizeFactor * avatarSetting.body.size.width, avatarSetting.body.sizeFactor * avatarSetting.body.size.height, avatarSetting.body.size.center)
+    // player.body.setOffset(avatarSetting.body.sizeFactor * avatarSetting.body.offset.width, avatarSetting.body.sizeFactor * avatarSetting.body.offset.height)
+
+    console.log(`body player: `, {
+      width: player.body.width,
+      heigth: player.body.height,
+      originX: player.originX,
+      originY: player.originY,
+    })
 
     // Add player to group
     this.players.add(player)
@@ -212,6 +221,7 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       up: false,
       down: false,
     },
+    avatar: noOpAvatar
   }
 
   // add player to server
