@@ -8,8 +8,8 @@ export interface AvatarSetting {
       center?: boolean | undefined
     }
     offset: {
-      width: number
-      height: number
+      x: number
+      y: number
     }
   }
 }
@@ -27,8 +27,8 @@ export const avatarSettings: AvatarSetting[] = [
         center: false,
       },
       offset: {
-        width: 0.31,
-        height: 0.45,
+        x: 0.31,
+        y: 0.45,
       },
     },
   },
@@ -44,8 +44,8 @@ export const noOpAvatar: AvatarSetting = {
       center: false,
     },
     offset: {
-      width: 0,
-      height: 0,
+      x: 0,
+      y: 0,
     }
   }
 }

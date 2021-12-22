@@ -75,8 +75,8 @@ Phaser.GameObjects.GameObjectFactory.register('player', function (
     avatarSetting.body.size.center,
   )
   player.body.setOffset(
-    sizeFactor * avatarSetting.body.offset.width,
-    sizeFactor * avatarSetting.body.offset.height,
+    sizeFactor * avatarSetting.body.offset.x,
+    sizeFactor * avatarSetting.body.offset.y,
   )
 
   return player

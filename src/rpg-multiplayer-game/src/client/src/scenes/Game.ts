@@ -211,8 +211,8 @@ const displayPlayers = (
     avatarSetting.body.size.center,
   )
   playerBody.setOffset(
-    sizeFactor * avatarSetting.body.offset.width,
-    sizeFactor * avatarSetting.body.offset.height,
+    sizeFactor * avatarSetting.body.offset.x,
+    sizeFactor * avatarSetting.body.offset.y,
   )
   console.log(`body player: `, { width: playerBody.width, heigth: playerBody.height, originX: player.originX, originY: player.originY })
   /****************** END DEBUG ******************/
