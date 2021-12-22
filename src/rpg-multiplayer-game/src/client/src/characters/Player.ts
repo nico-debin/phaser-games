@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 
 import { MovementInput, PlayerId } from '../types/playerTypes'
 
-export default class Player extends Phaser.GameObjects.Sprite {
+export default abstract class Player extends Phaser.GameObjects.Sprite {
   private playerId: PlayerId
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number | undefined) {

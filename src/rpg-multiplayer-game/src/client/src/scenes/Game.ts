@@ -16,6 +16,7 @@ import { createCharacterAnims, createLizardAnims } from '../anims'
 import Player from '../characters/Player'
 import Fauna from '../characters/Fauna'
 import Lizard from '../characters/Lizard'
+import PlayerFactory from '~/characters/PlayerFactory'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -188,10 +189,7 @@ const displayPlayers = (
   playerState: PlayerState,
   isMainPlayer = true,
 ) => {
-  // const player = isMainPlayer
-  //   ? new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
-  //   : new Lizard(scene, playerState.x, playerState.y, playerState.playerId)
-  const player = new Fauna(scene, playerState.x, playerState.y, playerState.playerId)
+  const player = PlayerFactory.fromPlayerState(scene, playerState)
 
   if (isMainPlayer) {
     scene.currentPlayer = player
