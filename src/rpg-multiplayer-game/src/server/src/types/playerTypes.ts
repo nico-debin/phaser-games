@@ -1,4 +1,5 @@
-import { AvatarSetting } from "~/characters/AvatarSetting";
+import { AvatarSetting } from "../characters/AvatarSetting";
+import Queue from "../classes/queue";
 
 export type MovementInput = {
   left: boolean;
@@ -19,4 +20,8 @@ export interface PlayerState {
 
 export interface PlayersStates {
   [playerId: PlayerId]: PlayerState
+}
+
+export interface PlayersInputQueue {
+  [playerId: PlayerId]: Queue<MovementInput>
 }

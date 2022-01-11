@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import Phaser, { GameObjects } from 'phaser'
 import { Server, Socket } from 'socket.io'
 
 import settings from '../settings'
@@ -11,12 +11,14 @@ import SceneKeys from '../consts/SceneKeys'
 import {
   MovementInput,
   PlayerId,
+  PlayersInputQueue,
   PlayersStates,
   PlayerState,
 } from '../types/playerTypes'
 
 import Player from '../characters/Player'
-import { noOpAvatar } from '~/characters/AvatarSetting'
+import { noOpAvatar } from '../characters/AvatarSetting'
+import Queue from '../classes/queue'
 
 declare global {
   interface Window {
@@ -32,6 +34,9 @@ export default class Game extends Phaser.Scene {
 
   // State representation of the players, used to update client
   playersStates: PlayersStates = {}
+
+  // Queue to process movement inputs in order
+  movementInputQueue: PlayersInputQueue = {};
 
   mapIsland!: Phaser.Tilemaps.Tilemap
 
@@ -122,6 +127,9 @@ export default class Game extends Phaser.Scene {
     // add player to our players states object
     this.playersStates[playerState.playerId] = playerState
 
+    // Start a new input queue for the player
+    this.movementInputQueue[playerState.playerId] = new Queue<MovementInput>()
+
 
     // Add player to physics
     // this.physics.add.existing(player)
@@ -157,6 +165,7 @@ export default class Game extends Phaser.Scene {
 
     // remove this player from our players object
     delete this.playersStates[playerId]
+    delete this.movementInputQueue[playerId]
   }
 
   handlePlayerMovementInput(playerId: PlayerId, input: MovementInput) {
@@ -164,17 +173,26 @@ export default class Game extends Phaser.Scene {
       const player = gameObject as Player
       if (playerId === player.id) {
         this.playersStates[player.id].movementInput = input
+        this.movementInputQueue[player.id].enqueue(input)
       }
     })
   }
 
-  private handlePlayerMovementUpdate() {
+  private handlePlayerMovementInputUpdate() {
+    for (const playerId in this.movementInputQueue) {
+      const player = (this.players.getChildren() as Player[]).find(player => player.id === playerId);
+      const movementInput = this.movementInputQueue[playerId].dequeue()
+
+      if (!player || !movementInput) continue;
+
+      player?.update(movementInput)
+    }
+  }
+
+  private handlePlayerUpdate() {
     let somePlayerHasMoved = false
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
-      const input = this.playersStates[player.id].movementInput
-
-      player.update(input)
 
       if (!somePlayerHasMoved) {
         somePlayerHasMoved =
@@ -193,7 +211,8 @@ export default class Game extends Phaser.Scene {
   /*** END: Player handlers ***/
 
   update(t: number, dt: number) {
-    this.handlePlayerMovementUpdate()
+    this.handlePlayerMovementInputUpdate()
+    this.handlePlayerUpdate()
   }
 }
 

@@ -79,6 +79,9 @@ Phaser.GameObjects.GameObjectFactory.register('player', function (
     sizeFactor * avatarSetting.body.offset.y,
   )
 
+  // The player can't be pushed by any other object
+  player.setPushable(false)
+
   return player
 })
 
