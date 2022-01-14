@@ -16,7 +16,16 @@ export default class Preloader extends Phaser.Scene {
 
     this.load.atlas(TextureKeys.Fauna, 'characters/fauna.png', 'characters/fauna.json')
     this.load.atlas(TextureKeys.Lizard, 'enemies/lizard.png', 'enemies/lizard.json')
-    this.load.spritesheet(AvatarKeys.NICO, 'characters/nico.png', { frameWidth: 64, frameHeight: 64 });
+
+    this.load.spritesheet(AvatarKeys.ADRIAN_TOMKINS, 'characters/adrian-tomkins.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.CALVIN_KOEPKE, 'characters/calvin-koepke.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.JOEL_BOWEN, 'characters/joel-bowen.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.JOHN_GEIGER, 'characters/john-geiger.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.LAKSHMI_VEGESNA, 'characters/lakshmi-vegesna.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.MICHAEL_KANTOR, 'characters/michael-kantor.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.NICK_TAYLOR, 'characters/nick-taylor.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.NICOLAS_DEBIN, 'characters/nicolas-debin.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet(AvatarKeys.RYAN_MCKAY, 'characters/ryan-mckay.png', {frameWidth: 64, frameHeight: 64})
   }
 
   create() {

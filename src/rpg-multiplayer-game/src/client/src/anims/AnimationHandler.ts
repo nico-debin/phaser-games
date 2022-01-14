@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import AvatarAnimationKeys from '~/consts/AvatarAnimationKeys';
+import AvatarAnimationKeys from '../consts/AvatarAnimationKeys';
 import AvatarKeys from "../consts/AvatarKeys";
 
 const getFrameNumber = (row, col): number => (row - 1) * 13 + (col - 1);

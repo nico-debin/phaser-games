@@ -58,7 +58,7 @@ export default class GenericLpc extends Player {
       this.anims.play(`${avatar}-${AvatarAnimationKeys.WALK_DOWN}`, true)
     } else {
       const parts = this.anims.currentAnim.key.split('-')
-      parts[1] = 'idle'
+      parts[2] = 'idle'
       this.anims.play(parts.join('-'))
     }
   }

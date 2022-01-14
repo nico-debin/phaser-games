@@ -94,7 +94,6 @@ export default class Game extends Phaser.Scene {
       playerState: PlayerState,
     ) {
       gameScene.addPlayer(playerState, false)
-      // displayPlayers(gameScene, playerState, false)
     })
 
     // A player has been disconnected
@@ -193,8 +192,8 @@ export default class Game extends Phaser.Scene {
     if (isMainPlayer) {
       this.currentPlayer = player
     } else {
-      const randomTint = Math.random() * 0xffffff
-      player.setTint(randomTint)
+      // const randomTint = Math.random() * 0xffffff
+      // player.setTint(randomTint)
     }
 
     /******************** DEBUG ********************/
