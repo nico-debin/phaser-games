@@ -81,11 +81,9 @@ export default class Game extends Phaser.Scene {
       gameScene.handleServerReconnect()
 
       Object.keys(playersStates).forEach(function (id) {
-        if (playersStates[id].playerId === gameScene.currentPlayerId) {
-          displayPlayers(gameScene, playersStates[id])
-        } else {
-          displayPlayers(gameScene, playersStates[id], false)
-        }
+        const isMainPlayer = playersStates[id].playerId === gameScene.currentPlayerId;
+        gameScene.addPlayer(playersStates[id], isMainPlayer)
+        // displayPlayers(gameScene, playersStates[id], isMainPlayer)
       })
 
       gameScene.cameras.main.startFollow(gameScene.currentPlayer, true)
@@ -95,7 +93,8 @@ export default class Game extends Phaser.Scene {
     this.socket.on(NetworkEventKeys.PlayersNew, function (
       playerState: PlayerState,
     ) {
-      displayPlayers(gameScene, playerState, false)
+      gameScene.addPlayer(playerState, false)
+      // displayPlayers(gameScene, playerState, false)
     })
 
     // A player has been disconnected
@@ -116,7 +115,12 @@ export default class Game extends Phaser.Scene {
         gameScene.players.getChildren().forEach(function (gameObject) {
           const player = gameObject as Player
           if (players[id].playerId === player.id) {
-            player.setPosition(players[id].x, players[id].y)
+            // UNCAUGHT BUG: For some reason I couldn't find yet, the player
+            // rendering needs to be moved by 16 pixels in X and Y. 
+            // Remove this when the bug is fixed
+            const errorOffset = 16;
+
+            player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
             player.update(players[id].movementInput)
           }
         })
@@ -182,41 +186,37 @@ export default class Game extends Phaser.Scene {
       this.players.clear(true, true)
     }
   }
-}
 
-const displayPlayers = (
-  scene: Game,
-  playerState: PlayerState,
-  isMainPlayer = true,
-) => {
-  const player = PlayerFactory.fromPlayerState(scene, playerState)
+  addPlayer(playerState: PlayerState, isMainPlayer = true) {
+    const player = PlayerFactory.fromPlayerState(this, playerState)
 
-  if (isMainPlayer) {
-    scene.currentPlayer = player
-  } else {
-    const randomTint = Math.random() * 0xffffff
-    player.setTint(randomTint)
+    if (isMainPlayer) {
+      this.currentPlayer = player
+    } else {
+      const randomTint = Math.random() * 0xffffff
+      player.setTint(randomTint)
+    }
+
+    /******************** DEBUG ********************/
+    // scene.physics.add.existing(player)
+  
+    // const avatarSetting = playerState.avatar
+    // const { sizeFactor } = avatarSetting.body
+  
+    // const playerBody = player.body as Phaser.Physics.Arcade.Body
+    // playerBody.setSize(
+    //   sizeFactor * avatarSetting.body.size.width,
+    //   sizeFactor * avatarSetting.body.size.height,
+    //   avatarSetting.body.size.center,
+    // )
+    // playerBody.setOffset(
+    //   sizeFactor * avatarSetting.body.offset.x,
+    //   sizeFactor * avatarSetting.body.offset.y,
+    // )
+    // console.log(`body player: `, { width: playerBody.width, heigth: playerBody.height, originX: player.originX, originY: player.originY })
+    /****************** END DEBUG ******************/
+
+    this.add.existing(player)
+    this.players.add(player)
   }
-
-  /******************** DEBUG ********************/
-  scene.physics.add.existing(player)
-
-  const avatarSetting = playerState.avatar
-  const { sizeFactor } = avatarSetting.body
-
-  const playerBody = player.body as Phaser.Physics.Arcade.Body
-  playerBody.setSize(
-    sizeFactor * avatarSetting.body.size.width,
-    sizeFactor * avatarSetting.body.size.height,
-    avatarSetting.body.size.center,
-  )
-  playerBody.setOffset(
-    sizeFactor * avatarSetting.body.offset.x,
-    sizeFactor * avatarSetting.body.offset.y,
-  )
-  console.log(`body player: `, { width: playerBody.width, heigth: playerBody.height, originX: player.originX, originY: player.originY })
-  /****************** END DEBUG ******************/
-
-  scene.add.existing(player)
-  scene.players.add(player)
 }

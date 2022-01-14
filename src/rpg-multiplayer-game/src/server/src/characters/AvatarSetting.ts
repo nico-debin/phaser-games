@@ -39,13 +39,28 @@ export const avatarSettings: AvatarSetting[] = [
       size: {
         width: 16 * 0.8,
         height: 28 * 0.5,
-        center: true,
+        center: false,
       },
       offset: {
         x: 2,
         y: 12,
       },
     },
+  },
+  {
+    name: 'generic-lpc',
+    body: {
+      sizeFactor: 1,
+      size: {
+        width: 64 * 0.25,
+        height: 64 * 0.50,
+        center: true,
+      },
+      offset: {
+        x: 24,
+        y: 29,
+      }
+    }
   },
 ]
 

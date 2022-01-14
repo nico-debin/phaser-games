@@ -1025,12 +1025,12 @@
   </tile>
   <tile id="72">
    <properties>
-    <property name="collides" type="bool" value="true"/>
+    <property name="collides" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="74">
    <properties>
-    <property name="collides" type="bool" value="true"/>
+    <property name="collides" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="83">

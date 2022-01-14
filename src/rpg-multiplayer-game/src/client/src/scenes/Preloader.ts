@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import AvatarKeys from '../consts/AvatarKeys'
 
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
@@ -15,6 +16,7 @@ export default class Preloader extends Phaser.Scene {
 
     this.load.atlas(TextureKeys.Fauna, 'characters/fauna.png', 'characters/fauna.json')
     this.load.atlas(TextureKeys.Lizard, 'enemies/lizard.png', 'enemies/lizard.json')
+    this.load.spritesheet(AvatarKeys.NICO, 'characters/nico.png', { frameWidth: 64, frameHeight: 64 });
   }
 
   create() {

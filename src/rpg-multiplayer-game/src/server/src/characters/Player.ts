@@ -24,8 +24,9 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
     super(scene, x, y, '')
     this.playerId = playerId
-    this.scale = 2
-    this.avatarSetting = getRandomAvatarSetting()
+    // this.scale = 2
+    // this.avatarSetting = getRandomAvatarSetting()
+    this.avatarSetting = avatarSettings.find((setting) => setting.name === 'generic-lpc')!
   }
 
   static fromPlayerState(scene: Phaser.Scene, playerState: PlayerState) {
