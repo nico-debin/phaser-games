@@ -1,5 +1,7 @@
-import Phaser from 'phaser'
 import { io, Socket } from 'socket.io-client'
+
+import Phaser from 'phaser'
+import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
 
 import {
   MovementInput,
@@ -43,6 +45,10 @@ export default class Game extends Phaser.Scene {
     return this.socket.id
   }
 
+  preload() {
+    this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
+  }
+
   create() {
     // Socket to communicate with the server
     this.socket = io()
@@ -80,6 +86,9 @@ export default class Game extends Phaser.Scene {
         const rectangle = this.add.rectangle(x!, y!, width, height, 0x9966ff, 0.5).setStrokeStyle(4, 0xefc53f).setOrigin(0);
         this.add.bitmapText(x! + width!/2 , y! + height!/2, FontKeys.DESYREL, votingValue, 64).setOrigin(0.5).setCenterAlign();
     })
+
+    // @ts-ignore
+    this.sys.animatedTiles.init(mapIsland);
 
     // Camara limited to the map
     this.cameras.main.setBounds(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
