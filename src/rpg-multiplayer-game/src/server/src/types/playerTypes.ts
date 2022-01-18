@@ -16,6 +16,7 @@ export interface PlayerState {
   playerId: PlayerId
   movementInput: MovementInput
   avatar: AvatarSetting
+  votingZone: string | undefined
 }
 
 export interface PlayersStates {

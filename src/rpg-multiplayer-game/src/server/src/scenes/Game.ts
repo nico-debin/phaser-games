@@ -95,6 +95,26 @@ export default class Game extends Phaser.Scene {
       tilesetIslandBeach,
     )
 
+    // Voting Zones
+    const votingZonesLayer = this.mapIsland.getObjectLayer('Voting Zones')
+    votingZonesLayer.objects.forEach((tiledObject) => {
+      const {x, y, height, width, properties } = tiledObject
+      const votingValue = properties[0]['value'] as string
+
+      const zone = this.add.zone(x!, y!, width!, height!).setOrigin(0);
+      
+      this.physics.world.enable(zone);
+      this.physics.add.overlap(zone, this.players, (obj1, obj2) => {
+        const player = obj2 as Player;
+        console.log(`Player ${player.id} ENTERED voting zone`)
+        this.playersStates[player.id].votingZone = votingValue
+        player.setVotingZone(zone, () => {
+          console.log(`Player ${player.id} LEFT voting zone`)
+          this.playersStates[player.id].votingZone = undefined
+        })
+      }, (obj1, obj2) => !(obj2 as Player).isOnVotingZone())
+    })
+
     // Tileset colliders
     islandsLayerGroup.getChildren().map((islandLayer) => {
       const tilemapLayer = islandLayer as Phaser.Tilemaps.TilemapLayer
@@ -242,7 +262,8 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       up: false,
       down: false,
     },
-    avatar: noOpAvatar
+    avatar: noOpAvatar,
+    votingZone: undefined
   }
 
   // add player to server

@@ -21,6 +21,12 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId
   readonly avatarSetting: AvatarSetting
 
+  // The voting zone where the player is standing on (or undefined if not)
+  currentVotingZone: Phaser.GameObjects.Zone | undefined;
+
+  // Callback to trigger when player leaves the voting zone
+  onPlayerLeftVotingZone!: () => void
+
   constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
     super(scene, x, y, '')
     this.playerId = playerId
@@ -39,7 +45,8 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 
   update(movementInput: MovementInput) {
     const speed = 300
-
+  
+    // Handle Movement
     if (movementInput.left) {
       this.setVelocity(-speed, 0)
     } else if (movementInput.right) {
@@ -51,6 +58,34 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     } else {
       this.setVelocity(0, 0)
     }
+
+    // Handle voting zone
+    let isOverlappingWithZone = false
+    if (this.currentVotingZone) {
+      const zoneBounds = this.currentVotingZone.getBounds()
+      const playerBounds = this.getBounds()
+      isOverlappingWithZone = Phaser.Geom.Intersects.GetRectangleIntersection(zoneBounds, playerBounds).width > 0
+
+      if (!isOverlappingWithZone) {
+        this.setUserLeftVotingZone()
+      }
+    }
+  }
+
+  isOnVotingZone(): boolean {
+    return this.currentVotingZone !== undefined
+  }
+
+  // Method to call by Phaser's Physics when player is overlapping with a zone
+  setVotingZone(zone: Phaser.GameObjects.Zone, onPlayerLeftVotingZone: () => void): void {
+    this.currentVotingZone = zone
+    this.onPlayerLeftVotingZone = onPlayerLeftVotingZone
+  }
+
+  // Method to call when the user leaves the voting zone
+  setUserLeftVotingZone (): void {
+    this.onPlayerLeftVotingZone()
+    this.currentVotingZone = undefined
   }
 }
 

@@ -1131,80 +1131,80 @@
   </data>
   </layer>
  </group>
- <objectgroup id="12" name="Players" locked="1" offsetx="0" offsety="-2.27374e-13">
-  <object id="97" name="Player" x="282.55" y="1410.53">
+ <objectgroup id="12" name="Players" offsetx="0" offsety="-2.27374e-13">
+  <object id="97" name="Player" x="304" y="1368">
    <point/>
   </object>
-  <object id="98" name="Player" x="299.66" y="1737.13">
+  <object id="98" name="Player" x="299.66" y="1721.13">
    <point/>
   </object>
-  <object id="99" name="Player" x="580.85" y="1666.22">
+  <object id="99" name="Player" x="580.85" y="1650.22">
    <point/>
   </object>
-  <object id="100" name="Player" x="109.93" y="1347.9">
+  <object id="100" name="Player" x="109.93" y="1331.9">
    <point/>
   </object>
-  <object id="101" name="Player" x="363.44" y="1221.62">
+  <object id="101" name="Player" x="363.44" y="1205.62">
    <point/>
   </object>
-  <object id="102" name="Player" x="587.02" y="1216">
+  <object id="102" name="Player" x="600" y="1200">
    <point/>
   </object>
-  <object id="103" name="Player" x="609.47" y="1340.42">
+  <object id="103" name="Player" x="568" y="1360">
    <point/>
   </object>
-  <object id="104" name="Player" x="80" y="1512.54">
+  <object id="104" name="Player" x="80" y="1496.54">
    <point/>
   </object>
-  <object id="105" name="Player" x="83.74" y="1675.31">
+  <object id="105" name="Player" x="83.74" y="1659.31">
    <point/>
   </object>
-  <object id="106" name="Player" x="202.54" y="1524.7">
+  <object id="106" name="Player" x="202.54" y="1508.7">
    <point/>
   </object>
-  <object id="107" name="Player" x="264.28" y="1635.09">
+  <object id="107" name="Player" x="264.28" y="1619.09">
    <point/>
   </object>
-  <object id="108" name="Player" x="473.83" y="1650.05">
+  <object id="108" name="Player" x="473.83" y="1634.05">
    <point/>
   </object>
-  <object id="109" name="Player" x="388.7" y="1578.02">
+  <object id="109" name="Player" x="388.7" y="1562.02">
    <point/>
   </object>
-  <object id="110" name="Player" x="311.99" y="1510.67">
+  <object id="110" name="Player" x="311.99" y="1494.67">
    <point/>
   </object>
-  <object id="111" name="Player" x="457.92" y="1425.54">
+  <object id="111" name="Player" x="457.92" y="1409.54">
    <point/>
   </object>
-  <object id="112" name="Player" x="422.38" y="1290.84">
+  <object id="112" name="Player" x="422.38" y="1274.84">
    <point/>
   </object>
-  <object id="113" name="Player" x="518.73" y="1338.55">
+  <object id="113" name="Player" x="518.73" y="1322.55">
    <point/>
   </object>
-  <object id="114" name="Player" x="564.56" y="1476.99">
+  <object id="114" name="Player" x="564.56" y="1460.99">
    <point/>
   </object>
-  <object id="115" name="Player" x="652.5" y="1416.19">
+  <object id="115" name="Player" x="652.5" y="1400.19">
    <point/>
   </object>
-  <object id="116" name="Player" x="654.37" y="1554.64">
+  <object id="116" name="Player" x="654.37" y="1538.64">
    <point/>
   </object>
-  <object id="117" name="Player" x="532.76" y="1542.48">
+  <object id="117" name="Player" x="532.76" y="1526.48">
    <point/>
   </object>
-  <object id="118" name="Player" x="721.72" y="1469.51">
+  <object id="118" name="Player" x="721.72" y="1453.51">
    <point/>
   </object>
-  <object id="119" name="Player" x="762.88" y="1554.64">
+  <object id="119" name="Player" x="762.88" y="1538.64">
    <point/>
   </object>
-  <object id="120" name="Player" x="215.64" y="1317.03">
+  <object id="120" name="Player" x="215.64" y="1301.03">
    <point/>
   </object>
-  <object id="121" name="Player" x="188.51" y="1662.21">
+  <object id="121" name="Player" x="188.51" y="1646.21">
    <point/>
   </object>
  </objectgroup>

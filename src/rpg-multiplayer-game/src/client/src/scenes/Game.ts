@@ -9,6 +9,7 @@ import {
   PlayersStates,
   PlayerState,
 } from '../types/playerTypes'
+import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
 import FontKeys from '../consts/FontKeys'
 import NetworkEventKeys from '../consts/NetworkEventKeys'
@@ -36,6 +37,11 @@ export default class Game extends Phaser.Scene {
 
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private lastMovementInput!: MovementInput
+
+
+  // Voting zones rectangles
+  private votingZones: VotingZone[] = []
+  private currentVotingZoneValue: VotingZoneValue
 
   constructor() {
     super(SceneKeys.Game)
@@ -85,6 +91,8 @@ export default class Game extends Phaser.Scene {
 
         const rectangle = this.add.rectangle(x!, y!, width, height, 0x9966ff, 0.5).setStrokeStyle(4, 0xefc53f).setOrigin(0);
         this.add.bitmapText(x! + width!/2 , y! + height!/2, FontKeys.DESYREL, votingValue, 64).setOrigin(0.5).setCenterAlign();
+
+        this.votingZones.push({ value: votingValue, zone: rectangle});
     })
 
     // @ts-ignore
@@ -143,6 +151,10 @@ export default class Game extends Phaser.Scene {
             player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
             player.update(players[id].movementInput)
           }
+          
+          if (players[id].playerId === gameScene.currentPlayerId) {
+            gameScene.updateVotingZoneRender(players[id].votingZone)
+          }
         })
       })
     })
@@ -195,6 +207,23 @@ export default class Game extends Phaser.Scene {
       this.socket.emit(NetworkEventKeys.PlayersInput, this.lastMovementInput)
 
       this.currentPlayer.update(this.lastMovementInput)
+    }
+  }
+
+  updateVotingZoneRender(newVotingZoneValue: VotingZoneValue) {
+    const getVotingZone = (value: VotingZoneValue) => this.votingZones.find((votingZone) => votingZone.value === value)
+    if (this.currentVotingZoneValue === undefined) {
+      if (newVotingZoneValue) {
+        this.currentVotingZoneValue = newVotingZoneValue
+        const votingZone = getVotingZone(newVotingZoneValue)
+        votingZone?.zone.setFillStyle(0x9966ff, 0.8)
+      }
+    } else {
+      if (newVotingZoneValue === undefined) {
+        const votingZone = getVotingZone(this.currentVotingZoneValue)
+        this.currentVotingZoneValue = undefined
+        votingZone?.zone.setFillStyle(0x9966ff, 0.5)
+      }
     }
   }
 

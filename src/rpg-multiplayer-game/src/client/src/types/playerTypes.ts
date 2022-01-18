@@ -1,3 +1,5 @@
+import { VotingZoneValue } from "./gameObjectsTypes";
+
 export type MovementInput = {
   left: boolean;
   right: boolean;
@@ -29,6 +31,7 @@ export interface PlayerState {
   playerId: PlayerId
   movementInput: MovementInput
   avatar: AvatarSetting
+  votingZone: VotingZoneValue
 }
 
 export interface PlayersStates {
