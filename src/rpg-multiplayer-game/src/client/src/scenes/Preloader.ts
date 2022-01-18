@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
-import AvatarKeys from '../consts/AvatarKeys'
 
+import AvatarKeys from '../consts/AvatarKeys'
+import FontKeys from '../consts/FontKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 
@@ -26,6 +27,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet(AvatarKeys.NICK_TAYLOR, 'characters/nick-taylor.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.NICOLAS_DEBIN, 'characters/nicolas-debin.png', { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet(AvatarKeys.RYAN_MCKAY, 'characters/ryan-mckay.png', {frameWidth: 64, frameHeight: 64})
+
+    // Fonts
+    this.load.bitmapFont(FontKeys.DESYREL, 'fonts/bitmap/desyrel.png', 'fonts/bitmap/desyrel.xml')
   }
 
   create() {

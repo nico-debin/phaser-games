@@ -8,15 +8,16 @@ import {
   PlayerState,
 } from '../types/playerTypes'
 
+import FontKeys from '../consts/FontKeys'
 import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 
 import { createCharacterAnims, createLizardAnims } from '../anims'
 
-import Player from '../characters/Player'
 import Fauna from '../characters/Fauna'
 import Lizard from '../characters/Lizard'
-import PlayerFactory from '~/characters/PlayerFactory'
+import Player from '../characters/Player'
+import PlayerFactory from '../characters/PlayerFactory'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -64,10 +65,21 @@ export default class Game extends Phaser.Scene {
     const tilesetIslandShoreline = mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
 
     mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
-    mapIsland.createLayer('Island 1/Island', [tilesetIslandBeach, tilesetIslandShoreline])
+    mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
+    mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
     mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach])
     mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach)
     mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
+
+    // Voting Zones
+    const votingZonesLayer = mapIsland.getObjectLayer('Voting Zones')
+    votingZonesLayer.objects.forEach((tiledObject) => {
+        const {x, y, height, width, properties } = tiledObject
+        const votingValue = properties[0]['value'] as string
+
+        const rectangle = this.add.rectangle(x!, y!, width, height, 0x9966ff, 0.5).setStrokeStyle(4, 0xefc53f).setOrigin(0);
+        this.add.bitmapText(x! + width!/2 , y! + height!/2, FontKeys.DESYREL, votingValue, 64).setOrigin(0.5).setCenterAlign();
+    })
 
     // Camara limited to the map
     this.cameras.main.setBounds(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
@@ -188,6 +200,8 @@ export default class Game extends Phaser.Scene {
 
   addPlayer(playerState: PlayerState, isMainPlayer = true) {
     const player = PlayerFactory.fromPlayerState(this, playerState)
+
+    player.setDepth(5)
 
     if (isMainPlayer) {
       this.currentPlayer = player

@@ -83,10 +83,9 @@ export default class Game extends Phaser.Scene {
       0,
       0,
     )
-
-    const islandLayer = this.mapIsland.createLayer('Island 1/Island', [
-      tilesetIslandBeach,
-      tilesetIslandShoreline,
+    const islandsLayerGroup = this.add.layer([
+      this.mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
+      this.mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
     ])
     const pathsLayer = this.mapIsland.createLayer('Island 1/Paths', [
       tilesetIslandBeach,
@@ -97,13 +96,16 @@ export default class Game extends Phaser.Scene {
     )
 
     // Tileset colliders
-    islandLayer.setCollisionByProperty({ collides: true })
+    islandsLayerGroup.getChildren().map((islandLayer) => {
+      const tilemapLayer = islandLayer as Phaser.Tilemaps.TilemapLayer
+      tilemapLayer.setCollisionByProperty({ collides: true })
+    })
     pathsLayer.setCollisionByProperty({ collides: true })
     vegetationBottomLayer.setCollisionByProperty({ collides: true })
 
     // Collide players with tiles
     this.physics.add.collider(this.players, [
-      islandLayer,
+      ...islandsLayerGroup.getChildren(),
       pathsLayer,
       vegetationBottomLayer,
     ])

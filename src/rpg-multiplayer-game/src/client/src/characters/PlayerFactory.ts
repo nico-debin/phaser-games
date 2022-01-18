@@ -3,6 +3,7 @@ import { PlayerState } from "../types/playerTypes";
 import Fauna from "./Fauna";
 import GenericLpc from "./GenericLpc";
 import Lizard from "./Lizard";
+import Player from "./Player";
 
 const avatarPlayerMapper = {
   fauna: Fauna,
@@ -49,7 +50,7 @@ export default class PlayerFactory {
     return AvatarKeys.NICOLAS_DEBIN
   };
 
-  public static fromPlayerState(scene: Phaser.Scene, playerState: PlayerState) {
+  public static fromPlayerState(scene: Phaser.Scene, playerState: PlayerState): Player {
     if (playerState.avatar.name === "generic-lpc") {
       const playerData = {
         avatar: this.getRandomAvatarKey(),
