@@ -1,4 +1,8 @@
 import Phaser from 'phaser'
+import AvatarAnimationKeys from '~/consts/AvatarAnimationKeys'
+import AvatarKeys from '~/consts/AvatarKeys'
+
+import NpcKeys from '../../consts/NpcKeys'
 
 enum Direction {
   UP,
@@ -24,12 +28,11 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    texture: string,
     frame?: string | number,
   ) {
-    super(scene, x, y, texture, frame)
+    super(scene, x, y, NpcKeys.COBRA, frame)
 
-    this.anims.play('cobra-idle-down')
+    this.anims.play(`${NpcKeys.COBRA}-idle-down`)
 
     scene.physics.world.on(Phaser.Physics.Arcade.Events.TILE_COLLIDE, this.handleTileCollision, this)
 
@@ -63,23 +66,23 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
     const speed = 100
     switch (this.direction) {
       case Direction.UP:
-        this.anims.play('cobra-walk-up', true)
+        this.anims.play(`${NpcKeys.COBRA}-${AvatarAnimationKeys.WALK_UP}`, true)
         this.setVelocity(0, -speed)
         break
         
         case Direction.DOWN:
-        this.anims.play('cobra-walk-down', true)
+        this.anims.play(`${NpcKeys.COBRA}-${AvatarAnimationKeys.WALK_DOWN}`, true)
         this.setVelocity(0, speed)
         break
         
         case Direction.LEFT:
-        this.anims.play('cobra-walk-side', true)
+        this.anims.play(`${NpcKeys.COBRA}-${AvatarAnimationKeys.WALK_SIDE}`, true)
         this.setVelocity(-speed, 0)
         this.setFlipX(true)
         break
         
         case Direction.RIGHT:
-        this.anims.play('cobra-walk-side', true)
+        this.anims.play(`${NpcKeys.COBRA}-${AvatarAnimationKeys.WALK_SIDE}`, true)
         this.setVelocity(speed, 0)
         this.setFlipX(false)
         break

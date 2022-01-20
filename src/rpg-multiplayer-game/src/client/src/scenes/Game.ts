@@ -83,9 +83,9 @@ export default class Game extends Phaser.Scene {
     const tilesetIslandBeach = mapIsland.addTilesetImage('tf_beach_tileB', 'tiles-islands-beach', 32, 32, 0, 0)
     const tilesetIslandShoreline = mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
 
+    mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
     // Group all tilset layers
     const islandsTilesLayerGroup = this.add.layer([
-      mapIsland.createLayer('Ocean', [tilesetIslandShoreline]),
       mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
       mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
       mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
@@ -109,7 +109,7 @@ export default class Game extends Phaser.Scene {
     const playersLayer = mapIsland.getObjectLayer('Players')
     const randomPlayerIndex = Phaser.Math.Between(0, playersLayer.objects.length - 1)
     const playerObj = playersLayer.objects[randomPlayerIndex]
-    const cobra = new Cobra(this, playerObj?.x!, playerObj?.y!, 'cobra')
+    const cobra = new Cobra(this, playerObj?.x!, playerObj?.y!)
     cobra.setDepth(3)
     this.add.existing(cobra)
     this.physics.add.existing(cobra)
