@@ -18,6 +18,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.atlas(TextureKeys.Fauna, 'characters/fauna.png', 'characters/fauna.json')
     this.load.atlas(TextureKeys.Lizard, 'enemies/lizard.png', 'enemies/lizard.json')
 
+    // Characters
     this.load.spritesheet(AvatarKeys.ADRIAN_TOMKINS, 'characters/adrian-tomkins.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.CALVIN_KOEPKE, 'characters/calvin-koepke.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.JOEL_BOWEN, 'characters/joel-bowen.png', {frameWidth: 64, frameHeight: 64})
@@ -27,6 +28,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet(AvatarKeys.NICK_TAYLOR, 'characters/nick-taylor.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.NICOLAS_DEBIN, 'characters/nicolas-debin.png', { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet(AvatarKeys.RYAN_MCKAY, 'characters/ryan-mckay.png', {frameWidth: 64, frameHeight: 64})
+
+    // NPC
+    this.load.spritesheet('cobra', 'characters/npc/cobra-finder.png', { frameWidth: 64, frameHeight: 64 })
 
     // Fonts
     this.load.bitmapFont(FontKeys.DESYREL, 'fonts/bitmap/desyrel.png', 'fonts/bitmap/desyrel.xml')

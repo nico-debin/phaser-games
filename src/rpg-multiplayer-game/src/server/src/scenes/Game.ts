@@ -106,10 +106,8 @@ export default class Game extends Phaser.Scene {
       this.physics.world.enable(zone);
       this.physics.add.overlap(zone, this.players, (obj1, obj2) => {
         const player = obj2 as Player;
-        console.log(`Player ${player.id} ENTERED voting zone`)
         this.playersStates[player.id].votingZone = votingValue
         player.setVotingZone(zone, () => {
-          console.log(`Player ${player.id} LEFT voting zone`)
           this.playersStates[player.id].votingZone = undefined
         })
       }, (obj1, obj2) => !(obj2 as Player).isOnVotingZone())

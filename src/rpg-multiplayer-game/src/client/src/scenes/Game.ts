@@ -11,16 +11,22 @@ import {
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
+// Keys
 import FontKeys from '../consts/FontKeys'
 import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 
-import { createCharacterAnims, createLizardAnims } from '../anims'
+// Animations
+import { createCharacterAnims, createLizardAnims, createNpcAnims } from '../anims'
 
+// Characters
 import Fauna from '../characters/Fauna'
 import Lizard from '../characters/Lizard'
 import Player from '../characters/Player'
 import PlayerFactory from '../characters/PlayerFactory'
+
+// NPC Characters
+import Cobra from '../characters/npc/Cobra'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -67,6 +73,7 @@ export default class Game extends Phaser.Scene {
     // Create animations
     createCharacterAnims(this.anims)
     createLizardAnims(this.anims)
+    createNpcAnims(this.anims)
 
     // Create tilemap and layers
     const mapIsland = this.make.tilemap({
@@ -76,11 +83,14 @@ export default class Game extends Phaser.Scene {
     const tilesetIslandBeach = mapIsland.addTilesetImage('tf_beach_tileB', 'tiles-islands-beach', 32, 32, 0, 0)
     const tilesetIslandShoreline = mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
 
-    mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
-    mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
-    mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
-    mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach])
-    mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach)
+    // Group all tilset layers
+    const islandsTilesLayerGroup = this.add.layer([
+      mapIsland.createLayer('Ocean', [tilesetIslandShoreline]),
+      mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
+      mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
+      mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
+      mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
+    ])
     mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
 
     // Voting Zones
@@ -95,6 +105,27 @@ export default class Game extends Phaser.Scene {
         this.votingZones.push({ value: votingValue, zone: rectangle});
     })
 
+    // Cobra NPC
+    const playersLayer = mapIsland.getObjectLayer('Players')
+    const randomPlayerIndex = Phaser.Math.Between(0, playersLayer.objects.length - 1)
+    const playerObj = playersLayer.objects[randomPlayerIndex]
+    const cobra = new Cobra(this, playerObj?.x!, playerObj?.y!, 'cobra')
+    cobra.setDepth(3)
+    this.add.existing(cobra)
+    this.physics.add.existing(cobra)
+    cobra.body.onCollide = true
+
+    // Enable collision by property on all layers
+    islandsTilesLayerGroup.getChildren().forEach((islandTileLayer) => {
+      const tilemapLayer = islandTileLayer as Phaser.Tilemaps.TilemapLayer
+      tilemapLayer.setCollisionByProperty({ collides: true })
+    })
+
+    // Enable collission between Cobra and map tiles
+    this.physics.add.collider(cobra, [...islandsTilesLayerGroup.getChildren()])
+
+
+    // Animated Tiles (like sea water in the shore)
     // @ts-ignore
     this.sys.animatedTiles.init(mapIsland);
 
