@@ -2,10 +2,11 @@ import Phaser from 'phaser'
 
 import Preloader from './scenes/Preloader'
 import Game from './scenes/Game'
+import Hud from './scenes/Hud'
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
-	scene: [Preloader, Game],
+	scene: [Preloader, Game, Hud],
 	scale: {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH,

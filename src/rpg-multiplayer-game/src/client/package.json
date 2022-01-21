@@ -22,6 +22,7 @@
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
+		"mobx": "^6.3.12",
 		"phaser": "^3.55.2",
 		"phaser-animated-tiles": "^2.0.2",
 		"socket.io-client": "^4.4.0"

@@ -11,6 +11,8 @@ import {
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
+import { playerVotingState } from '../states/PlayersState'
+
 // Keys
 import FontKeys from '../consts/FontKeys'
 import NetworkEventKeys from '../consts/NetworkEventKeys'
@@ -59,6 +61,10 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
+  }
+
+  init() {
+    this.scene.launch('hud')
   }
 
   create() {
@@ -185,6 +191,7 @@ export default class Game extends Phaser.Scene {
           
           if (players[id].playerId === gameScene.currentPlayerId) {
             gameScene.updateVotingZoneRender(players[id].votingZone)
+            playerVotingState.vote = players[id].votingZone
           }
         })
       })
