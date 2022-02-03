@@ -1,0 +1,42 @@
+$background-spritesheet: url(../../../../public/ui/spritesheet_menu_01.png);
+
+.checkbox-input {
+  display: inline-block;
+
+  &:hover {
+    filter: brightness(70%);
+    cursor: pointer;
+  }
+
+  .custom-checkbox {
+    background: $background-spritesheet;
+    background-repeat: no-repeat;
+    background-position-y: -1732px;
+    width: 105px;
+    height: 108px;
+    transform: scale(0.3);
+    display: inline-block;
+    margin-right: -39px;
+    margin-left: -39px;
+    margin-top: -48px;
+    margin-bottom: -48px;
+
+    &.checked {
+      background-position-x: -222px;
+    }
+    
+    &.unchecked {
+      background-position-x: -326px;
+    }
+
+  }
+
+  label {
+    display: inline-block;
+    margin-left: 10px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

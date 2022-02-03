@@ -1,0 +1,213 @@
+@keyframes bounce-background {
+  0% {
+    background-position: center right;
+  }
+  25% {
+    background-position: center bottom;
+  }
+  50% {
+    background-position: center left;
+  }
+  75% {
+      background-position: center top;
+  }
+  100% {
+      background-position: center right;
+  }
+}
+.bounce-background {
+  animation-name: bounce-background;
+  animation-timing-function: linear;
+  animation-duration: 120s;
+  animation-iteration-count: infinite;
+
+  /* For Chrome & Safari */
+//  -webkit-animation-name: bounce-background;
+//  -webkit-animation-timing-function:ease-in-out;
+//  -webkit-animation-duration:20s;
+//  -webkit-animation-iteration-count:infinite;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background-image: url(../../public/backgrounds/simon-lee-Ue97JK9S0QE-unsplash.jpeg);
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat;
+  // background-size: cover;
+  background-size: 120%;
+}
+
+@import url(./reset.scss);
+
+@font-face {
+  font-family: AdvoCut;
+  src: url(../../public/fonts/advocut-webfont.woff);
+}
+
+/* Disable text hightlight */
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.App {
+  * {
+    font-family: AdvoCut, sans-serif;
+  }
+
+  h2 {
+    font-size: x-large;
+  }
+
+  .slide-container {
+    padding: 0 60px;
+  }
+}
+
+.image {
+  max-width: 64px;
+  max-height: 64px;
+}
+
+.homepage-board {
+  top: 35%;
+  left: 50%;
+  display: block;
+  position: absolute;
+  background: url(../../public/homepage/homepage-board.png) no-repeat center center;
+  background-size: contain;
+  width: 500px;
+  height: 600px;
+  margin-top: -300px;
+  margin-left: -250px;
+
+  h1 {
+    position: relative;
+    text-align: center;
+    font-size: xx-large;
+    padding-left: 10px;
+    margin-top: 20px;
+    text-shadow: 4px 4px 2px rgba(150, 150, 150, 1);
+  }
+
+  .username-selector {
+    position: relative;
+    top: 90px;
+
+    h2 {
+      text-align: center;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 20px;
+      font-size: x-large;
+    }
+
+    .hr-text {
+      top: -35px;
+      width: 70%;
+    }
+
+    .text-input {
+      position: absolute;
+      bottom: -10px;
+      left: 145px;
+      width: 200px;
+      background-color: #0000000d;
+      border: 2px dashed #b2af9b;
+      height: 30px;
+      text-align: center;
+    }
+  }
+
+  .avatar-selector {
+    position: relative;
+    top: 135px;
+    
+    h2 {
+      text-align: center;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .slider {
+
+      .slide-container {
+        display: grid;
+        grid-template: 1fr / 1fr;
+        place-items: center;
+      
+        > * {
+          grid-column: 1 / 1;
+          grid-row: 1 / 1;
+        }
+      
+        .below {
+          margin-top: 128px;
+          width: 130px;
+          z-index: 2;
+          text-align: center;
+        }
+      
+        .top {
+          z-index: 1;
+        }
+      }
+    }
+  }
+
+  .options-section {
+    position: absolute;
+    bottom: 60px;
+    left: 65px;
+    width: 100%;
+  }
+
+  .play-button {
+    position: absolute;
+    bottom: -150px;
+    left: 142px;
+  }
+}
+
+.hr-text {
+  line-height: 1em;
+  position: relative;
+  outline: 0;
+  border: 0;
+  color: black;
+  text-align: center;
+  height: 1.5em;
+  opacity: .5;
+  &:before {
+    content: '';
+    // use the linear-gradient for the fading effect
+    // use a solid background color for a solid bar
+    background: linear-gradient(to right, transparent, #818078, transparent);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+  }
+  &:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+
+    padding: 0 .5em;
+    line-height: 1.5em;
+    // this is really the only tricky part, you need to specify the background color of the container element...
+    color: #818078;
+    background-color: #fcfcfa;
+  }
+}

@@ -1,0 +1,33 @@
+$background-spritesheet: url(../../../../public/ui/spritesheet_menu_01.png);
+
+.arrow-button {
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  width: 34px;
+  height: 38px;
+
+  button {
+    background: $background-spritesheet;
+    background-repeat: no-repeat;
+    background-position: -441px -1713px;
+    width: 113px;
+    height: 125px;
+    border: none;
+    display: inline-block;
+    transform: scale(0.3);
+    color: transparent;
+    box-sizing: border-box;
+    transform-origin: center top;
+    margin-left: -39px;
+
+    &.left {
+      transform: scaleX(-0.3) scaleY(0.3);
+    }
+
+    &:hover {
+      filter: brightness(70%);
+      cursor: pointer;
+    }
+  }
+}

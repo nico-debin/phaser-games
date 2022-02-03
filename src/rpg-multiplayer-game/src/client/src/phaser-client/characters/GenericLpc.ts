@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import AvatarAnimationKeys from '~/consts/AvatarAnimationKeys';
+import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AvatarKeys from '../consts/AvatarKeys';
 import { MovementInput, PlayerId } from '../types/playerTypes'

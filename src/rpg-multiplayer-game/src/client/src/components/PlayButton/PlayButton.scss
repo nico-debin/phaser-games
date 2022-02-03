@@ -1,0 +1,90 @@
+$background-spritesheet: url(../../../public/ui/spritesheet_menu_01.png);
+
+.play-button {
+  // position: absolute;
+  // bottom: -200px;
+  // left: 142px;
+  width: 210px;
+  height: 68px;
+  // border: 1px solid green;
+
+
+  &:hover {
+    filter: brightness(70%);
+    cursor: pointer;
+  }
+
+  .green-wood {
+    background: $background-spritesheet;
+    background-repeat: no-repeat;
+    background-position: -174px -1594px;
+    width: 118px;
+    height: 112px;
+    border: none;
+    display: block;
+    transform: scale(0.6);
+    color: transparent;
+    box-sizing: border-box;
+    transform-origin: top left;
+    // transform-origin: center bottom;
+    // margin-left: -39px;
+    // margin-right: -39px;
+    // float: left;
+    position: absolute;
+    // top: 25px;
+    // border: 1px solid red;
+
+    .play-icon {
+      background: inherit;
+      background-repeat: no-repeat;
+      background-position: -1355px -243px;
+      width: 172px;
+      height: 119px;
+      border: none;
+      display: block;
+      transform: scale(0.5);
+      color: transparent;
+      box-sizing: border-box;
+      transform-origin: center bottom;
+      // margin-left: -39px;
+      // margin-right: -39px;
+      position: relative;
+      left: -26px;
+      bottom: 34px;
+    }
+  }
+
+  .wood {
+    background: $background-spritesheet;
+    background-repeat: no-repeat;
+    background-position: -1494px -1147px;
+    width: 465px;
+    height: 207px;
+    border: none;
+    display: block;
+    transform: scale(0.3);
+    color: transparent;
+    box-sizing: border-box;
+    // transform-origin: center bottom;
+    transform-origin: top left;
+    // margin-left: -39px;
+    // margin-right: -39px;
+    // float: left;
+    // border: 1px solid blue;
+    position: absolute;
+    left: 68px;
+    top: 3px;
+  }
+
+  label {
+    position: absolute;
+    top: 16px;
+    left: 98px;
+    font-size: xx-large;
+    color: #fff;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

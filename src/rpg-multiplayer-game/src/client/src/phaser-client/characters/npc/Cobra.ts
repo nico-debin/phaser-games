@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
-import AvatarAnimationKeys from '~/consts/AvatarAnimationKeys'
-import AvatarKeys from '~/consts/AvatarKeys'
+import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys'
+import AvatarKeys from '~/phaser-client/consts/AvatarKeys'
 
 import NpcKeys from '../../consts/NpcKeys'
 

@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 
 import AvatarKeys from '../consts/AvatarKeys'
 import FontKeys from '../consts/FontKeys'
-import NpcKeys from '~/consts/NpcKeys'
+import NpcKeys from '~/phaser-client/consts/NpcKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 

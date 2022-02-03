@@ -19,13 +19,18 @@
 		"parcel-bundler": "^1.12.5",
 		"parcel-plugin-clean-easy": "^1.0.2",
 		"parcel-plugin-static-files-copy": "^2.4.3",
+		"sass": "^1.49.7",
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
 		"mobx": "^6.3.12",
 		"phaser": "^3.55.2",
 		"phaser-animated-tiles": "^2.0.2",
-		"socket.io-client": "^4.4.0"
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-responsive-spritesheet": "^2.3.9",
+		"socket.io-client": "^4.4.0",
+		"zustand": "^3.6.9"
 	},
 	"parcelCleanPaths": [
 		"dist"
