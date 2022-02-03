@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { MovementInput, PlayerId, PlayerState } from '../types/playerTypes'
+import { MovementInput, PlayerId, PlayerInitialState } from '../types/playerTypes'
 import { AvatarSetting, avatarSettings } from './AvatarSetting'
 
 declare global {
@@ -7,14 +7,9 @@ declare global {
     interface GameObjectFactory {
       player(x: number, y: number, playerId: PlayerId): Player
 
-      playerFromState(playerState: PlayerState): Player
+      playerFromInitialState(playerInitialState: PlayerInitialState): Player
     }
   }
-}
-
-const getRandomAvatarSetting = () => {
-  const randomIndex = Phaser.Math.Between(0, avatarSettings.length - 1)
-  return avatarSettings[randomIndex]
 }
 
 export default class Player extends Phaser.Physics.Arcade.Image {
@@ -30,13 +25,9 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
     super(scene, x, y, '')
     this.playerId = playerId
-    // this.scale = 2
-    // this.avatarSetting = getRandomAvatarSetting()
+    
+    // The only avatar setting allowed for now is generic-lpc
     this.avatarSetting = avatarSettings.find((setting) => setting.name === 'generic-lpc')!
-  }
-
-  static fromPlayerState(scene: Phaser.Scene, playerState: PlayerState) {
-    return new Player(scene, playerState.x, playerState.y, playerState.playerId)
   }
 
   get id() {
@@ -121,9 +112,13 @@ Phaser.GameObjects.GameObjectFactory.register('player', function (
   return player
 })
 
-Phaser.GameObjects.GameObjectFactory.register('playerFromState', function (
+Phaser.GameObjects.GameObjectFactory.register('playerFromInitialState', function (
   this: Phaser.GameObjects.GameObjectFactory,
-  playerState: PlayerState,
+  playerInitialState: PlayerInitialState,
 ) {
-  return this.scene.add.player(playerState.x, playerState.y, playerState.playerId)
+  return this.scene.add.player(
+    playerInitialState.x,
+    playerInitialState.y,
+    playerInitialState.playerId
+  )
 })

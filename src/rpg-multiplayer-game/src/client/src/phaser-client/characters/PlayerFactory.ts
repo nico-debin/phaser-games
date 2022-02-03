@@ -1,5 +1,5 @@
 import AvatarKeys from "../consts/AvatarKeys";
-import { PlayerState } from "../types/playerTypes";
+import { PlayerInitialState, PlayerState } from "../types/playerTypes";
 import Fauna from "./Fauna";
 import GenericLpc from "./GenericLpc";
 import Lizard from "./Lizard";
@@ -50,20 +50,20 @@ export default class PlayerFactory {
     return AvatarKeys.NICOLAS_DEBIN
   };
 
-  public static fromPlayerState(scene: Phaser.Scene, playerState: PlayerState): Player {
-    if (playerState.avatar.name === "generic-lpc") {
+  public static fromPlayerState(scene: Phaser.Scene, playerInitialState: PlayerInitialState): Player {
+    if (playerInitialState.avatar.name === "generic-lpc") {
       const playerData = {
         avatar: this.getRandomAvatarKey(),
-        playerId: playerState.playerId,
+        playerId: playerInitialState.playerId,
       };
-      return new GenericLpc(scene, playerState.x, playerState.y, playerData);
+      return new GenericLpc(scene, playerInitialState.x, playerInitialState.y, playerData);
     }
-    const classname = avatarPlayerMapper[playerState.avatar.name];
+    const classname = avatarPlayerMapper[playerInitialState.avatar.name];
     return new classname(
       scene,
-      playerState.x,
-      playerState.y,
-      playerState.playerId
+      playerInitialState.x,
+      playerInitialState.y,
+      playerInitialState.playerId
     );
   }
 }

@@ -1,8 +1,13 @@
-import Phaser, { GameObjects } from 'phaser'
+import Phaser from 'phaser'
 import { Server, Socket } from 'socket.io'
 
+import { objectMap, omit } from '../utils'
 import settings from '../settings'
+import Queue from '../classes/queue'
 import { socketIoServerMock } from '../debug/SocketIoServerMock'
+
+import Player from '../characters/Player'
+import { noOpAvatar } from '../characters/AvatarSetting'
 
 import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SocketIOEventKeys from '../consts/SocketIOEventKeys'
@@ -11,14 +16,12 @@ import SceneKeys from '../consts/SceneKeys'
 import {
   MovementInput,
   PlayerId,
+  PlayerInitialState,
+  PlayersInitialStates,
   PlayersInputQueue,
   PlayersStates,
   PlayerState,
 } from '../types/playerTypes'
-
-import Player from '../characters/Player'
-import { noOpAvatar } from '../characters/AvatarSetting'
-import Queue from '../classes/queue'
 
 declare global {
   interface Window {
@@ -42,6 +45,16 @@ export default class Game extends Phaser.Scene {
 
   constructor() {
     super(SceneKeys.Game)
+  }
+
+  get playersInitialStates(): PlayersInitialStates {
+    // Create an initial states object with current players state
+    return objectMap(this.playersStates, (playerState) => {
+      return {
+        ...omit(playerState, ['movementInput']),
+        avatar: this.getPlayerById(playerState.playerId)!.avatarSetting
+      }
+    })
   }
 
   create() {
@@ -137,39 +150,28 @@ export default class Game extends Phaser.Scene {
   }
 
   /*** START: Player handlers ***/
-  addPlayerFromState(playerState: PlayerState) {
+  addPlayerFromInitialState(playerInitialState: PlayerInitialState) {
     // Create player object
-    const player = this.add.playerFromState(playerState)
-    // .setOrigin(0.5, 0.5)
+    const player = this.add.playerFromInitialState(playerInitialState)
 
-    playerState.avatar = player.avatarSetting
+    playerInitialState.avatar = player.avatarSetting
 
     // add player to our players states object
-    this.playersStates[playerState.playerId] = playerState
+    const playerState: PlayerState = omit({
+      ...playerInitialState,
+
+      // initialize movment input
+      movementInput: {
+        up: false,
+        down: false,
+        left: false,
+        right: false,
+      },
+    }, ['avatar']) as PlayerState;
+    this.playersStates[playerInitialState.playerId] = playerState
 
     // Start a new input queue for the player
-    this.movementInputQueue[playerState.playerId] = new Queue<MovementInput>()
-
-
-    // Add player to physics
-    // this.physics.add.existing(player)
-
-    // const avatarSetting = player.avatarSetting
-
-    // This setting works only for Fauna character
-    // TODO: handle different characters with different sizes
-    // player.body.setSize(DEFAULT_SIZE.width * 0.41, DEFAULT_SIZE.height * 0.4, false)
-    // player.body.setOffset(DEFAULT_SIZE.width * 0.31, DEFAULT_SIZE.height * 0.45)
-
-    // player.body.setSize(avatarSetting.body.sizeFactor * avatarSetting.body.size.width, avatarSetting.body.sizeFactor * avatarSetting.body.size.height, avatarSetting.body.size.center)
-    // player.body.setOffset(avatarSetting.body.sizeFactor * avatarSetting.body.offset.width, avatarSetting.body.sizeFactor * avatarSetting.body.offset.height)
-
-    console.log(`body player: `, {
-      width: player.body.width,
-      heigth: player.body.height,
-      originX: player.originX,
-      originY: player.originY,
-    })
+    this.movementInputQueue[playerInitialState.playerId] = new Queue<MovementInput>()
 
     // Add player to group
     this.players.add(player)
@@ -198,9 +200,13 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  private getPlayerById(playerId: PlayerId): Player | undefined {
+    return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
+  }
+
   private handlePlayerMovementInputUpdate() {
     for (const playerId in this.movementInputQueue) {
-      const player = (this.players.getChildren() as Player[]).find(player => player.id === playerId);
+      const player = this.getPlayerById(playerId);
       const movementInput = this.movementInputQueue[playerId].dequeue()
 
       if (!player || !movementInput) continue;
@@ -250,33 +256,27 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   )
   const playerObj = playersLayer.objects[randomPlayerIndex]
 
-  const newPlayerState: PlayerState = {
+  const newPlayerInitialState: PlayerInitialState = {
     playerId,
     x: playerObj?.x!,
     y: playerObj?.y!,
-    movementInput: {
-      left: false,
-      right: false,
-      up: false,
-      down: false,
-    },
     avatar: noOpAvatar,
     votingZone: undefined
   }
 
   // add player to server
-  gameScene.addPlayerFromState(newPlayerState)
+  gameScene.addPlayerFromInitialState(newPlayerInitialState)
 
   // send the players object to the new player
   socket.emit(
     NetworkEventKeys.PlayersInitialStatusInfo,
-    gameScene.playersStates,
+    gameScene.playersInitialStates,
   )
 
   // update all other players of the new player
   socket.broadcast.emit(
     NetworkEventKeys.PlayersNew,
-    gameScene.playersStates[playerId],
+    gameScene.playersInitialStates[playerId],
   )
 
   // Player disconnected handler

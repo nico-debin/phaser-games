@@ -25,15 +25,22 @@ export interface AvatarSetting {
   }
 }
 
-export interface PlayerState {
+export interface PlayerInitialState {
+  playerId: PlayerId
   x: number
   y: number
-  playerId: PlayerId
-  movementInput: MovementInput
   avatar: AvatarSetting
-  votingZone: VotingZoneValue
+  votingZone: string | undefined
+}
+
+export interface PlayerState extends Omit<PlayerInitialState, "avatar"> {
+  movementInput: MovementInput
 }
 
 export interface PlayersStates {
   [playerId: PlayerId]: PlayerState
+}
+
+export interface PlayersInitialStates {
+  [playerId: PlayerId]: PlayerInitialState
 }

@@ -6,6 +6,8 @@ import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
 import {
   MovementInput,
   PlayerId,
+  PlayerInitialState,
+  PlayersInitialStates,
   PlayersStates,
   PlayerState,
 } from '../types/playerTypes'
@@ -140,15 +142,15 @@ export default class Game extends Phaser.Scene {
 
     const gameScene: Game = this
 
-    // All players in the game - used when joining a game that already has players
+    // All players in the game - used when joining a game that already has players (or not)
     this.socket.on(NetworkEventKeys.PlayersInitialStatusInfo, function (
-      playersStates: PlayersStates,
+      playersInitialStates: PlayersInitialStates,
     ) {
       gameScene.handleServerReconnect()
 
-      Object.keys(playersStates).forEach(function (id) {
-        const isMainPlayer = playersStates[id].playerId === gameScene.currentPlayerId;
-        gameScene.addPlayer(playersStates[id], isMainPlayer)
+      Object.keys(playersInitialStates).forEach(function (id) {
+        const isMainPlayer = playersInitialStates[id].playerId === gameScene.currentPlayerId;
+        gameScene.addPlayer(playersInitialStates[id], isMainPlayer)
         // displayPlayers(gameScene, playersStates[id], isMainPlayer)
       })
 
@@ -157,9 +159,9 @@ export default class Game extends Phaser.Scene {
 
     // A new player has joined the game
     this.socket.on(NetworkEventKeys.PlayersNew, function (
-      playerState: PlayerState,
+      playerInitialState: PlayerInitialState,
     ) {
-      gameScene.addPlayer(playerState, false)
+      gameScene.addPlayer(playerInitialState, false)
     })
 
     // A player has been disconnected
@@ -274,8 +276,8 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  addPlayer(playerState: PlayerState, isMainPlayer = true) {
-    const player = PlayerFactory.fromPlayerState(this, playerState)
+  addPlayer(playerInitialState: PlayerInitialState, isMainPlayer = true) {
+    const player = PlayerFactory.fromPlayerState(this, playerInitialState)
 
     player.setDepth(5)
 
