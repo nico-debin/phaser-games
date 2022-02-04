@@ -1,3 +1,4 @@
+import AvatarKeys from "../consts/AvatarKeys";
 import { VotingZoneValue } from "./gameObjectsTypes";
 
 export type MovementInput = {
@@ -31,6 +32,7 @@ export interface PlayerInitialState {
   y: number
   avatar: AvatarSetting
   votingZone: string | undefined
+  playerSettings: PlayerSettings
 }
 
 export interface PlayerState extends Omit<PlayerInitialState, "avatar"> {
@@ -43,4 +45,9 @@ export interface PlayersStates {
 
 export interface PlayersInitialStates {
   [playerId: PlayerId]: PlayerInitialState
+}
+
+export interface PlayerSettings {
+  username: string;
+  avatarName: AvatarKeys;
 }

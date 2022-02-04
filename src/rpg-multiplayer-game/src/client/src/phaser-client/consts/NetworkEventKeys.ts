@@ -13,6 +13,9 @@ enum NetworkEventKeys {
 
   // A player has pressed a key
   PlayersInput = 'players-input',
+
+  // An error happened in the server
+  ServerError = 'server-error',
 }
 
 export default NetworkEventKeys

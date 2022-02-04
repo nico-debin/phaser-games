@@ -16,6 +16,7 @@ export interface PlayerInitialState {
   y: number
   avatar: AvatarSetting
   votingZone: string | undefined
+  playerSettings: PlayerSettings
 }
 
 export interface PlayerState extends Omit<PlayerInitialState, "avatar"> {
@@ -32,4 +33,9 @@ export interface PlayersInitialStates {
 
 export interface PlayersInputQueue {
   [playerId: PlayerId]: Queue<MovementInput>
+}
+
+export interface PlayerSettings {
+  username: string;
+  avatarName: string;
 }

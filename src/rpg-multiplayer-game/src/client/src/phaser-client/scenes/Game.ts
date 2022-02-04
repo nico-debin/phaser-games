@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client'
+import { useStore } from '../../store/useStore'
 
 import Phaser from 'phaser'
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
@@ -7,15 +8,16 @@ import {
   MovementInput,
   PlayerId,
   PlayerInitialState,
+  PlayerSettings,
   PlayersInitialStates,
   PlayersStates,
-  PlayerState,
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
 import { playerVotingState } from '../states/PlayersState'
 
 // Keys
+import AvatarKeys from '../consts/AvatarKeys'
 import FontKeys from '../consts/FontKeys'
 import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SceneKeys from '../consts/SceneKeys'
@@ -24,8 +26,6 @@ import SceneKeys from '../consts/SceneKeys'
 import { createCharacterAnims, createLizardAnims, createNpcAnims } from '../anims'
 
 // Characters
-import Fauna from '../characters/Fauna'
-import Lizard from '../characters/Lizard'
 import Player from '../characters/Player'
 import PlayerFactory from '../characters/PlayerFactory'
 
@@ -39,6 +39,8 @@ export default class Game extends Phaser.Scene {
   // Current player from this client
   currentPlayer!: Player
 
+  // Settings selected in the login page
+  playerSettings: PlayerSettings;
 
   // SocketIO client
   private socket!: Socket
@@ -55,6 +57,14 @@ export default class Game extends Phaser.Scene {
 
   constructor() {
     super(SceneKeys.Game)
+
+    // Login page settings
+    const { getState } = useStore
+    const { username, avatar: avatarName } = getState()
+    this.playerSettings = {
+      username,
+      avatarName: avatarName as AvatarKeys,
+    }
   }
 
   get currentPlayerId() {
@@ -71,7 +81,11 @@ export default class Game extends Phaser.Scene {
 
   create() {
     // Socket to communicate with the server
-    this.socket = io()
+    this.socket = io({
+      query: {
+        playerSettings: JSON.stringify(this.playerSettings),
+      }
+    })
 
     // Players will be stored in this group
     this.players = this.add.group({
@@ -199,6 +213,16 @@ export default class Game extends Phaser.Scene {
       })
     })
 
+    this.socket.on(NetworkEventKeys.ServerError, (errorMsg: string) => {
+      console.error(`Server error: ${errorMsg}`);
+
+      this.add.text(10, 10, `Server error: ${errorMsg}`, {
+        fontSize: '16px',
+        color: '#ffffff',
+        backgroundColor: '#333333'
+      })
+    });
+
     this.socket.on('disconnect', () => {
       console.error('Disconnected from server')
       this.disconnectedFromServer = true
@@ -277,7 +301,7 @@ export default class Game extends Phaser.Scene {
   }
 
   addPlayer(playerInitialState: PlayerInitialState, isMainPlayer = true) {
-    const player = PlayerFactory.fromPlayerState(this, playerInitialState)
+    const player = PlayerFactory.fromPlayerInitialState(this, playerInitialState)
 
     player.setDepth(5)
 

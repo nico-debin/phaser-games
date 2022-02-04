@@ -17,6 +17,7 @@ import {
   MovementInput,
   PlayerId,
   PlayerInitialState,
+  PlayerSettings,
   PlayersInitialStates,
   PlayersInputQueue,
   PlayersStates,
@@ -242,11 +243,24 @@ export default class Game extends Phaser.Scene {
   }
 }
 
+const sendErrorMesage = (socket: Socket, msg: string, broadcast = false) => {
+  if (broadcast) {
+    socket.broadcast.emit(NetworkEventKeys.ServerError, msg);
+  } else {
+    socket.emit(NetworkEventKeys.ServerError, msg);
+  }
+  console.error(msg)
+}
+
 /*** START: Socket Handlers ***/
 const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   const playerId: PlayerId = socket.id
 
   console.log(`user ${playerId} connected`)
+
+  // Check for player settings
+  const playerSettings = handlePlayerSettings(socket, gameScene, playerId)
+  if (!playerSettings) return
 
   // Get player initial location from object layer
   const playersLayer = gameScene.mapIsland.getObjectLayer('Players')
@@ -261,7 +275,8 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     x: playerObj?.x!,
     y: playerObj?.y!,
     avatar: noOpAvatar,
-    votingZone: undefined
+    votingZone: undefined,
+    playerSettings
   }
 
   // add player to server
@@ -288,6 +303,27 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   socket.on(NetworkEventKeys.PlayersInput, (inputData: MovementInput) =>
     gameScene.handlePlayerMovementInput(playerId, inputData),
   )
+}
+
+const handlePlayerSettings = (socket: Socket, gameScene: Game, playerId: PlayerId): PlayerSettings | undefined => {
+  let errorMessage = '';
+
+  if (socket.handshake.query.playerSettings) {
+    try {
+      return JSON.parse(socket.handshake.query.playerSettings as string) as PlayerSettings
+    } catch(e) {
+      errorMessage = 'Invalid playerSettings'
+    }
+  } else {
+    errorMessage = 'Missing playerSettings'
+  }
+
+  if (errorMessage) {
+    sendErrorMesage(socket, 'Missing playerSettings')
+    socket.disconnect(true)
+    handleSocketDisconnect(gameScene, playerId)
+    return undefined
+  }
 }
 
 const handleSocketDisconnect = (gameScene: Game, playerId: PlayerId) => {
