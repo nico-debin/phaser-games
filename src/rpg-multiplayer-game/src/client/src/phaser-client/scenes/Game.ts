@@ -14,7 +14,7 @@ import {
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
-import { playerVotingState } from '../states/PlayersState'
+import { playerVotingState } from '../states/PlayerVotingState'
 
 // Keys
 import AvatarKeys from '../consts/AvatarKeys'

@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 import { autorun } from 'mobx'
-import { playerVotingState } from '../states/PlayersState'
+import { playerVotingState } from '../states/PlayerVotingState'
 
 export default class Hud extends Phaser.Scene {
   constructor() {
