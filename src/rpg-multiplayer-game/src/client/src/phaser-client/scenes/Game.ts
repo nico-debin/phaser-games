@@ -14,7 +14,7 @@ import {
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
-import { playerVotingState } from '../states/PlayerVotingState'
+import { gameVotingManager } from '../classes/GameVotingManager'
 
 // Keys
 import AvatarKeys from '../consts/AvatarKeys'
@@ -184,6 +184,7 @@ export default class Game extends Phaser.Scene {
         const player = gameObject as Player
         if (playerId === player.id) {
           player.destroy()
+          gameVotingManager.removePlayer(playerId)
         }
       })
     })
@@ -203,12 +204,15 @@ export default class Game extends Phaser.Scene {
 
             player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
             player.update(players[id].movementInput)
+            gameVotingManager.setVote(player.id, players[id].votingZone)
           }
           
-          if (players[id].playerId === gameScene.currentPlayerId) {
-            gameScene.updateVotingZoneRender(players[id].votingZone)
-            playerVotingState.setVote(players[id].votingZone)
-          }
+          // if (players[id].votingZone) {
+          // }
+          // if (players[id].playerId === gameScene.currentPlayerId) {
+          //   gameScene.updateVotingZoneRender(players[id].votingZone)
+          //   playerVotingState.setVote(players[id].votingZone)
+          // }
         })
       })
     })
@@ -333,5 +337,7 @@ export default class Game extends Phaser.Scene {
 
     this.add.existing(player)
     this.players.add(player)
+
+    gameVotingManager.addPlayer(player.id)
   }
 }

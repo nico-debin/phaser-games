@@ -1,11 +1,18 @@
-import { makeAutoObservable } from 'mobx'
+import { makeObservable, observable, action } from 'mobx'
 import { VotingZoneValue } from "../types/gameObjectsTypes"
+import { PlayerId } from '../types/playerTypes'
 
-class PlayerVotingState {
+export class PlayerVotingState {
+  playerId: PlayerId
   vote: VotingZoneValue = undefined
 
-  constructor() {
-    makeAutoObservable(this)
+  constructor(playerId: PlayerId) {
+    this.playerId = playerId
+
+    makeObservable(this, {
+      vote: observable,
+      setVote: action,
+    })
   }
 
   setVote(newVote: VotingZoneValue) {
@@ -13,4 +20,4 @@ class PlayerVotingState {
   }
 }
 
-export const playerVotingState = new PlayerVotingState()
+export const playerVotingState = new PlayerVotingState('123')
