@@ -217,22 +217,28 @@ export default class Game extends Phaser.Scene {
   }
 
   private handlePlayerUpdate() {
-    let somePlayerHasMoved = false
+    const playersStatesThatChanged: PlayersStates = {}
+
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
+      
+      let playerHasMoved = this.playersStates[player.id].x != player.x || this.playersStates[player.id].y != player.y
 
-      if (!somePlayerHasMoved) {
-        somePlayerHasMoved =
-          this.playersStates[player.id].x != player.x ||
-          this.playersStates[player.id].y != player.y
-      }
-
+      // Update new player position      
       this.playersStates[player.id].x = player.x
       this.playersStates[player.id].y = player.y
+
+      if (playerHasMoved) {
+        playersStatesThatChanged[player.id] = {
+          ...this.playersStates[player.id]
+        }
+      }
     })
 
+    const somePlayerHasMoved = Object.entries(playersStatesThatChanged).length > 0
     if (somePlayerHasMoved) {
-      io.emit(NetworkEventKeys.PlayersStatusUpdate, this.playersStates)
+      // Emit only player states that has been updated to optimize network usage
+      io.emit(NetworkEventKeys.PlayersStatusUpdate, playersStatesThatChanged)
     }
   }
   /*** END: Player handlers ***/
