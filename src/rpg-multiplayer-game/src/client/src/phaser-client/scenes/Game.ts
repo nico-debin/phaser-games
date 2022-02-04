@@ -207,7 +207,7 @@ export default class Game extends Phaser.Scene {
           
           if (players[id].playerId === gameScene.currentPlayerId) {
             gameScene.updateVotingZoneRender(players[id].votingZone)
-            playerVotingState.vote = players[id].votingZone
+            playerVotingState.setVote(players[id].votingZone)
           }
         })
       })

@@ -7,6 +7,10 @@ class PlayerVotingState {
   constructor() {
     makeAutoObservable(this)
   }
+
+  setVote(newVote: VotingZoneValue) {
+    this.vote = newVote
+  }
 }
 
 export const playerVotingState = new PlayerVotingState()
