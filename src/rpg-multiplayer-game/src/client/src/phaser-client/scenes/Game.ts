@@ -154,33 +154,31 @@ export default class Game extends Phaser.Scene {
     // Camara limited to the map
     this.cameras.main.setBounds(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
 
-    const gameScene: Game = this
-
     // All players in the game - used when joining a game that already has players (or not)
-    this.socket.on(NetworkEventKeys.PlayersInitialStatusInfo, function (
+    this.socket.on(NetworkEventKeys.PlayersInitialStatusInfo, (
       playersInitialStates: PlayersInitialStates,
-    ) {
-      gameScene.handleServerReconnect()
+    ) => {
+      this.handleServerReconnect()
 
-      Object.keys(playersInitialStates).forEach(function (id) {
-        const isMainPlayer = playersInitialStates[id].playerId === gameScene.currentPlayerId;
-        gameScene.addPlayer(playersInitialStates[id], isMainPlayer)
-        // displayPlayers(gameScene, playersStates[id], isMainPlayer)
+      Object.keys(playersInitialStates).forEach((id) => {
+        const isMainPlayer = playersInitialStates[id].playerId === this.currentPlayerId;
+        this.addPlayer(playersInitialStates[id], isMainPlayer)
+        // displayPlayers(this, playersStates[id], isMainPlayer)
       })
 
-      gameScene.cameras.main.startFollow(gameScene.currentPlayer, true)
+      this.cameras.main.startFollow(this.currentPlayer, true)
     })
 
     // A new player has joined the game
-    this.socket.on(NetworkEventKeys.PlayersNew, function (
+    this.socket.on(NetworkEventKeys.PlayersNew, (
       playerInitialState: PlayerInitialState,
-    ) {
-      gameScene.addPlayer(playerInitialState, false)
+    ) => {
+      this.addPlayer(playerInitialState, false)
     })
 
     // A player has been disconnected
-    this.socket.on(NetworkEventKeys.PlayersLeft, function (playerId: PlayerId) {
-      gameScene.players.getChildren().forEach(function (gameObject) {
+    this.socket.on(NetworkEventKeys.PlayersLeft, (playerId: PlayerId) => {
+      this.players.getChildren().forEach((gameObject) => {
         const player = gameObject as Player
         if (playerId === player.id) {
           player.destroy()
@@ -190,11 +188,11 @@ export default class Game extends Phaser.Scene {
     })
 
     // Update players positions
-    this.socket.on(NetworkEventKeys.PlayersStatusUpdate, function (
+    this.socket.on(NetworkEventKeys.PlayersStatusUpdate, (
       players: PlayersStates,
-    ) {
-      Object.keys(players).forEach(function (id) {
-        gameScene.players.getChildren().forEach(function (gameObject) {
+    ) => {
+      Object.keys(players).forEach((id) => {
+        this.players.getChildren().forEach((gameObject) => {
           const player = gameObject as Player
           if (players[id].playerId === player.id) {
             // UNCAUGHT BUG: For some reason I couldn't find yet, the player
@@ -206,13 +204,6 @@ export default class Game extends Phaser.Scene {
             player.update(players[id].movementInput)
             gameVotingManager.setVote(player.id, players[id].votingZone)
           }
-          
-          // if (players[id].votingZone) {
-          // }
-          // if (players[id].playerId === gameScene.currentPlayerId) {
-          //   gameScene.updateVotingZoneRender(players[id].votingZone)
-          //   playerVotingState.setVote(players[id].votingZone)
-          // }
         })
       })
     })
