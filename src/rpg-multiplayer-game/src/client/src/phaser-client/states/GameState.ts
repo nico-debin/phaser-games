@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx'
 import { PlayerId, PlayerSettings } from "../types/playerTypes";
 
 interface PlayerGameState extends PlayerSettings {
@@ -7,6 +8,10 @@ interface PlayerGameState extends PlayerSettings {
 
 class GameState {
   private players: PlayerGameState[] = []
+
+  constructor() {
+    makeAutoObservable(this)
+  }
 
   /**
    * Adds a new player
@@ -43,6 +48,14 @@ class GameState {
    */
   getPlayer(id: PlayerId): PlayerGameState | undefined {
     return this.players.find((player: PlayerGameState) => player.id === id)
+  }
+
+  /**
+   * Get the amount of players in the game
+   * @returns number amount of players in game
+   */
+  getPlayersCount(): number {
+    return this.players.length
   }
 
   /**
