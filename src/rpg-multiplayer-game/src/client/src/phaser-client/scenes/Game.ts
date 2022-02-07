@@ -15,6 +15,7 @@ import {
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
 import { gameVotingManager } from '../classes/GameVotingManager'
+import { gameState } from '../states/GameState'
 
 // Keys
 import AvatarKeys from '../consts/AvatarKeys'
@@ -178,13 +179,7 @@ export default class Game extends Phaser.Scene {
 
     // A player has been disconnected
     this.socket.on(NetworkEventKeys.PlayersLeft, (playerId: PlayerId) => {
-      this.players.getChildren().forEach((gameObject) => {
-        const player = gameObject as Player
-        if (playerId === player.id) {
-          player.destroy()
-          gameVotingManager.removePlayer(playerId)
-        }
-      })
+      this.removePlayer(playerId)
     })
 
     // Update players positions
@@ -208,6 +203,7 @@ export default class Game extends Phaser.Scene {
       })
     })
 
+    // An error happened in the server
     this.socket.on(NetworkEventKeys.ServerError, (errorMsg: string) => {
       console.error(`Server error: ${errorMsg}`);
 
@@ -218,7 +214,8 @@ export default class Game extends Phaser.Scene {
       })
     });
 
-    this.socket.on('disconnect', () => {
+    // Server offline or internet went down
+    this.socket.on(NetworkEventKeys.ServerOffline, () => {
       console.error('Disconnected from server')
       this.disconnectedFromServer = true
       
@@ -330,5 +327,17 @@ export default class Game extends Phaser.Scene {
     this.players.add(player)
 
     gameVotingManager.addPlayer(player.id)
+    gameState.addPlayer(player.id, playerInitialState.playerSettings, isMainPlayer)
+  }
+
+  removePlayer(playerId: PlayerId) {
+    this.players.getChildren().forEach((gameObject) => {
+      const player = gameObject as Player
+      if (playerId === player.id) {
+        player.destroy()
+        gameVotingManager.removePlayer(playerId)
+        gameState.removePlayer(playerId)
+      }
+    })
   }
 }

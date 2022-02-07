@@ -48,6 +48,7 @@ export interface PlayersInitialStates {
 }
 
 export interface PlayerSettings {
-  username: string;
-  avatarName: AvatarKeys;
+  id?: PlayerId
+  username: string
+  avatarName: AvatarKeys
 }

@@ -16,6 +16,9 @@ enum NetworkEventKeys {
 
   // An error happened in the server
   ServerError = 'server-error',
+
+  // Server went offline or internet went down
+  ServerOffline = 'disconnect',
 }
 
 export default NetworkEventKeys

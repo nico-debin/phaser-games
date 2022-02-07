@@ -19,5 +19,3 @@ export class PlayerVotingState {
     this.vote = newVote
   }
 }
-
-export const playerVotingState = new PlayerVotingState('123')

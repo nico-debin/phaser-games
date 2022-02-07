@@ -4,7 +4,7 @@ import { autorun } from 'mobx'
 import { gameVotingManager } from '../classes/GameVotingManager'
 import SceneKeys from '../consts/SceneKeys'
 import Game from './Game'
-import Player from '../characters/Player'
+import { gameState } from "../states/GameState";
 
 export default class Hud extends Phaser.Scene {
   private gameScene!: Game
@@ -28,13 +28,15 @@ export default class Hud extends Phaser.Scene {
       const labels: string[] = [];
       for (const playerId in gameVotingManager.votesByPlayer) {
         const vote = gameVotingManager.votesByPlayer[playerId].vote
-        if (vote) {
-          if (this.gameScene.currentPlayerId === playerId) {
-            labels.unshift(`You estimated ${vote}`)
-          } else {
-            labels.push(`Player ${playerId} estimation: ${vote}`)
-          }
-          
+        if (!vote) continue;
+        
+        const player = gameState.getPlayer(playerId)
+        if (!player) continue;
+
+        if (player.isCurrentPlayer) {
+          labels.unshift(`You estimated ${vote}`)
+        } else {
+          labels.push(`${player.username} estimated: ${vote}`)
         }
       }
 
