@@ -299,34 +299,12 @@ export default class Game extends Phaser.Scene {
 
     if (isMainPlayer) {
       this.currentPlayer = player
-    } else {
-      // const randomTint = Math.random() * 0xffffff
-      // player.setTint(randomTint)
     }
-
-    /******************** DEBUG ********************/
-    // scene.physics.add.existing(player)
-  
-    // const avatarSetting = playerState.avatar
-    // const { sizeFactor } = avatarSetting.body
-  
-    // const playerBody = player.body as Phaser.Physics.Arcade.Body
-    // playerBody.setSize(
-    //   sizeFactor * avatarSetting.body.size.width,
-    //   sizeFactor * avatarSetting.body.size.height,
-    //   avatarSetting.body.size.center,
-    // )
-    // playerBody.setOffset(
-    //   sizeFactor * avatarSetting.body.offset.x,
-    //   sizeFactor * avatarSetting.body.offset.y,
-    // )
-    // console.log(`body player: `, { width: playerBody.width, heigth: playerBody.height, originX: player.originX, originY: player.originY })
-    /****************** END DEBUG ******************/
 
     this.add.existing(player)
     this.players.add(player)
 
-    gameVotingManager.addPlayer(player.id)
+    gameVotingManager.addPlayer(player.id, playerInitialState.votingZone)
     gameState.addPlayer(player.id, playerInitialState.playerSettings, isMainPlayer)
   }
 

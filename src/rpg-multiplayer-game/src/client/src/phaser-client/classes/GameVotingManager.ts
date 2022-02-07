@@ -20,8 +20,11 @@ export class GameVotingManager {
     })
   }
 
-  addPlayer(playerId: PlayerId) {
+  addPlayer(playerId: PlayerId, vote?: VotingZoneValue) {
     this.votesByPlayer[playerId] = new PlayerVotingState(playerId)
+    if (vote) {
+      this.setVote(playerId, vote)
+    }
   }
 
   removePlayer(playerId: PlayerId) {
