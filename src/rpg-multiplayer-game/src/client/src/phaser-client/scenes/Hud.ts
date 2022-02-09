@@ -2,9 +2,8 @@ import Phaser from 'phaser'
 
 import { autorun } from 'mobx'
 import { gameVotingManager } from '../classes/GameVotingManager'
-import SceneKeys from '../consts/SceneKeys'
-import Game from './Game'
 import { gameState } from "../states/GameState";
+import TextureKeys from '../consts/TextureKeys';
 
 export default class Hud extends Phaser.Scene {
   private votingLabel!: Phaser.GameObjects.Text
@@ -15,13 +14,16 @@ export default class Hud extends Phaser.Scene {
   }
 
   create() {
-    this.votingLabel = this.add.text(10, 50, '', {
-      fontSize: '16px',
-      color: '#ffffff',
-      backgroundColor: '#333333'
-    })
+    this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
 
-    this.votingStatsLabel = this.add.text(10, 10, '', {
+    this.votingStatsLabel = this.add.text(24, 27, '', {
+      fontFamily: 'AdvoCut',
+      fontSize: '64px',
+      color: '#000000',
+    }).setScale(0.3)
+    
+    this.votingLabel = this.add.text(10, 100, '', {
+      fontFamily: 'AdvoCut',
       fontSize: '16px',
       color: '#ffffff',
       backgroundColor: '#333333'

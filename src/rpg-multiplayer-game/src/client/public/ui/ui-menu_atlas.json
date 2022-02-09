@@ -1,0 +1,125 @@
+{
+    "frames": [
+        {
+            "filename": "wood-medium",
+            "frame": {
+                "w": 803,
+                "h": 201,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wood-small",
+            "frame": {
+                "w": 463,
+                "h": 201,
+                "x": 0,
+                "y": 201
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "yellow-button",
+            "frame": {
+                "w": 241,
+                "h": 239,
+                "x": 0,
+                "y": 402
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "game-icon",
+            "frame": {
+                "w": 168,
+                "h": 124,
+                "x": 241,
+                "y": 402
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wheel-icon",
+            "frame": {
+                "w": 162,
+                "h": 163,
+                "x": 409,
+                "y": 402
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "right-arrow",
+            "frame": {
+                "w": 120,
+                "h": 128,
+                "x": 463,
+                "y": 201
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "green-wood-square",
+            "frame": {
+                "w": 116,
+                "h": 110,
+                "x": 241,
+                "y": 526
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "checkbox-off",
+            "frame": {
+                "w": 103,
+                "h": 103,
+                "x": 583,
+                "y": 201
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "checkbox-on",
+            "frame": {
+                "w": 102,
+                "h": 102,
+                "x": 686,
+                "y": 201
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

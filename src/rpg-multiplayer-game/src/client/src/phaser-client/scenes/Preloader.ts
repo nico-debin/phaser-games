@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 
 import AvatarKeys from '../consts/AvatarKeys'
 import FontKeys from '../consts/FontKeys'
-import NpcKeys from '~/phaser-client/consts/NpcKeys'
+import NpcKeys from '../consts/NpcKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 
@@ -12,12 +12,17 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
+    // Tilemaps
     this.load.image('tiles-islands-beach', 'tiles/tf_beach_tileB.png')
     this.load.image('tiles-islands-shoreline', 'tiles/tf_beach_tileA1.png')
     this.load.tilemapTiledJSON('islands', 'tilemaps/islands-01.json')
 
+    // TODO: remove this
     this.load.atlas(TextureKeys.Fauna, 'characters/fauna.png', 'characters/fauna.json')
     this.load.atlas(TextureKeys.Lizard, 'enemies/lizard.png', 'enemies/lizard.json')
+
+    // UI
+    this.load.atlas(TextureKeys.UIMenu1, 'ui/ui-menu.png', 'ui/ui-menu_atlas.json')
 
     // Characters
     this.load.spritesheet(AvatarKeys.ADRIAN_TOMKINS, 'characters/adrian-tomkins.png', {frameWidth: 64, frameHeight: 64})
