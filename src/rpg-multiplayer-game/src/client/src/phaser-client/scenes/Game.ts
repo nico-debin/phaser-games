@@ -198,6 +198,10 @@ export default class Game extends Phaser.Scene {
             player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
             player.update(players[id].movementInput)
             gameVotingManager.setVote(player.id, players[id].votingZone)
+
+            if (players[id].playerId === this.currentPlayerId) {
+              this.updateVotingZoneRender(players[id].votingZone)
+            }
           }
         })
       })
