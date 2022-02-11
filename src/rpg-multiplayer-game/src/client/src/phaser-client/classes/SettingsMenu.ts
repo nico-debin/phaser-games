@@ -1,11 +1,13 @@
 import Phaser from "phaser";
 import TextureKeys from "../consts/TextureKeys";
+import CheckboxInput from "./CheckboxInput";
 export default class SettingsMenu {
   scene: Phaser.Scene;
   menuIsOpen: boolean = false;
   settingsBoard: Phaser.GameObjects.Image;
   closeButton: Phaser.GameObjects.Image;
   baseBackgroundColor: Phaser.Display.Color;
+  voterCheckbox: CheckboxInput;
 
   constructor(scene: Phaser.Scene) {
     const { width, height } = scene.scale;
@@ -27,15 +29,25 @@ export default class SettingsMenu {
       .setVisible(false)
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
-        this.closeButton.setTint(0xdedede)
+        this.closeButton.setTint(0xdedede);
       })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => {
-        this.closeButton.setTint(0xffffff)
+        this.closeButton.setTint(0xffffff);
       })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
-        this.closeMenu()
-      })
+        this.closeMenu();
+      });
     this.baseBackgroundColor = scene.cameras.main.backgroundColor;
+
+    this.voterCheckbox = new CheckboxInput(
+      scene,
+      this.settingsBoard.x - this.settingsBoard.displayWidth * this.settingsBoard.originX + 60,
+      this.settingsBoard.y - this.settingsBoard.displayHeight * this.settingsBoard.originY + 110,
+      "I'm a voter"
+    )
+      .setOrigin(0.5, 0.5)
+      .setScale(0.2)
+      .setVisible(false);
   }
 
   toggleMenu() {
@@ -46,6 +58,7 @@ export default class SettingsMenu {
     this.menuIsOpen = true;
     this.settingsBoard.setVisible(true);
     this.closeButton.setVisible(true);
+    this.voterCheckbox.setVisible(true);
     this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
   }
 
@@ -53,6 +66,7 @@ export default class SettingsMenu {
     this.menuIsOpen = false;
     this.settingsBoard.setVisible(false);
     this.closeButton.setVisible(false);
+    this.voterCheckbox.setVisible(false);
     this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
   }
 }
