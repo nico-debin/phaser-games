@@ -2,19 +2,14 @@ import Phaser from "phaser";
 import TextureKeys from "../consts/TextureKeys";
 
 export default class CheckboxInput {
-  scene: Phaser.Scene;
-  isChecked: boolean = false;
-  isVisible: boolean = true;
-  x: number;
-  y: number;
-  label: string;
+  private isChecked: boolean = false;
 
-  checkboxOnImage: Phaser.GameObjects.Image;
-  checkboxOffImage: Phaser.GameObjects.Image;
-  checkboxLabel: Phaser.GameObjects.Text;
+  private checkboxOnImage: Phaser.GameObjects.Image;
+  private checkboxOffImage: Phaser.GameObjects.Image;
+  private checkboxLabel: Phaser.GameObjects.Text;
 
-  onCheckCallback: () => void = () => null;
-  onUncheckCallback: () => void = () => null;
+  private onCheckCallback: () => void = () => null;
+  private onUncheckCallback: () => void = () => null;
 
   constructor(
     scene: Phaser.Scene,
@@ -23,10 +18,6 @@ export default class CheckboxInput {
     label: string = "",
     initialValue: boolean = false
   ) {
-    this.scene = scene;
-    this.x = x;
-    this.y = y;
-    this.label = label;
     this.isChecked = initialValue;
 
     const doToggle = () => this.toggle();
