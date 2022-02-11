@@ -4,10 +4,12 @@ import { autorun } from 'mobx'
 import { gameVotingManager } from '../classes/GameVotingManager'
 import { gameState } from "../states/GameState";
 import TextureKeys from '../consts/TextureKeys';
+import SettingsMenu from '../classes/SettingsMenu';
 
 export default class Hud extends Phaser.Scene {
   private votingLabel!: Phaser.GameObjects.Text
   private votingStatsLabel!: Phaser.GameObjects.Text
+  private settingsMenu!: SettingsMenu;
 
   constructor() {
     super('hud')
@@ -16,9 +18,9 @@ export default class Hud extends Phaser.Scene {
   create() {
     this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
 
-    this.votingStatsLabel = this.add.text(24, 27, '', {
+    this.votingStatsLabel = this.add.text(25, 30, '', {
       fontFamily: 'AdvoCut',
-      fontSize: '64px',
+      fontSize: '56px',
       color: '#000000',
     }).setScale(0.3)
     
@@ -28,6 +30,28 @@ export default class Hud extends Phaser.Scene {
       color: '#ffffff',
       backgroundColor: '#333333'
     })
+
+    const { width } = this.scale
+    
+    this.settingsMenu = new SettingsMenu(this);
+
+    const settingsButton = this.add.image(width - 10, 10, TextureKeys.UIMenu1, 'yellow-button').setScale(0.20).setOrigin(1, 0);
+    this.add.image(width - 17, 17, TextureKeys.UIMenu1, 'wheel-icon').setScale(0.20).setOrigin(1, 0);
+
+    settingsButton.setInteractive({ useHandCursor: true })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
+        settingsButton.setTint(0xdedede)
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => {
+        settingsButton.setTint(0xffffff)
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+        settingsButton.setTint(0xf4bf19)
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
+        settingsButton.setTint(0xffffff)
+        this.settingsMenu.toggleMenu()
+      })
 
     // Update labels
     autorun(() => {
