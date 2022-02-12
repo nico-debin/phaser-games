@@ -60,7 +60,7 @@ export class GameVotingManager {
   }
 
   get pendingVotes(): number {
-    return gameState.getPlayersCount() - this.totalVotes
+    return gameState.votingPlayersCount - this.totalVotes
   }
 }
 

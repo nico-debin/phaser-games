@@ -3,10 +3,12 @@ import create from "zustand";
 interface PlayerState {
   username: string;
   avatar: string
+  isVoter: boolean;
   isAdmin: boolean;
   gameStarted: boolean;
   setUsername: (username: string) => void;
   setAvatar: (avatar: string) => void;
+  setIsVoter: (isVoter: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   setGameStarted: (gameStarted: boolean) => void;
   isReadyToPlay: () => boolean;
@@ -17,6 +19,7 @@ export const useStore = create<PlayerState>((set, get) => ({
   usernameFromSlider: '',
   usernameFromInputText: '',
   avatar: '',
+  isVoter: true,
   isAdmin: false,
   gameStarted: false,
 
@@ -29,6 +32,13 @@ export const useStore = create<PlayerState>((set, get) => ({
   setAvatar: (avatar: string) => {
     set((state) => ({
       avatar
+    }))
+  },
+
+
+  setIsVoter: (isVoter: boolean) => {
+    set((state) => ({
+      isVoter
     }))
   },
 

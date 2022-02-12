@@ -40,6 +40,23 @@ class GameState {
     return false
   }
 
+  /**
+   * Updates a player's settings
+   * @param id 
+   * @param settings 
+   */
+  updatePlayerSettings(id: PlayerId, settings: PlayerSettings): void {
+    const idx = this.players.findIndex((player: PlayerGameState) => player.id === id)
+    if (idx >= 0) {
+      this.players[idx] = {
+        ...this.players[idx],
+        ...settings,
+      }
+    } else {
+      console.error("Couldn't update player settings with playerId " + id)
+    }
+  }
+
 
   /**
    * Get player by id
@@ -51,11 +68,32 @@ class GameState {
   }
 
   /**
+   * Get current player
+   * @param id 
+   * @returns PlayerSetting if found, undefined if not found
+   */
+  get currentPlayer(): PlayerGameState | undefined {
+    return this.players.find((player: PlayerGameState) => player.isCurrentPlayer === true)
+  }
+
+  get currentPlayerIsVoter(): boolean | undefined {
+    return this.currentPlayer?.isVoter
+  }
+
+  /**
    * Get the amount of players in the game
    * @returns number amount of players in game
    */
-  getPlayersCount(): number {
+  get playersCount(): number {
     return this.players.length
+  }
+
+  /**
+   * Get the amount of players in the game
+   * @returns number amount of players in game
+   */
+  get votingPlayersCount(): number {
+    return this.players.filter((player: PlayerGameState) => player.isVoter).length
   }
 
   /**

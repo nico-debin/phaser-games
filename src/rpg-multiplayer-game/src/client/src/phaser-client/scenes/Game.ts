@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client'
+import { autorun } from 'mobx'
 import { useStore } from '../../store/useStore'
 
 import Phaser from 'phaser'
@@ -48,6 +49,9 @@ export default class Game extends Phaser.Scene {
   // Flag to check if it was previosly connected (to check reconnections)
   private disconnectedFromServer = false
 
+  // Flag to prevent sending player settings when it was already sent when first connected
+  private preventDuplicateInitialSettingsEvent = true
+
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private lastMovementInput!: MovementInput
 
@@ -61,10 +65,11 @@ export default class Game extends Phaser.Scene {
 
     // Login page settings
     const { getState } = useStore
-    const { username, avatar: avatarName } = getState()
+    const { username, avatar: avatarName, isVoter } = getState()
     this.playerSettings = {
       username,
       avatarName: avatarName as AvatarKeys,
+      isVoter,
     }
   }
 
@@ -197,10 +202,13 @@ export default class Game extends Phaser.Scene {
 
             player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
             player.update(players[id].movementInput)
-            gameVotingManager.setVote(player.id, players[id].votingZone)
 
-            if (players[id].playerId === this.currentPlayerId) {
-              this.updateVotingZoneRender(players[id].votingZone)
+            if (gameState.getPlayer(player.id)?.isVoter) {
+              gameVotingManager.setVote(player.id, players[id].votingZone)
+  
+              if (players[id].playerId === this.currentPlayerId) {
+                this.updateVotingZoneRender(players[id].votingZone)
+              }
             }
           }
         })
@@ -225,6 +233,35 @@ export default class Game extends Phaser.Scene {
       
       // Paint all players in color red
       this.players.setTint(0xff0000)
+    })
+
+    // Send an event when the current player changes it's voting setting
+    autorun(() => {
+      if (gameState.currentPlayer !== undefined) {
+        if (this.preventDuplicateInitialSettingsEvent) {
+          // Prevent sending player settings when it was already sent with NetworkEventKeys.PlayersInitialStatusInfo
+          this.preventDuplicateInitialSettingsEvent = false;
+        } else {
+          const currentPlayerSettings: PlayerSettings = {
+            id: gameState.currentPlayer.id,
+            username: gameState.currentPlayer.username,
+            avatarName: gameState.currentPlayer.avatarName,
+            isVoter: gameState.currentPlayer.isVoter,
+          }
+          this.socket.emit(NetworkEventKeys.PlayerSettingsUpdate, currentPlayerSettings)
+        }
+      }
+    })
+
+    // Another player has updated it's settings
+    this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
+      if (playerSettings.id) {
+        const playerId: PlayerId = playerSettings.id;
+        gameState.updatePlayerSettings(playerId, playerSettings)
+        playerSettings.isVoter ? gameVotingManager.addPlayer(playerId) : gameVotingManager.removePlayer(playerId)
+      } else {
+        console.error("Can't update remote player settings without player's id: ", playerSettings)
+      }
     })
 
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -308,7 +345,9 @@ export default class Game extends Phaser.Scene {
     this.add.existing(player)
     this.players.add(player)
 
-    gameVotingManager.addPlayer(player.id, playerInitialState.votingZone)
+    if (playerInitialState.playerSettings.isVoter) {
+      gameVotingManager.addPlayer(player.id, playerInitialState.votingZone)
+    }
     gameState.addPlayer(player.id, playerInitialState.playerSettings, isMainPlayer)
   }
 

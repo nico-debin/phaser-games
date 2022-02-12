@@ -36,6 +36,8 @@ export interface PlayersInputQueue {
 }
 
 export interface PlayerSettings {
+  id?: PlayerId
   username: string;
   avatarName: string;
+  isVoter: boolean;
 }

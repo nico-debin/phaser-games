@@ -1,6 +1,9 @@
 import Phaser from "phaser";
+import { autorun } from "mobx";
+
 import FontKeys from "../consts/FontKeys";
 import TextureKeys from "../consts/TextureKeys";
+import { gameState } from "../states/GameState";
 import CheckboxInput from "./CheckboxInput";
 export default class SettingsMenu {
   scene: Phaser.Scene;
@@ -13,6 +16,7 @@ export default class SettingsMenu {
 
   constructor(scene: Phaser.Scene) {
     const { width, height } = scene.scale;
+
     this.scene = scene;
     this.settingsBoard = scene.add
       .image(width * 0.5, height * 0.5, TextureKeys.SettingsBoard)
@@ -62,13 +66,34 @@ export default class SettingsMenu {
       this.settingsBoard.y -
         this.settingsBoard.displayHeight * this.settingsBoard.originY +
         110,
-      "I'm a voter"
+      "I'm a voter",
     )
       .setOrigin(0.5, 0.5)
       .setScale(0.2)
       .setVisible(false)
-      .onCheck(() => console.log("VOTER"))
-      .onUncheck(() => console.log("NOT A VOTER"));
+      .onCheck(() => {
+        const currentPlayer = gameState.currentPlayer
+        currentPlayer && gameState.updatePlayerSettings(currentPlayer.id, {
+          ...currentPlayer,
+          isVoter: true
+        })
+      })
+      .onUncheck(() => {
+        const currentPlayer = gameState.currentPlayer
+        currentPlayer && gameState.updatePlayerSettings(currentPlayer.id, {
+          ...currentPlayer,
+          isVoter: false
+        })
+      });
+
+    // wait until the current player state is built to set the according settings
+    autorun((reaction) => {
+      const currentPlayer = gameState.currentPlayer
+      if (currentPlayer) {
+        this.voterCheckbox.setInitialValue(currentPlayer.isVoter)
+        reaction.dispose(); // Run only once
+      }
+    })
   }
 
   toggleMenu() {

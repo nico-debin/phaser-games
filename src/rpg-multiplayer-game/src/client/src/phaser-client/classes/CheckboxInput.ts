@@ -4,6 +4,7 @@ import TextureKeys from "../consts/TextureKeys";
 
 export default class CheckboxInput {
   private isChecked: boolean = false;
+  private isVisible: boolean = true;
 
   private checkboxOnImage: Phaser.GameObjects.Image;
   private checkboxOffImage: Phaser.GameObjects.Image;
@@ -19,7 +20,7 @@ export default class CheckboxInput {
     label: string = "",
     initialValue: boolean = false
   ) {
-    this.isChecked = initialValue;
+    this.setInitialValue(initialValue)
 
     // Fonts renders blury if x and y aren't integers
     const sanitizedX = Math.round(x);
@@ -41,6 +42,10 @@ export default class CheckboxInput {
     this.isChecked ? this.check() : this.uncheck();
   }
 
+  setInitialValue(initialValue: boolean) {
+    this.isChecked = initialValue;
+  }
+
   setOrigin(x: number, y?: number): CheckboxInput {
     this.checkboxOnImage.setOrigin(x, y || x);
     this.checkboxOffImage.setOrigin(x, y || x);
@@ -60,8 +65,20 @@ export default class CheckboxInput {
   }
 
   setVisible(visible: boolean): CheckboxInput {
-    this.checkboxOnImage.setVisible(visible);
-    this.checkboxOffImage.setVisible(visible);
+    this.isVisible = visible;
+
+    if (visible) {
+      if (this.isChecked) {
+        this.checkboxOnImage.setVisible(true)
+        this.checkboxOffImage.setVisible(false);
+      } else {
+        this.checkboxOnImage.setVisible(false)
+        this.checkboxOffImage.setVisible(true);
+      }
+    } else {
+      this.checkboxOnImage.setVisible(false);
+      this.checkboxOffImage.setVisible(false);
+    }
     this.checkboxLabel.setVisible(visible);
     return this;
   }
@@ -78,19 +95,21 @@ export default class CheckboxInput {
 
   check(): void {
     this.isChecked = true;
-    this.checkboxOnImage.setVisible(this.isChecked);
-    this.checkboxOffImage.setVisible(!this.isChecked);
+    this.updateRender();
     this.onCheckCallback();
   }
 
   uncheck(): void {
     this.isChecked = false;
-    this.checkboxOnImage.setVisible(this.isChecked);
-    this.checkboxOffImage.setVisible(!this.isChecked);
+    this.updateRender();
     this.onUncheckCallback();
   }
 
   toggle(): void {
     this.isChecked ? this.uncheck() : this.check();
+  }
+
+  private updateRender(): void {
+    this.setVisible(this.isVisible);
   }
 }

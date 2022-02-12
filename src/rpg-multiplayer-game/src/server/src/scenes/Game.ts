@@ -309,6 +309,17 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   socket.on(NetworkEventKeys.PlayersInput, (inputData: MovementInput) =>
     gameScene.handlePlayerMovementInput(playerId, inputData),
   )
+
+  socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
+    // Save new settings in players states object
+    gameScene.playersStates[playerId].playerSettings = playerSettings
+
+    // Update the rest of the players
+    socket.broadcast.emit(
+      NetworkEventKeys.PlayerSettingsUpdate,
+      playerSettings
+    )
+  })
 }
 
 const handlePlayerSettings = (socket: Socket, gameScene: Game, playerId: PlayerId): PlayerSettings | undefined => {

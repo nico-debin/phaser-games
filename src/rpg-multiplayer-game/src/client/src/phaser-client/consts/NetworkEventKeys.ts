@@ -4,6 +4,9 @@ enum NetworkEventKeys {
 
   // Players positions update
   PlayersStatusUpdate = 'players-status-update',
+  
+  // Player settings update
+  PlayerSettingsUpdate = 'player-settings-update',
 
   // New player joined
   PlayersNew = 'players-new',

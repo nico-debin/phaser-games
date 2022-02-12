@@ -51,4 +51,5 @@ export interface PlayerSettings {
   id?: PlayerId
   username: string
   avatarName: AvatarKeys
+  isVoter: boolean
 }
