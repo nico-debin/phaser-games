@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import FontKeys from "../consts/FontKeys";
 import TextureKeys from "../consts/TextureKeys";
 
 export default class CheckboxInput {
@@ -6,7 +7,7 @@ export default class CheckboxInput {
 
   private checkboxOnImage: Phaser.GameObjects.Image;
   private checkboxOffImage: Phaser.GameObjects.Image;
-  private checkboxLabel: Phaser.GameObjects.Text;
+  private checkboxLabel: Phaser.GameObjects.BitmapText;
 
   private onCheckCallback: () => void = () => null;
   private onUncheckCallback: () => void = () => null;
@@ -20,22 +21,22 @@ export default class CheckboxInput {
   ) {
     this.isChecked = initialValue;
 
+    // Fonts renders blury if x and y aren't integers
+    const sanitizedX = Math.round(x);
+    const sanitizedY = Math.round(y);
+
     const doToggle = () => this.toggle();
 
     this.checkboxOnImage = scene.add
-      .image(x, y, TextureKeys.UIMenu1, "checkbox-on")
+      .image(sanitizedX, sanitizedY, TextureKeys.UIMenu1, "checkbox-on")
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
     this.checkboxOffImage = scene.add
-      .image(x, y, TextureKeys.UIMenu1, "checkbox-off")
+      .image(sanitizedX, sanitizedY, TextureKeys.UIMenu1, "checkbox-off")
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
 
-    this.checkboxLabel = scene.add.text(x, y, label, {
-      fontFamily: "AdvoCut",
-      fontSize: "16px",
-      color: "#000000",
-    });
+    this.checkboxLabel = scene.add.bitmapText(sanitizedX, sanitizedY, FontKeys.GEM, label, 16).setTint(0x000000);
 
     this.isChecked ? this.check() : this.uncheck();
   }

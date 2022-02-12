@@ -1,5 +1,7 @@
 enum FontKeys {
-  DESYREL = 'desyrel'
+  DESYREL = 'desyrel',
+  GEM = 'gem',
+  GOTHIC = 'gothic',
 }
 
 export default FontKeys

@@ -5,10 +5,11 @@ import { gameVotingManager } from '../classes/GameVotingManager'
 import { gameState } from "../states/GameState";
 import TextureKeys from '../consts/TextureKeys';
 import SettingsMenu from '../classes/SettingsMenu';
+import FontKeys from '../consts/FontKeys';
 
 export default class Hud extends Phaser.Scene {
   private votingLabel!: Phaser.GameObjects.Text
-  private votingStatsLabel!: Phaser.GameObjects.Text
+  private votingStatsLabel!: Phaser.GameObjects.BitmapText
   private settingsMenu!: SettingsMenu;
 
   constructor() {
@@ -18,14 +19,9 @@ export default class Hud extends Phaser.Scene {
   create() {
     this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
 
-    this.votingStatsLabel = this.add.text(25, 30, '', {
-      fontFamily: 'AdvoCut',
-      fontSize: '56px',
-      color: '#000000',
-    }).setScale(0.3)
+    this.votingStatsLabel = this.add.bitmapText(25, 30, FontKeys.GEM, '', 16).setTint(0x000000);
     
     this.votingLabel = this.add.text(10, 100, '', {
-      fontFamily: 'AdvoCut',
       fontSize: '16px',
       color: '#ffffff',
       backgroundColor: '#333333'

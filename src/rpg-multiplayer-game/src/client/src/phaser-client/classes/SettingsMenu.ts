@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import FontKeys from "../consts/FontKeys";
 import TextureKeys from "../consts/TextureKeys";
 import CheckboxInput from "./CheckboxInput";
 export default class SettingsMenu {
@@ -7,6 +8,7 @@ export default class SettingsMenu {
   settingsBoard: Phaser.GameObjects.Image;
   closeButton: Phaser.GameObjects.Image;
   baseBackgroundColor: Phaser.Display.Color;
+  settingsTitle: Phaser.GameObjects.BitmapText;
   voterCheckbox: CheckboxInput;
 
   constructor(scene: Phaser.Scene) {
@@ -38,16 +40,35 @@ export default class SettingsMenu {
         this.closeMenu();
       });
     this.baseBackgroundColor = scene.cameras.main.backgroundColor;
+    this.settingsTitle = scene.add
+      .bitmapText(
+        Math.round(this.settingsBoard.x),
+        Math.round(this.settingsBoard.y -
+          this.settingsBoard.displayHeight * this.settingsBoard.originY +
+          30),
+        FontKeys.GOTHIC,
+        "SETTINGS",
+        28
+      )
+      .setTint(0xffffff)
+      .setOrigin(0.5, 0.5)
+      .setVisible(false);
 
     this.voterCheckbox = new CheckboxInput(
       scene,
-      this.settingsBoard.x - this.settingsBoard.displayWidth * this.settingsBoard.originX + 60,
-      this.settingsBoard.y - this.settingsBoard.displayHeight * this.settingsBoard.originY + 110,
+      this.settingsBoard.x -
+        this.settingsBoard.displayWidth * this.settingsBoard.originX +
+        60,
+      this.settingsBoard.y -
+        this.settingsBoard.displayHeight * this.settingsBoard.originY +
+        110,
       "I'm a voter"
     )
       .setOrigin(0.5, 0.5)
       .setScale(0.2)
-      .setVisible(false);
+      .setVisible(false)
+      .onCheck(() => console.log("VOTER"))
+      .onUncheck(() => console.log("NOT A VOTER"));
   }
 
   toggleMenu() {
@@ -58,6 +79,7 @@ export default class SettingsMenu {
     this.menuIsOpen = true;
     this.settingsBoard.setVisible(true);
     this.closeButton.setVisible(true);
+    this.settingsTitle.setVisible(true);
     this.voterCheckbox.setVisible(true);
     this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
   }
@@ -66,6 +88,7 @@ export default class SettingsMenu {
     this.menuIsOpen = false;
     this.settingsBoard.setVisible(false);
     this.closeButton.setVisible(false);
+    this.settingsTitle.setVisible(false);
     this.voterCheckbox.setVisible(false);
     this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
   }
