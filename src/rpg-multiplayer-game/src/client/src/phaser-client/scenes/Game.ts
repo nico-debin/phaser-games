@@ -236,6 +236,7 @@ export default class Game extends Phaser.Scene {
     })
 
     // Send an event when the current player changes it's voting setting
+    // Update voting manager accordingly
     autorun(() => {
       if (gameState.currentPlayer !== undefined) {
         if (this.preventDuplicateInitialSettingsEvent) {
@@ -249,6 +250,13 @@ export default class Game extends Phaser.Scene {
             isVoter: gameState.currentPlayer.isVoter,
           }
           this.socket.emit(NetworkEventKeys.PlayerSettingsUpdate, currentPlayerSettings)
+
+          if (gameState.currentPlayer.isVoter) {
+            gameVotingManager.addPlayer(gameState.currentPlayer.id)
+          } else {
+            gameVotingManager.removePlayer(gameState.currentPlayer.id)
+            this.updateVotingZoneRender(undefined) // disable voting zone highlight if the player is standing on it
+          }
         }
       }
     })
