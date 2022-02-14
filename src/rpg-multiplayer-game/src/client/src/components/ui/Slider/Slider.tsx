@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactChild, useEffect, useState } from "react";
 
 import ArrowButton from "../ArrowButton";
 
@@ -13,30 +13,33 @@ export type Slide = {
 
 type Props = {
   slides: Slide[];
-  children: (props: any) => JSX.Element;
+  startKey: number;
+  setStartKey: (key: number) => void;
   onSlideChange?: (slide: Slide) => void;
+  children?: ReactChild;
 };
 
-const Slider = ({ slides, children, onSlideChange = () => null }: Props) => {
-  const [start, setStart] = useState(0);
+const Slider = ({ slides, startKey, setStartKey, children, onSlideChange = () => null }: Props) => {
+
+  const [preventSlideReset, setPreventSlideReset] = useState<boolean>(true);
 
   const setStartWrapper = (index: number) => {
-    setStart(index);
+    setStartKey(index);
     onSlideChange(slides[index]);
   };
 
   useEffect(() => {
-    setStartWrapper(0);
+    preventSlideReset ? setPreventSlideReset(false) : setStartWrapper(0);
   }, [slides]);
 
-  const visibleSlide = slides[start];
+  const visibleSlide = slides[startKey];
 
   const onNextClick = () => {
-    setStartWrapper(start + 1 >= slides.length ? 0 : start + 1);
+    setStartWrapper(startKey + 1 >= slides.length ? 0 : startKey + 1);
   };
 
   const onPrevClick = () => {
-    setStartWrapper(start - 1 >= 0 ? start - 1 : slides.length - 1);
+    setStartWrapper(startKey - 1 >= 0 ? startKey - 1 : slides.length - 1);
   };
 
   return (
@@ -51,7 +54,7 @@ const Slider = ({ slides, children, onSlideChange = () => null }: Props) => {
         <ArrowButton orientation="right" onClick={onNextClick} />
       </div>
       <div className="slides-info">
-        <span>{slides[start].name}</span>
+        <span>{slides[startKey].name}</span>
       </div>
     </div>
   );

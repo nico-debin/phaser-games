@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Spritesheet from 'react-responsive-spritesheet';
 import { useStore } from '../../store/useStore';
 
@@ -10,7 +10,17 @@ interface AvatarSelectorProps {
 }
 
 const AvatarSelector = ({ title, slides }: AvatarSelectorProps) => {
-  const setAvatar = useStore(store => store.setAvatar);
+  const { avatar, setAvatar } = useStore();
+  const [sliderStartKey, setSliderStartKey] = useState(0);
+  const [initialAvatarHasLoaded, setInitialAvatarHasLoaded] = useState<boolean>(false);
+
+  if (initialAvatarHasLoaded === false && avatar) {
+    const avatarKey = slides.findIndex((s: Slide) => s.name === avatar);
+    if (avatarKey >= 0) {
+      setSliderStartKey(avatarKey)
+    }
+    setInitialAvatarHasLoaded(true); 
+  }
   
   const onSlideChangeHandler = (slide: Slide) => {
     setAvatar(slide.name);
@@ -18,7 +28,7 @@ const AvatarSelector = ({ title, slides }: AvatarSelectorProps) => {
   return (
     <div className="avatar-selector">
       <h2>{title ?? 'Select your avatar'}</h2>
-      <Slider slides={slides} onSlideChange={onSlideChangeHandler}>
+      <Slider slides={slides} startKey={sliderStartKey} setStartKey={setSliderStartKey} onSlideChange={onSlideChangeHandler}>
         {(slide: Slide) => (
           <div className="slide-container" key={slide.name}>
             <Spritesheet

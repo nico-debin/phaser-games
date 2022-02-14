@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from "../store/useStore";
 
+import { SavedSettings } from '../types';
 import { Slide } from "../components/ui";
 
 import PlayButton from "../components/PlayButton/PlayButton";
@@ -15,9 +16,10 @@ import StoreDebugger from "../store/StoreDebugger";
 import '../styles/HomePage.scss';
 
 const HomePage = () => {
-  const { username, isReadyToPlay } = useStore();
+  const { username, isReadyToPlay, setFromSavedSettings } = useStore();
   const [avatarsLoaded, setAvatarsLoaded] = useState<boolean>(false)
   const [activeSlides, setActiveSlides] = useState<Slide[]>(defaultAvatarSlides)
+  // const [savedSettings, setSavedSettings] = useState<SavedSettings | undefined>();
 
   useEffect(() => {
     const loadImage = (slide: Slide) => {
@@ -32,6 +34,12 @@ const HomePage = () => {
     Promise.all([...avatarSlides, ...defaultAvatarSlides].map(slide => loadImage(slide)))
       .then(() => setAvatarsLoaded(true))
       .catch(err => console.log("Failed to load images", err))
+
+    const parsedSavedSettings = JSON.parse(localStorage.getItem('grooming-wars') || '{}') as SavedSettings;
+    if (parsedSavedSettings) {
+      // setSavedSettings(parsedSavedSettings);
+      setFromSavedSettings(parsedSavedSettings);
+    }
   }, [])
 
   useEffect(() => {

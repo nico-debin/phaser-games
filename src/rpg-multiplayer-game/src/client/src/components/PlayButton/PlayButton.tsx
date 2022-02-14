@@ -1,5 +1,6 @@
 import React from "react";
-import { useStore } from "~/store/useStore";
+import { useStore } from "../../store/useStore";
+import { SavedSettings } from "../../types";
 
 import "./PlayButton.scss";
 
@@ -8,10 +9,17 @@ interface PlayButtonProps {
 }
 
 const PlayButton = ({}: PlayButtonProps) => {
-  const setGameStarted = useStore(store => store.setGameStarted);
+  const store = useStore();
 
   const onClickHandler = () => {
-    setGameStarted(true);
+    const savedSettings: SavedSettings = {
+      username: store.username,
+      avatar: store.avatar,
+      isVoter: store.isVoter,
+      isAdmin: store.isAdmin,
+    };
+    localStorage.setItem('grooming-wars', JSON.stringify(savedSettings))
+    store.setGameStarted(true);
   }
 
   return (

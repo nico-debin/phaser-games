@@ -9,14 +9,26 @@ interface UsernameSelectorProps {
 }
 
 const UsernameSelector = ({ title, usernames, onUsernameSelected = () => null }: UsernameSelectorProps) => {
-  const setUsername = useStore(store => store.setUsername);
-  const [sliderKey, setSliderKey] = useState(0);
+  const { username, setUsername } = useStore();
   const [textInputValue, setTextInputValue] = useState<string>('');
+  const [initialUsernameHasLoaded, setInitialUsernameHasLoaded] = useState<boolean>(false);
 
-  // Hack to reset TextSlider if the TextInput has been used
+  const [textSliderStartKey, setTextSliderStartKey] = useState<number>(-1);
+
+  if (initialUsernameHasLoaded === false && username) {
+    const usernameKey = usernames.findIndex((u: string) => u === username);
+    if (usernameKey >= 0) {
+      setTextSliderStartKey(usernameKey)
+    } else {
+      setTextInputValue(username)
+    }
+    setInitialUsernameHasLoaded(true);
+  }
+
+  // Show TextSlider placeholder if the TextInput has been used
   useEffect(() => {
     if (textInputValue !== '') {
-      setSliderKey((prev) => prev + 1);
+      setTextSliderStartKey(-1);
     }
   }, [textInputValue])
 
@@ -38,7 +50,7 @@ const UsernameSelector = ({ title, usernames, onUsernameSelected = () => null }:
   return (
     <div className="username-selector">
       <h2>{title ?? 'Select your username'}</h2>
-      <TextSlider placeholder='Select' options={usernames} onSlide={onSlideHandler} key={sliderKey} />
+      <TextSlider placeholder='Select' options={usernames} onSlide={onSlideHandler} startKey={textSliderStartKey} setStartKey={setTextSliderStartKey} />
       <hr className="hr-text" data-content="OR" />
       <TextInput value={textInputValue} placeholder="Insert your username" onChange={onTextInputChangeHandle} />
     </div>

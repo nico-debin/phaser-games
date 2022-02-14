@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ArrowButton from "../ArrowButton";
 
 
@@ -7,23 +7,28 @@ import "./TextSlider.scss"
 interface TextSliderProps {
   placeholder: string;
   options: string[];
+  startKey: number;
+  setStartKey: (key: number) => void;
   onSlide?: (text: string) => void;
 }
 
-const TextSlider = ({ placeholder, options, onSlide }: TextSliderProps) => {
+const TextSlider = ({ placeholder, options, startKey, setStartKey, onSlide }: TextSliderProps) => {
   const [showPlaceholder, setShowPlaceholder] = useState(true);
-  const [start, setStart] = useState(-1);
+
+  useEffect(() => {
+    setShowPlaceholder(startKey < 0)
+  }, [startKey])
 
   const onNextClick = () => {
-    const newValue = start + 1 >= options.length ? 0 : start + 1
+    const newValue = startKey + 1 >= options.length ? 0 : startKey + 1
     onSlide && onSlide(options[newValue])
-    setStart(newValue);
+    setStartKey(newValue);
   };
 
   const onPrevClick = () => {
-    const newValue = start - 1 >= 0 ? start - 1 : options.length - 1
+    const newValue = startKey - 1 >= 0 ? startKey - 1 : options.length - 1
     onSlide && onSlide(options[newValue])
-    setStart(newValue);
+    setStartKey(newValue);
   };
 
   const onClickHandler = (orientation: 'left' | 'right') => () => {
@@ -40,7 +45,7 @@ const TextSlider = ({ placeholder, options, onSlide }: TextSliderProps) => {
     }
   }
 
-  const displayText = showPlaceholder ? placeholder : options[start];
+  const displayText = showPlaceholder ? placeholder : options[startKey];
   return (
     <div className="text-slider">
       <ArrowButton onClick={onClickHandler('left')} orientation="left" />

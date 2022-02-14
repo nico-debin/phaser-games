@@ -1,4 +1,5 @@
 import create from "zustand";
+import { SavedSettings } from "../types";
 import { avatarSlides } from "../avatarSlides";
 import { Slide } from "../components/ui";
 
@@ -14,6 +15,7 @@ interface PlayerState {
   setIsAdmin: (isAdmin: boolean) => void;
   setGameStarted: (gameStarted: boolean) => void;
   isReadyToPlay: () => boolean;
+  setFromSavedSettings: (savedSettings: SavedSettings) => void;
 }
 
 export const useStore = create<PlayerState>((set, get) => ({
@@ -69,4 +71,11 @@ export const useStore = create<PlayerState>((set, get) => ({
   isReadyToPlay: () => {
     return get().username !== "" && get().avatar !== "";
   },
+
+  setFromSavedSettings: (savedSettings: SavedSettings) => {
+    set((state) => ({
+      ...state,
+      ...savedSettings,
+    }))
+  }
 }));
