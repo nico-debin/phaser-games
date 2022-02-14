@@ -1,8 +1,10 @@
 import create from "zustand";
+import { avatarSlides } from "../avatarSlides";
+import { Slide } from "../components/ui";
 
 interface PlayerState {
   username: string;
-  avatar: string
+  avatar: string;
   isVoter: boolean;
   isAdmin: boolean;
   gameStarted: boolean;
@@ -15,46 +17,56 @@ interface PlayerState {
 }
 
 export const useStore = create<PlayerState>((set, get) => ({
-  username: '',
-  usernameFromSlider: '',
-  usernameFromInputText: '',
-  avatar: '',
+  username: "",
+  usernameFromSlider: "",
+  usernameFromInputText: "",
+  avatar: "",
   isVoter: true,
   isAdmin: false,
   gameStarted: false,
 
   setUsername: (username: string) => {
-    set((state) => ({
-      username
-    }))
+    set((state) => {
+      const predefinedPlayer = avatarSlides.find(
+        (slide: Slide) => slide.name === username
+      );
+      if (predefinedPlayer && predefinedPlayer.isVoter !== undefined) {
+        return {
+          ...state,
+          username,
+          isVoter: predefinedPlayer.isVoter,
+        };
+      } else {
+        return { ...state, username };
+      }
+    });
   },
 
   setAvatar: (avatar: string) => {
     set((state) => ({
-      avatar
-    }))
+      avatar,
+    }));
   },
-
 
   setIsVoter: (isVoter: boolean) => {
     set((state) => ({
-      isVoter
-    }))
+      isVoter,
+    }));
   },
 
   setIsAdmin: (isAdmin: boolean) => {
     set((state) => ({
-      isAdmin
-    }))
+      isAdmin,
+    }));
   },
 
   setGameStarted: (gameStarted: boolean) => {
     set((state) => ({
-      gameStarted
-    }))
+      gameStarted,
+    }));
   },
 
   isReadyToPlay: () => {
-    return get().username !== '' && get().avatar !== ''
-  }
-}))
+    return get().username !== "" && get().avatar !== "";
+  },
+}));

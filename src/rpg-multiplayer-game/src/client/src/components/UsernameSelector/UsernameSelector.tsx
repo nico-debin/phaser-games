@@ -11,7 +11,7 @@ interface UsernameSelectorProps {
 const UsernameSelector = ({ title, usernames, onUsernameSelected = () => null }: UsernameSelectorProps) => {
   const setUsername = useStore(store => store.setUsername);
   const [sliderKey, setSliderKey] = useState(0);
-  const [textInputValue, setTextInputValue] = useState<string>('')
+  const [textInputValue, setTextInputValue] = useState<string>('');
 
   // Hack to reset TextSlider if the TextInput has been used
   useEffect(() => {

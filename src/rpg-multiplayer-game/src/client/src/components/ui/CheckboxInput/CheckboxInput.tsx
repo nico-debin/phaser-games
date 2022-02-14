@@ -4,21 +4,20 @@ import './CheckboxInput.scss'
 
 interface CheckboxInputProps {
   label: string;
+  className?: string;
   value?: boolean;
   onChange?: (value: boolean) => void;
 }
 
-const CheckboxInput = ({ label, value, onChange }: CheckboxInputProps) => {
-  const [isChecked, setIsChecked] = useState<boolean>(value);
+const CheckboxInput = ({ label, value, className='', onChange = () => null }: CheckboxInputProps) => {
 
   const clickHandler = () => {
-    onChange(!isChecked);
-    setIsChecked(!isChecked);
+    onChange(!value);
   }
 
   return (
-    <div className="checkbox-input" >
-      <div onClick={clickHandler} className={`custom-checkbox ${isChecked === true ? 'checked' : 'unchecked'}`}></div>
+    <div className={`checkbox-input ${className}`} >
+      <div onClick={clickHandler} className={`custom-checkbox ${value === true ? 'checked' : 'unchecked'}`}></div>
       <label onClick={clickHandler}>
         {label}
       </label>
