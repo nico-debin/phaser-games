@@ -9,6 +9,9 @@ interface PlayerGameState extends PlayerSettings {
 class GameState {
   private players: PlayerGameState[] = []
 
+  // Y position threshold dividing main island vs voting islands
+  votingFrontierY?: number
+
   constructor() {
     makeAutoObservable(this)
   }
@@ -78,6 +81,10 @@ class GameState {
 
   get currentPlayerIsVoter(): boolean | undefined {
     return this.currentPlayer?.isVoter
+  }
+
+  get hidePlayersWhileVoting(): boolean {
+    return this.currentPlayer?.hidePlayersWhileVoting ?? false
   }
 
   /**

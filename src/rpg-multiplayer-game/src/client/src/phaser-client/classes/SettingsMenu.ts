@@ -13,6 +13,7 @@ export default class SettingsMenu {
   baseBackgroundColor: Phaser.Display.Color;
   settingsTitle: Phaser.GameObjects.BitmapText;
   voterCheckbox: CheckboxInput;
+  hidePlayersWhileVotingCheckbox: CheckboxInput;
 
   constructor(scene: Phaser.Scene) {
     const { width, height } = scene.scale;
@@ -86,11 +87,41 @@ export default class SettingsMenu {
         })
       });
 
+    this.hidePlayersWhileVotingCheckbox = new CheckboxInput(
+      scene,
+      this.settingsBoard.x -
+        this.settingsBoard.displayWidth * this.settingsBoard.originX +
+        60,
+      this.settingsBoard.y -
+        this.settingsBoard.displayHeight * this.settingsBoard.originY +
+        150,
+      'Hide players while voting',
+      gameState.hidePlayersWhileVoting,
+    )
+    .setOrigin(0.5, 0.5)
+    .setScale(0.2)
+    .setVisible(false)
+    .onCheck(() => {
+      const currentPlayer = gameState.currentPlayer
+      currentPlayer && gameState.updatePlayerSettings(currentPlayer.id, {
+        ...currentPlayer,
+        hidePlayersWhileVoting: true
+      })
+    })
+    .onUncheck(() => {
+      const currentPlayer = gameState.currentPlayer
+      currentPlayer && gameState.updatePlayerSettings(currentPlayer.id, {
+        ...currentPlayer,
+        hidePlayersWhileVoting: false
+      })
+    });
+
     // wait until the current player state is built to set the according settings
     autorun((reaction) => {
-      const currentPlayer = gameState.currentPlayer
+      const { currentPlayer, hidePlayersWhileVoting } = gameState
       if (currentPlayer) {
         this.voterCheckbox.setInitialValue(currentPlayer.isVoter)
+        this.hidePlayersWhileVotingCheckbox.setInitialValue(currentPlayer.hidePlayersWhileVoting)
         reaction.dispose(); // Run only once
       }
     })
@@ -106,6 +137,7 @@ export default class SettingsMenu {
     this.closeButton.setVisible(true);
     this.settingsTitle.setVisible(true);
     this.voterCheckbox.setVisible(true);
+    this.hidePlayersWhileVotingCheckbox.setVisible(true);
     this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
   }
 
@@ -115,6 +147,7 @@ export default class SettingsMenu {
     this.closeButton.setVisible(false);
     this.settingsTitle.setVisible(false);
     this.voterCheckbox.setVisible(false);
+    this.hidePlayersWhileVotingCheckbox.setVisible(false);
     this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
   }
 }

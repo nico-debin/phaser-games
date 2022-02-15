@@ -70,6 +70,7 @@ export default class Game extends Phaser.Scene {
       username,
       avatarName: avatarName as AvatarKeys,
       isVoter,
+      hidePlayersWhileVoting: true,
     }
   }
 
@@ -132,6 +133,13 @@ export default class Game extends Phaser.Scene {
 
         this.votingZones.push({ value: votingValue, zone: rectangle});
     })
+
+    // Voting Frontier: border that tells if a player is in voting islands or not
+    const thresholdsLayer = mapIsland.getObjectLayer('Thresholds')
+    const votingFrontier = thresholdsLayer.objects.find((tiledObject) => tiledObject.name === 'Voting Frontier')!
+    if (votingFrontier) {
+      gameState.votingFrontierY = votingFrontier.y;
+    }
 
     // Cobra NPC
     const playersLayer = mapIsland.getObjectLayer('Players')
@@ -199,6 +207,7 @@ export default class Game extends Phaser.Scene {
             // rendering needs to be moved by 16 pixels in X and Y. 
             // Remove this when the bug is fixed
             const errorOffset = 16;
+            const isCurrentPlayer = players[id].playerId === this.currentPlayerId
 
             player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
             player.update(players[id].movementInput)
@@ -206,9 +215,15 @@ export default class Game extends Phaser.Scene {
             if (gameState.getPlayer(player.id)?.isVoter) {
               gameVotingManager.setVote(player.id, players[id].votingZone)
   
-              if (players[id].playerId === this.currentPlayerId) {
+              if (isCurrentPlayer) {
                 this.updateVotingZoneRender(players[id].votingZone)
               }
+            }
+
+            if (!isCurrentPlayer && gameState.votingFrontierY) {
+              const playerIsVoting = player.y < gameState.votingFrontierY
+              const isHidden = gameState.hidePlayersWhileVoting && playerIsVoting
+              player.setVisible(!isHidden)
             }
           }
         })
@@ -235,7 +250,7 @@ export default class Game extends Phaser.Scene {
       this.players.setTint(0xff0000)
     })
 
-    // Send an event when the current player changes it's voting setting
+    // Send an event when the current player changes it's voting setting (or any other setting)
     // Update voting manager accordingly
     autorun(() => {
       if (gameState.currentPlayer !== undefined) {
@@ -248,6 +263,7 @@ export default class Game extends Phaser.Scene {
             username: gameState.currentPlayer.username,
             avatarName: gameState.currentPlayer.avatarName,
             isVoter: gameState.currentPlayer.isVoter,
+            hidePlayersWhileVoting: gameState.currentPlayer.hidePlayersWhileVoting,
           }
           this.socket.emit(NetworkEventKeys.PlayerSettingsUpdate, currentPlayerSettings)
 
@@ -260,6 +276,17 @@ export default class Game extends Phaser.Scene {
         }
       }
     })
+
+    // // Hide players if they are voting
+    // autorun(() => {
+    //   if (gameState.currentPlayer?.viewPlayersWhileVoting === undefined) return
+    //   this.players.getChildren().forEach((gameObject) => {
+    //     const player = gameObject as Player
+    //     if (gameState.currentPlayer?.id !== player.id) {
+    //       player.setVisible()
+    //     }
+    //   })
+    // })
 
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {

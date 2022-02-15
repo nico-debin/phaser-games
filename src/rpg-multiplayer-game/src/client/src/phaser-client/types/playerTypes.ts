@@ -52,4 +52,5 @@ export interface PlayerSettings {
   username: string
   avatarName: AvatarKeys
   isVoter: boolean
+  hidePlayersWhileVoting: boolean
 }

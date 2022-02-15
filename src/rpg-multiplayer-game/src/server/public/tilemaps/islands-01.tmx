@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="100" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="30" nextobjectid="134">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="100" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="31" nextobjectid="135">
  <editorsettings>
   <export target="islands-01.json" format="json"/>
  </editorsettings>
@@ -1131,7 +1131,7 @@
   </data>
   </layer>
  </group>
- <objectgroup id="12" name="Players" visible="0" locked="1" offsetx="0" offsety="-2.27374e-13">
+ <objectgroup id="12" name="Players" locked="1" offsetx="0" offsety="-2.27374e-13">
   <object id="97" name="Player" x="304" y="1368">
    <point/>
   </object>
@@ -1268,6 +1268,11 @@
    <properties>
     <property name="value" value="?"/>
    </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="30" name="Thresholds">
+  <object id="134" name="Voting Frontier" x="512" y="960">
+   <point/>
   </object>
  </objectgroup>
 </map>
