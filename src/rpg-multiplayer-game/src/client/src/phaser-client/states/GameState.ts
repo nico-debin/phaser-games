@@ -12,6 +12,8 @@ class GameState {
   // Y position threshold dividing main island vs voting islands
   votingFrontierY?: number
 
+  playerCanMove = true
+
   constructor() {
     makeAutoObservable(this)
   }
@@ -96,7 +98,7 @@ class GameState {
   }
 
   /**
-   * Get the amount of players in the game
+   * Get the amount of VOTING players in the game
    * @returns number amount of players in game
    */
   get votingPlayersCount(): number {

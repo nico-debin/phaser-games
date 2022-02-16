@@ -6,11 +6,13 @@ import { gameState } from "../states/GameState";
 import TextureKeys from '../consts/TextureKeys';
 import SettingsMenu from '../classes/SettingsMenu';
 import FontKeys from '../consts/FontKeys';
+import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 
 export default class Hud extends Phaser.Scene {
   private votingLabel!: Phaser.GameObjects.Text
   private votingStatsLabel!: Phaser.GameObjects.BitmapText
   private settingsMenu!: SettingsMenu;
+  private endOfVotingMenu!: EndOfVotingMenu;
 
   constructor() {
     super('hud')
@@ -28,11 +30,9 @@ export default class Hud extends Phaser.Scene {
     })
 
     const { width } = this.scale
-    
-    this.settingsMenu = new SettingsMenu(this);
 
     const settingsButton = this.add.image(width - 10, 10, TextureKeys.UIMenu1, 'yellow-button').setScale(0.20).setOrigin(1, 0);
-    this.add.image(width - 17, 17, TextureKeys.UIMenu1, 'wheel-icon').setScale(0.20).setOrigin(1, 0);
+    const settingsWheelIcon = this.add.image(width - 17, 17, TextureKeys.UIMenu1, 'wheel-icon').setScale(0.20).setOrigin(1, 0);
 
     settingsButton.setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
@@ -48,11 +48,28 @@ export default class Hud extends Phaser.Scene {
         settingsButton.setTint(0xffffff)
         this.settingsMenu.toggleMenu()
       })
+    
+    this.settingsMenu = new SettingsMenu(this);
+    this.endOfVotingMenu = new EndOfVotingMenu(this);
+    this.endOfVotingMenu.onOpen(() => {
+      settingsButton.setVisible(false)
+      settingsWheelIcon.setVisible(false)
+      gameState.playerCanMove = false
+    }).onClose(() => {
+      settingsButton.setVisible(true)
+      settingsWheelIcon.setVisible(true)
+      gameState.playerCanMove = true
+    })
 
     // Update labels
     autorun(() => {
       this.setVotingLabel()
       this.setVotingStatsLabel()
+    })
+
+    // Show/hide voting results menu
+    autorun(() => {
+      gameVotingManager.votingIsClosed ? this.endOfVotingMenu.openMenu() : this.endOfVotingMenu.closeMenu()
     })
   }
 

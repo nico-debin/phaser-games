@@ -34,7 +34,6 @@ import PlayerFactory from '../characters/PlayerFactory'
 
 // NPC Characters
 import Cobra from '../characters/npc/Cobra'
-import { XOR } from '~/types'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -256,6 +255,13 @@ export default class Game extends Phaser.Scene {
       }
     })
 
+    // Prevent player to keep moving by inertia on hard stop
+    autorun(() => {
+      if (!gameState.playerCanMove) {
+        this.hardStopCurrentPlayerMovement()
+      }
+    })
+
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
@@ -314,37 +320,58 @@ export default class Game extends Phaser.Scene {
   }
 
   update(t: number, dt: number) {
-    // Capture last movement to compare what changed
-    const { left, right, up, down } = this.lastMovementInput
+    this.handleMovementInput()
+  }
+
+  private handleMovementInput() {
+    if (!gameState.playerCanMove) return
+
+    const newMovementInput: MovementInput = { ...this.lastMovementInput }
 
     if (this.cursors.left.isDown) {
-      this.lastMovementInput.left = true
+      newMovementInput.left = true
     } else if (this.cursors.right.isDown) {
-      this.lastMovementInput.right = true
+      newMovementInput.right = true
     } else {
-      this.lastMovementInput.left = false
-      this.lastMovementInput.right = false
+      newMovementInput.left = false
+      newMovementInput.right = false
     }
 
     if (this.cursors.up.isDown) {
-      this.lastMovementInput.up = true
+      newMovementInput.up = true
     } else if (this.cursors.down.isDown) {
-      this.lastMovementInput.down = true
+      newMovementInput.down = true
     } else {
-      this.lastMovementInput.up = false
-      this.lastMovementInput.down = false
+      newMovementInput.up = false
+      newMovementInput.down = false
     }
 
+    this.updateLastMovementInput(newMovementInput)
+  }
+
+  private updateLastMovementInput(movementInput: MovementInput) {
+    // Capture last movement to compare what changed
+    const { left, right, up, down } = this.lastMovementInput
     if (
-      left !== this.lastMovementInput.left ||
-      right !== this.lastMovementInput.right ||
-      up !== this.lastMovementInput.up ||
-      down !== this.lastMovementInput.down
+      left !== movementInput.left ||
+      right !== movementInput.right ||
+      up !== movementInput.up ||
+      down !== movementInput.down
     ) {
+      this.lastMovementInput = movementInput
       this.socket.emit(NetworkEventKeys.PlayersInput, this.lastMovementInput)
 
       this.currentPlayer.update(this.lastMovementInput)
     }
+  }
+
+  hardStopCurrentPlayerMovement() {
+    this.updateLastMovementInput({
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+    })
   }
 
   updateVotingZoneRender(newVotingZoneValue: VotingZoneValue) {

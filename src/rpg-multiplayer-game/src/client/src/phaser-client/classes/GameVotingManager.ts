@@ -62,6 +62,10 @@ export class GameVotingManager {
   get pendingVotes(): number {
     return gameState.votingPlayersCount - this.totalVotes
   }
+
+  get votingIsClosed(): boolean {
+    return this.totalVotes >= 1 && this.pendingVotes === 0
+  }
 }
 
 export const gameVotingManager = new GameVotingManager()
