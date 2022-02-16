@@ -20,7 +20,7 @@ export default class CheckboxInput {
     label: string = "",
     initialValue: boolean = false
   ) {
-    this.setInitialValue(initialValue)
+    this.setInitialValue(initialValue);
 
     // Fonts renders blury if x and y aren't integers
     const sanitizedX = Math.round(x);
@@ -37,7 +37,11 @@ export default class CheckboxInput {
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
 
-    this.checkboxLabel = scene.add.bitmapText(sanitizedX, sanitizedY, FontKeys.GEM, label, 16).setTint(0x000000);
+    this.checkboxLabel = scene.add
+      .bitmapText(sanitizedX, sanitizedY, FontKeys.GEM, label, 16)
+      .setTint(0x000000)
+      .setInteractive({ useHandCursor: true })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
 
     this.isChecked ? this.check() : this.uncheck();
   }
@@ -50,9 +54,9 @@ export default class CheckboxInput {
     this.checkboxOnImage.setOrigin(x, y || x);
     this.checkboxOffImage.setOrigin(x, y || x);
     this.checkboxLabel
-      .setOrigin(x, y || x)
+      .setOrigin(0, y || x)
       .setPosition(
-        this.checkboxOnImage.x + this.checkboxOnImage.displayWidth * x + 10,
+        this.checkboxOnImage.x + this.checkboxOnImage.displayWidth * x + 7,
         this.checkboxOnImage.y
       );
     return this;
@@ -69,10 +73,10 @@ export default class CheckboxInput {
 
     if (visible) {
       if (this.isChecked) {
-        this.checkboxOnImage.setVisible(true)
+        this.checkboxOnImage.setVisible(true);
         this.checkboxOffImage.setVisible(false);
       } else {
-        this.checkboxOnImage.setVisible(false)
+        this.checkboxOnImage.setVisible(false);
         this.checkboxOffImage.setVisible(true);
       }
     } else {

@@ -69,8 +69,8 @@ export default class SettingsMenu {
         110,
       "I'm a voter",
     )
-      .setOrigin(0.5, 0.5)
       .setScale(0.2)
+      .setOrigin(0.5, 0.5)
       .setVisible(false)
       .onCheck(() => {
         const currentPlayer = gameState.currentPlayer
@@ -98,8 +98,8 @@ export default class SettingsMenu {
       'Hide players while voting',
       gameState.hidePlayersWhileVoting,
     )
-    .setOrigin(0.5, 0.5)
     .setScale(0.2)
+    .setOrigin(0.5, 0.5)
     .setVisible(false)
     .onCheck(() => {
       const currentPlayer = gameState.currentPlayer
