@@ -12,6 +12,7 @@ import {
   PlayerSettings,
   PlayersInitialStates,
   PlayersStates,
+  PlayerState,
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
@@ -33,6 +34,7 @@ import PlayerFactory from '../characters/PlayerFactory'
 
 // NPC Characters
 import Cobra from '../characters/npc/Cobra'
+import { XOR } from '~/types'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -197,36 +199,10 @@ export default class Game extends Phaser.Scene {
 
     // Update players positions
     this.socket.on(NetworkEventKeys.PlayersStatusUpdate, (
-      players: PlayersStates,
+      newPlayerStates: PlayersStates,
     ) => {
-      Object.keys(players).forEach((id) => {
-        this.players.getChildren().forEach((gameObject) => {
-          const player = gameObject as Player
-          if (players[id].playerId === player.id) {
-            // UNCAUGHT BUG: For some reason I couldn't find yet, the player
-            // rendering needs to be moved by 16 pixels in X and Y. 
-            // Remove this when the bug is fixed
-            const errorOffset = 16;
-            const isCurrentPlayer = players[id].playerId === this.currentPlayerId
-
-            player.setPosition(players[id].x + errorOffset, players[id].y + errorOffset)
-            player.update(players[id].movementInput)
-
-            if (gameState.getPlayer(player.id)?.isVoter) {
-              gameVotingManager.setVote(player.id, players[id].votingZone)
-  
-              if (isCurrentPlayer) {
-                this.updateVotingZoneRender(players[id].votingZone)
-              }
-            }
-
-            if (!isCurrentPlayer && gameState.votingFrontierY) {
-              const playerIsVoting = player.y < gameState.votingFrontierY
-              const isHidden = gameState.hidePlayersWhileVoting && playerIsVoting
-              player.setVisible(!isHidden)
-            }
-          }
-        })
+      Object.keys(newPlayerStates).forEach((id) => {
+        this.updatePlayerState(newPlayerStates[id]);
       })
     })
 
@@ -273,25 +249,18 @@ export default class Game extends Phaser.Scene {
             gameVotingManager.removePlayer(gameState.currentPlayer.id)
             this.updateVotingZoneRender(undefined) // disable voting zone highlight if the player is standing on it
           }
+  
+          // Trigger a player update to reflect any rendering update
+          this.players.getChildren().map((gameObject) => this.handlePlayerVisibilityWhileVoting(gameObject as Player))
         }
       }
     })
-
-    // // Hide players if they are voting
-    // autorun(() => {
-    //   if (gameState.currentPlayer?.viewPlayersWhileVoting === undefined) return
-    //   this.players.getChildren().forEach((gameObject) => {
-    //     const player = gameObject as Player
-    //     if (gameState.currentPlayer?.id !== player.id) {
-    //       player.setVisible()
-    //     }
-    //   })
-    // })
 
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
         const playerId: PlayerId = playerSettings.id;
+        console.log(`Event 'PlayerSettingsUpdate': playerId ${playerId}`)
         gameState.updatePlayerSettings(playerId, playerSettings)
         playerSettings.isVoter ? gameVotingManager.addPlayer(playerId) : gameVotingManager.removePlayer(playerId)
       } else {
@@ -305,6 +274,42 @@ export default class Game extends Phaser.Scene {
       right: false,
       up: false,
       down: false,
+    }
+  }
+
+  updatePlayerState(newPlayerState: PlayerState): void {
+    const { playerId } = newPlayerState;
+    const gameObject = this.players.getChildren().find((gameObject) => (gameObject as Player).id === playerId);
+    if (!gameObject) return;
+
+    const player = gameObject as Player;
+
+    // UNCAUGHT BUG: For some reason I couldn't find yet, the player
+    // rendering needs to be moved by 16 pixels in X and Y. 
+    // Remove this when the bug is fixed
+    const errorOffset = 16;
+    const isCurrentPlayer = newPlayerState.playerId === this.currentPlayerId
+
+    player.setPosition(newPlayerState.x + errorOffset, newPlayerState.y + errorOffset)
+    player.update(newPlayerState.movementInput)
+
+    if (gameState.getPlayer(player.id)?.isVoter) {
+      gameVotingManager.setVote(player.id, newPlayerState.votingZone)
+
+      if (isCurrentPlayer) {
+        this.updateVotingZoneRender(newPlayerState.votingZone)
+      }
+    }
+
+    this.handlePlayerVisibilityWhileVoting(player)
+  }
+
+  handlePlayerVisibilityWhileVoting(player: Player): void {
+    const isCurrentPlayer = player.id === this.currentPlayerId
+    if (!isCurrentPlayer && gameState.votingFrontierY) {
+      const playerIsVoting = player.y < gameState.votingFrontierY
+      const isHidden = gameState.hidePlayersWhileVoting && playerIsVoting
+      player.setVisible(!isHidden)
     }
   }
 
