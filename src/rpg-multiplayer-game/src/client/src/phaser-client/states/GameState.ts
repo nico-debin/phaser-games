@@ -86,7 +86,10 @@ class GameState {
   }
 
   get hidePlayersWhileVoting(): boolean {
-    return this.currentPlayer?.hidePlayersWhileVoting ?? false
+    if (this.currentPlayer) {
+      return this.currentPlayer.hidePlayersWhileVoting
+    }
+    return true
   }
 
   /**

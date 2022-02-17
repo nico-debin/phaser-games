@@ -178,7 +178,6 @@ export default class Game extends Phaser.Scene {
       Object.keys(playersInitialStates).forEach((id) => {
         const isMainPlayer = playersInitialStates[id].playerId === this.currentPlayerId;
         this.addPlayer(playersInitialStates[id], isMainPlayer)
-        // displayPlayers(this, playersStates[id], isMainPlayer)
       })
 
       this.cameras.main.startFollow(this.currentPlayer, true)
@@ -416,6 +415,9 @@ export default class Game extends Phaser.Scene {
       gameVotingManager.addPlayer(player.id, playerInitialState.votingZone)
     }
     gameState.addPlayer(player.id, playerInitialState.playerSettings, isMainPlayer)
+
+    // Hide the player if it's on voting islands
+    this.handlePlayerVisibilityWhileVoting(player)
   }
 
   removePlayer(playerId: PlayerId) {
