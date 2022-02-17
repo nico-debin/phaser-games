@@ -72,7 +72,7 @@ export default class Game extends Phaser.Scene {
     this.players = this.physics.add.group({
       classType: Player,
     })
-    this.physics.add.collider(this.players, this.players)
+    // this.physics.add.collider(this.players, this.players)
   }
 
   private createTilesets() {
