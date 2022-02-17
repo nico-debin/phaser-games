@@ -100,6 +100,10 @@ export default class Game extends Phaser.Scene {
       classType: Player,
     })
 
+
+    // Round pixels to prevent sub-pixel aliasing
+    this.cameras.main.setRoundPixels(true)
+
     // Create animations
     createCharacterAnims(this.anims)
     createLizardAnims(this.anims)

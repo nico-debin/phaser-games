@@ -19,6 +19,8 @@ export default class Hud extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.setRoundPixels(true)
+
     this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
 
     this.votingStatsLabel = this.add.bitmapText(25, 30, FontKeys.GEM, '', 16).setTint(0x000000);

@@ -19,11 +19,12 @@ export default class GenericLpc extends Player {
     x: number,
     y: number,
     playerData: PlayerData,
+    errorOffset = 16,
   ) {
     // UNCAUGHT BUG: For some reason I couldn't find yet, the player
     // rendering needs to be moved by 16 pixels in X and Y. 
     // Remove this when the bug is fixed
-    const errorOffset = 16;
+    // const errorOffset = 16;
 
     super(scene, x + errorOffset, y + errorOffset, playerData.avatar, playerData.playerId)
     this.playerData = playerData;

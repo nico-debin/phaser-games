@@ -22,23 +22,19 @@ export default class CheckboxInput {
   ) {
     this.setInitialValue(initialValue);
 
-    // Fonts renders blury if x and y aren't integers
-    const sanitizedX = Math.round(x);
-    const sanitizedY = Math.round(y);
-
     const doToggle = () => this.toggle();
 
     this.checkboxOnImage = scene.add
-      .image(sanitizedX, sanitizedY, TextureKeys.UIMenu1, "checkbox-on")
+      .image(x, y, TextureKeys.UIMenu1, "checkbox-on")
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
     this.checkboxOffImage = scene.add
-      .image(sanitizedX, sanitizedY, TextureKeys.UIMenu1, "checkbox-off")
+      .image(x, y, TextureKeys.UIMenu1, "checkbox-off")
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
 
     this.checkboxLabel = scene.add
-      .bitmapText(sanitizedX, sanitizedY, FontKeys.GEM, label, 16)
+      .bitmapText(x, y, FontKeys.GEM, label, 16)
       .setTint(0x000000)
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);

@@ -54,12 +54,11 @@ export default abstract class AbstractMenu {
 
     this.menuTitle = scene.add
       .bitmapText(
-        Math.round(this.menuBoard.x),
-        Math.round(
-          this.menuBoard.y -
-            this.menuBoard.displayHeight * this.menuBoard.originY +
-            30
-        ),
+        this.menuBoard.x,
+        this.menuBoard.y -
+          this.menuBoard.displayHeight * this.menuBoard.originY +
+          30
+        ,
         FontKeys.GOTHIC,
         "ABSTRACT MENU",
         28
