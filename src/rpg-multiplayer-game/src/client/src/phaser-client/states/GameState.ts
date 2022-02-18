@@ -12,7 +12,8 @@ class GameState {
   // Y position threshold dividing main island vs voting islands
   votingFrontierY?: number
 
-  playerCanMove = true
+  // Flag to enable/disable current player movment
+  private _playerCanMove = true
 
   constructor() {
     makeAutoObservable(this)
@@ -106,6 +107,14 @@ class GameState {
    */
   get votingPlayersCount(): number {
     return this.players.filter((player: PlayerGameState) => player.isVoter).length
+  }
+
+  set playerCanMove(newValue: boolean) {
+    this._playerCanMove = newValue;
+  }
+
+  get playerCanMove(): boolean {
+    return this._playerCanMove;
   }
 
   /**

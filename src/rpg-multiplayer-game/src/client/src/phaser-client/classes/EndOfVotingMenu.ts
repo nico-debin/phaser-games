@@ -167,7 +167,6 @@ export default class EndOfVotingMenu extends AbstractMenu {
         })
       )
     );
-    console.log(votingResults);
     return votingResults;
   }
 
