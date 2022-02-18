@@ -9,7 +9,7 @@ import FontKeys from '../consts/FontKeys';
 import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 
 export default class Hud extends Phaser.Scene {
-  private votingLabel!: Phaser.GameObjects.Text
+  // private votingLabel!: Phaser.GameObjects.Text
   private votingStatsLabel!: Phaser.GameObjects.BitmapText
   private settingsMenu!: SettingsMenu;
   private endOfVotingMenu!: EndOfVotingMenu;
@@ -25,11 +25,11 @@ export default class Hud extends Phaser.Scene {
 
     this.votingStatsLabel = this.add.bitmapText(25, 30, FontKeys.GEM, '', 16).setTint(0x000000);
     
-    this.votingLabel = this.add.text(10, 100, '', {
-      fontSize: '16px',
-      color: '#ffffff',
-      backgroundColor: '#333333'
-    })
+    // this.votingLabel = this.add.text(10, 100, '', {
+    //   fontSize: '16px',
+    //   color: '#ffffff',
+    //   backgroundColor: '#333333'
+    // })
 
     const { width } = this.scale
 
@@ -65,7 +65,7 @@ export default class Hud extends Phaser.Scene {
 
     // Update labels
     autorun(() => {
-      this.setVotingLabel()
+      // this.setVotingLabel()
       this.setVotingStatsLabel()
     })
 
@@ -75,24 +75,24 @@ export default class Hud extends Phaser.Scene {
     })
   }
 
-  setVotingLabel() {
-    const labels: string[] = [];
-    for (const playerId in gameVotingManager.votesByPlayer) {
-      const vote = gameVotingManager.votesByPlayer[playerId].vote
-      if (!vote) continue;
+  // setVotingLabel() {
+  //   const labels: string[] = [];
+  //   for (const playerId in gameVotingManager.votesByPlayer) {
+  //     const vote = gameVotingManager.votesByPlayer[playerId].vote
+  //     if (!vote) continue;
       
-      const player = gameState.getPlayer(playerId)
-      if (!player) continue;
+  //     const player = gameState.getPlayer(playerId)
+  //     if (!player) continue;
 
-      if (player.isCurrentPlayer) {
-        labels.unshift(`You estimated ${vote}`)
-      } else {
-        labels.push(`${player.username} estimated: ${vote}`)
-      }
-    }
+  //     if (player.isCurrentPlayer) {
+  //       labels.unshift(`You estimated ${vote}`)
+  //     } else {
+  //       labels.push(`${player.username} estimated: ${vote}`)
+  //     }
+  //   }
 
-    this.votingLabel.setText(labels.join('\n'))
-  }
+  //   this.votingLabel.setText(labels.join('\n'))
+  // }
 
   setVotingStatsLabel() {
     const votingStats = gameVotingManager.getStats()

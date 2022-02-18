@@ -8,6 +8,7 @@ import { VotingZoneValue } from "../types/gameObjectsTypes";
 import { PlayerVotingState } from "../states/PlayerVotingState";
 import { PlayerSettings } from "../types/playerTypes";
 import GenericLpc from "../characters/GenericLpc";
+import TextureKeys from "../consts/TextureKeys";
 
 type VotingResultRow = {
   vote: VotingZoneValue;
@@ -16,6 +17,8 @@ type VotingResultRow = {
 
 export default class EndOfVotingMenu extends AbstractMenu {
   private votingResultsRows: VotingResultRowContainer;
+  private uiButtonsContainer: Phaser.GameObjects.Container;
+  private showFightButton = true;
 
   constructor(scene: Phaser.Scene) {
     super(scene, {
@@ -44,6 +47,113 @@ export default class EndOfVotingMenu extends AbstractMenu {
     );
 
     scene.add.existing(this.votingResultsRows);
+
+    this.uiButtonsContainer = this.scene.add.container();
+    this.createButtons();
+  }
+
+  private createButtons() {
+    this.uiButtonsContainer.setVisible(false);
+
+    const fightButtonOffset = this.showFightButton ? 55 : 0;
+
+    // CHANGE MY VOTE BUTTON
+    const changeMyVoteButton = this.scene.add
+      .image(
+        this.menuBoard.x - this.menuBoard.displayWidth / 5 - fightButtonOffset,
+        this.menuBoard.y + this.menuBoard.displayHeight / 2 - 50,
+        TextureKeys.UIMenu1,
+        "red-wood-button"
+      )
+      .setOrigin(0.5)
+      .setScale(0.3)
+      .setInteractive({ useHandCursor: true })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
+        changeMyVoteButton.setTint(0xdedede);
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => {
+        changeMyVoteButton.setTint(0xffffff);
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
+        // TODO: ADD ACTION HERE
+      });
+
+    const changeMyVoteLabel = this.scene.add
+      .bitmapText(
+        changeMyVoteButton.x,
+        changeMyVoteButton.y,
+        FontKeys.GEM,
+        "CHANGE MY\nVOTE",
+        16,
+        Phaser.GameObjects.BitmapText.ALIGN_CENTER
+      )
+      .setOrigin(0.5);
+
+    // RESTART BUTTON
+    const restartButton = this.scene.add
+      .image(
+        this.menuBoard.x + this.menuBoard.displayWidth / 5 + fightButtonOffset,
+        changeMyVoteButton.y,
+        TextureKeys.UIMenu1,
+        "green-wood-button"
+      )
+      .setOrigin(0.5)
+      .setScale(0.3)
+      .setInteractive({ useHandCursor: true })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
+        restartButton.setTint(0xdedede);
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => {
+        restartButton.setTint(0xffffff);
+      })
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
+        // TODO: ADD ACTION HERE
+      });
+
+    const restartButtonLabel = this.scene.add
+      .bitmapText(restartButton.x, restartButton.y, FontKeys.GEM, "RESTART", 16)
+      .setOrigin(0.5);
+
+    this.uiButtonsContainer.add([
+      changeMyVoteButton,
+      changeMyVoteLabel,
+      restartButton,
+      restartButtonLabel,
+    ]);
+
+    // FIGHT FOR YOUR VOTE BUTTON
+    if (this.showFightButton) {
+      const fightButton = this.scene.add
+        .image(
+          this.menuBoard.x,
+          changeMyVoteButton.y + changeMyVoteButton.displayHeight * 0.5 + 5,
+          TextureKeys.UIMenu1,
+          "yellow-wood-button"
+        )
+        .setOrigin(0.5)
+        .setScale(0.6, 0.4)
+        .setInteractive({ useHandCursor: true })
+        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
+          fightButton.setTint(0xdedede);
+        })
+        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => {
+          fightButton.setTint(0xffffff);
+        })
+        .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
+          // TODO: ADD ACTION HERE
+        });
+      const fightButtonLabel = this.scene.add
+        .bitmapText(
+          fightButton.x,
+          fightButton.y,
+          FontKeys.GEM,
+          "FIGHT FOR YOUR VOTE",
+          16
+        )
+        .setOrigin(0.5);
+
+      this.uiButtonsContainer.add([fightButton, fightButtonLabel]);
+    }
   }
 
   private generateVotingResultsRows(): VotingResultRow[] {
@@ -68,11 +178,13 @@ export default class EndOfVotingMenu extends AbstractMenu {
   openMenu() {
     super.openMenu();
     this.showVotingResults();
+    this.uiButtonsContainer.setVisible(true);
   }
 
   closeMenu() {
     super.closeMenu();
     this.votingResultsRows.clearRows();
+    this.uiButtonsContainer.setVisible(false);
   }
 }
 
@@ -146,7 +258,9 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
   }
 
   addRows(votingResults: VotingResultRow[]): void {
-    votingResults.forEach((votingResult: VotingResultRow) => this.addRow(votingResult));
+    votingResults.forEach((votingResult: VotingResultRow) =>
+      this.addRow(votingResult)
+    );
   }
 
   clearRows(): void {
