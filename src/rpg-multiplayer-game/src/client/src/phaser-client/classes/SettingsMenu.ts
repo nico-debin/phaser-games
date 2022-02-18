@@ -74,7 +74,7 @@ export default class SettingsMenu extends AbstractMenu {
 
     // wait until the current player state is built to set the according settings
     autorun((reaction) => {
-      const { currentPlayer, hidePlayersWhileVoting } = gameState;
+      const { currentPlayer } = gameState;
       if (currentPlayer) {
         this.voterCheckbox.setInitialValue(currentPlayer.isVoter);
         this.hidePlayersWhileVotingCheckbox.setInitialValue(

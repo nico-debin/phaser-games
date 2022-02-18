@@ -22,6 +22,7 @@ import {
   PlayersInputQueue,
   PlayersStates,
   PlayerState,
+  Position,
 } from '../types/playerTypes'
 
 declare global {
@@ -201,7 +202,7 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  private getPlayerById(playerId: PlayerId): Player | undefined {
+  getPlayerById(playerId: PlayerId): Player | undefined {
     return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
   }
 
@@ -247,6 +248,20 @@ export default class Game extends Phaser.Scene {
     this.handlePlayerMovementInputUpdate()
     this.handlePlayerUpdate()
   }
+
+  getPlayerRandomInitialPosition(): Position {
+    const playersLayer = this.mapIsland.getObjectLayer('Players')
+    const randomPlayerIndex = Phaser.Math.Between(
+      0,
+      playersLayer.objects.length - 1,
+    )
+    const playerObj = playersLayer.objects[randomPlayerIndex]
+    
+    return {
+      x: playerObj?.x!,
+      y: playerObj?.y!,
+    }
+  }
 }
 
 const sendErrorMesage = (socket: Socket, msg: string, broadcast = false) => {
@@ -268,18 +283,13 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   const playerSettings = handlePlayerSettings(socket, gameScene, playerId)
   if (!playerSettings) return
 
-  // Get player initial location from object layer
-  const playersLayer = gameScene.mapIsland.getObjectLayer('Players')
-  const randomPlayerIndex = Phaser.Math.Between(
-    0,
-    playersLayer.objects.length - 1,
-  )
-  const playerObj = playersLayer.objects[randomPlayerIndex]
+  // Get random position
+  const randomPosition = gameScene.getPlayerRandomInitialPosition()
 
   const newPlayerInitialState: PlayerInitialState = {
     playerId,
-    x: playerObj?.x!,
-    y: playerObj?.y!,
+    x: randomPosition.x,
+    y: randomPosition.y,
     avatar: noOpAvatar,
     votingZone: undefined,
     playerSettings
@@ -310,6 +320,7 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     gameScene.handlePlayerMovementInput(playerId, inputData),
   )
 
+  // Player has updated his settings
   socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
     // Save new settings in players states object
     gameScene.playersStates[playerId].playerSettings = playerSettings
@@ -319,6 +330,15 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       NetworkEventKeys.PlayerSettingsUpdate,
       playerSettings
     )
+  })
+
+  // Send player to main island
+  socket.on(NetworkEventKeys.PlayerRestartPosition, () => {
+    const randomPosition = gameScene.getPlayerRandomInitialPosition()
+    const player = gameScene.getPlayerById(playerId)
+    if (player) {
+      player.setPosition(randomPosition.x, randomPosition.y)
+    }
   })
 }
 

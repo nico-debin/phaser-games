@@ -12,7 +12,7 @@ import TextureKeys from "../consts/TextureKeys";
 
 type VotingResultRow = {
   vote: VotingZoneValue;
-  player: PlayerSettings;
+  player?: PlayerSettings;
 };
 
 export default class EndOfVotingMenu extends AbstractMenu {
@@ -75,7 +75,8 @@ export default class EndOfVotingMenu extends AbstractMenu {
         changeMyVoteButton.setTint(0xffffff);
       })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
-        // TODO: ADD ACTION HERE
+        gameState.enableRespawnFlag();
+        this.closeMenu()
       });
 
     const changeMyVoteLabel = this.scene.add
@@ -163,7 +164,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
         gameVotingManager.votesByPlayer,
         (voteByPlayer: PlayerVotingState): VotingResultRow => ({
           vote: voteByPlayer.vote,
-          player: gameState.getPlayer(voteByPlayer.playerId)!,
+          player: gameState.getPlayer(voteByPlayer.playerId),
         })
       )
     );
@@ -213,6 +214,8 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
   }
 
   addRow(votingResult: VotingResultRow): void {
+    if (!votingResult.player) return;
+    
     const playerData = {
       avatar: votingResult.player.avatarName,
       playerId: "VOTING-RESULT-SPRITE",

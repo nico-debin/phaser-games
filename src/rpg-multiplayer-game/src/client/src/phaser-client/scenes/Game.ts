@@ -173,6 +173,15 @@ export default class Game extends Phaser.Scene {
     // Camara limited to the map
     this.cameras.main.setBounds(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
 
+    // Create cursor keys and initial movement input
+    this.cursors = this.input.keyboard.createCursorKeys()
+    this.lastMovementInput = {
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+    }
+
     // All players in the game - used when joining a game that already has players (or not)
     this.socket.on(NetworkEventKeys.PlayersInitialStatusInfo, (
       playersInitialStates: PlayersInitialStates,
@@ -265,6 +274,14 @@ export default class Game extends Phaser.Scene {
       }
     })
 
+    // Send respawn event to server
+    autorun(() => {
+      if (gameState.respawnFlagEnabled) {
+        gameState.disableRespawnFlag();
+        this.socket.emit(NetworkEventKeys.PlayerRestartPosition)
+      }
+    })
+
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
@@ -276,14 +293,6 @@ export default class Game extends Phaser.Scene {
         console.error("Can't update remote player settings without player's id: ", playerSettings)
       }
     })
-
-    this.cursors = this.input.keyboard.createCursorKeys()
-    this.lastMovementInput = {
-      left: false,
-      right: false,
-      up: false,
-      down: false,
-    }
   }
 
   updatePlayerState(newPlayerState: PlayerState): void {

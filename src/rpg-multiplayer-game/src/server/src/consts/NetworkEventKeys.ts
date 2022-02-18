@@ -8,6 +8,9 @@ enum NetworkEventKeys {
   // Player settings update
   PlayerSettingsUpdate = 'player-settings-update',
 
+  // Send player back to initial position (main island)
+  PlayerRestartPosition = 'player-restart-position',
+
   // New player joined
   PlayersNew = 'players-new',
 

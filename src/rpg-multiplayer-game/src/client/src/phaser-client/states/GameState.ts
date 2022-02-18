@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { action, computed, makeAutoObservable, makeObservable, observable } from 'mobx'
 import { PlayerId, PlayerSettings } from "../types/playerTypes";
 
 interface PlayerGameState extends PlayerSettings {
@@ -13,10 +13,19 @@ class GameState {
   votingFrontierY?: number
 
   // Flag to enable/disable current player movment
-  private _playerCanMove = true
+  _playerCanMove = true
+
+  // Flag to send back player to main island
+  // _playerWantsToRespawn = false
+  _playerWantsToRespawn = false
 
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this, {
+      _playerWantsToRespawn: observable,
+      enableRespawnFlag: action,
+      disableRespawnFlag: action,
+    })
+
   }
 
   /**
@@ -116,6 +125,26 @@ class GameState {
   get playerCanMove(): boolean {
     return this._playerCanMove;
   }
+
+  enableRespawnFlag() {
+    this._playerWantsToRespawn = true;
+  }
+
+  disableRespawnFlag() {
+    this._playerWantsToRespawn = false;
+  }
+
+  get respawnFlagEnabled() {
+    return this._playerWantsToRespawn
+  }
+
+  // set playerWantsToRespawn(newValue: boolean) {
+  //   this._playerWantsToRespawn = newValue;
+  // }
+
+  // get playerWantsToRespawn() {
+  //   return this._playerWantsToRespawn;
+  // }
 
   /**
    * Clear all state
