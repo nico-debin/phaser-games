@@ -270,5 +270,6 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
       row.votingLabel.destroy();
     });
     this.rows = [];
+    this.currentY = this.initialY;
   }
 }
