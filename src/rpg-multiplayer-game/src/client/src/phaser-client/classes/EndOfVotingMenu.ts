@@ -167,6 +167,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
         })
       )
     );
+    console.log(votingResults);
     return votingResults;
   }
 
@@ -176,12 +177,14 @@ export default class EndOfVotingMenu extends AbstractMenu {
   }
 
   openMenu() {
+    if (this.menuIsOpen) return;
     super.openMenu();
     this.showVotingResults();
     this.uiButtonsContainer.setVisible(true);
   }
 
   closeMenu() {
+    if (!this.menuIsOpen) return;
     super.closeMenu();
     this.votingResultsRows.clearRows();
     this.uiButtonsContainer.setVisible(false);

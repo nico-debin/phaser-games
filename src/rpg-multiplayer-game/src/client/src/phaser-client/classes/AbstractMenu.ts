@@ -76,6 +76,7 @@ export default abstract class AbstractMenu {
   }
 
   openMenu(): void {
+    if (this.menuIsOpen) return;
     this.menuIsOpen = true;
     this.menuBoard.setVisible(true);
     this.closeButton?.setVisible(true);
@@ -85,6 +86,7 @@ export default abstract class AbstractMenu {
   }
 
   closeMenu(): void {
+    if (!this.menuIsOpen) return;
     this.menuIsOpen = false;
     this.menuBoard.setVisible(false);
     this.closeButton?.setVisible(false);
