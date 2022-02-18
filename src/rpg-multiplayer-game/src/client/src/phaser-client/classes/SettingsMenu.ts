@@ -86,12 +86,14 @@ export default class SettingsMenu extends AbstractMenu {
   }
 
   openMenu() {
+    if (this.menuIsOpen) return;
     super.openMenu();
     this.voterCheckbox.setVisible(true);
     this.hidePlayersWhileVotingCheckbox.setVisible(true);
   }
 
   closeMenu() {
+    if (!this.menuIsOpen) return;
     super.closeMenu();
     this.voterCheckbox.setVisible(false);
     this.hidePlayersWhileVotingCheckbox.setVisible(false);

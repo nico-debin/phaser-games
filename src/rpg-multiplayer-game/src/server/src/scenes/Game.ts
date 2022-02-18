@@ -262,6 +262,15 @@ export default class Game extends Phaser.Scene {
       y: playerObj?.y!,
     }
   }
+
+  // Set a new random position to every player
+  resetPlayersPosition(): void {
+    this.players.getChildren().forEach((gameObject) => {
+      const player = gameObject as Player
+      const randomPosition = this.getPlayerRandomInitialPosition()
+      player.setPosition(randomPosition.x, randomPosition.y).setUserLeftVotingZone()
+    })
+  }
 }
 
 const sendErrorMesage = (socket: Socket, msg: string, broadcast = false) => {
@@ -339,6 +348,12 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     if (player) {
       player.setPosition(randomPosition.x, randomPosition.y)
     }
+  })
+
+  // Restart game: send all players to main island
+  socket.on(NetworkEventKeys.RestartGame, () => {
+    gameScene.resetPlayersPosition()
+    socket.broadcast.emit(NetworkEventKeys.RestartGame)
   })
 }
 

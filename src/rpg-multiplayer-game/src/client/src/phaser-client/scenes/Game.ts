@@ -34,6 +34,7 @@ import PlayerFactory from '../characters/PlayerFactory'
 
 // NPC Characters
 import Cobra from '../characters/npc/Cobra'
+import Hud from './Hud'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -84,7 +85,7 @@ export default class Game extends Phaser.Scene {
   }
 
   init() {
-    this.scene.launch('hud')
+    this.scene.launch(SceneKeys.Hud)
   }
 
   create() {
@@ -212,9 +213,7 @@ export default class Game extends Phaser.Scene {
     this.socket.on(NetworkEventKeys.PlayersStatusUpdate, (
       newPlayerStates: PlayersStates,
     ) => {
-      Object.keys(newPlayerStates).forEach((id) => {
-        this.updatePlayerState(newPlayerStates[id]);
-      })
+      Object.keys(newPlayerStates).forEach((id) => this.updatePlayerState(newPlayerStates[id]))
     })
 
     // An error happened in the server
@@ -276,9 +275,16 @@ export default class Game extends Phaser.Scene {
 
     // Send respawn event to server
     autorun(() => {
+      // Respawn player to main island
       if (gameState.respawnFlagEnabled) {
         gameState.disableRespawnFlag();
         this.socket.emit(NetworkEventKeys.PlayerRestartPosition)
+      }
+
+      // RESET GAME
+      if (gameState.restartGame) {
+        gameState.disableRestartGameFlag();
+        this.socket.emit(NetworkEventKeys.RestartGame);
       }
     })
 
@@ -286,12 +292,17 @@ export default class Game extends Phaser.Scene {
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
         const playerId: PlayerId = playerSettings.id;
-        console.log(`Event 'PlayerSettingsUpdate': playerId ${playerId}`)
         gameState.updatePlayerSettings(playerId, playerSettings)
         playerSettings.isVoter ? gameVotingManager.addPlayer(playerId) : gameVotingManager.removePlayer(playerId)
       } else {
         console.error("Can't update remote player settings without player's id: ", playerSettings)
       }
+    })
+
+    this.socket.on(NetworkEventKeys.RestartGame, () => {
+      // Close open menus
+      const hudScene = this.scene.get(SceneKeys.Hud) as Hud
+      hudScene.closeMenus()
     })
   }
 

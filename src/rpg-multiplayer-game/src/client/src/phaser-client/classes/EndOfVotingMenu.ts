@@ -108,7 +108,8 @@ export default class EndOfVotingMenu extends AbstractMenu {
         restartButton.setTint(0xffffff);
       })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
-        // TODO: ADD ACTION HERE
+        gameState.enableRestartGameFlag();
+        this.closeMenu()
       });
 
     const restartButtonLabel = this.scene.add
@@ -215,7 +216,7 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
 
   addRow(votingResult: VotingResultRow): void {
     if (!votingResult.player) return;
-    
+
     const playerData = {
       avatar: votingResult.player.avatarName,
       playerId: "VOTING-RESULT-SPRITE",

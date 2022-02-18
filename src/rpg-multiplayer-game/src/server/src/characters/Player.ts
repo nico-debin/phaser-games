@@ -68,15 +68,17 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   }
 
   // Method to call by Phaser's Physics when player is overlapping with a zone
-  setVotingZone(zone: Phaser.GameObjects.Zone, onPlayerLeftVotingZone: () => void): void {
+  setVotingZone(zone: Phaser.GameObjects.Zone, onPlayerLeftVotingZone: () => void): Player {
     this.currentVotingZone = zone
     this.onPlayerLeftVotingZone = onPlayerLeftVotingZone
+    return this
   }
 
   // Method to call when the user leaves the voting zone
-  setUserLeftVotingZone (): void {
+  setUserLeftVotingZone(): Player {
     this.onPlayerLeftVotingZone()
     this.currentVotingZone = undefined
+    return this
   }
 }
 

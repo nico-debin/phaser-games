@@ -7,6 +7,7 @@ import TextureKeys from '../consts/TextureKeys';
 import SettingsMenu from '../classes/SettingsMenu';
 import FontKeys from '../consts/FontKeys';
 import EndOfVotingMenu from '../classes/EndOfVotingMenu';
+import SceneKeys from '../consts/SceneKeys';
 
 export default class Hud extends Phaser.Scene {
   // private votingLabel!: Phaser.GameObjects.Text
@@ -15,7 +16,7 @@ export default class Hud extends Phaser.Scene {
   private endOfVotingMenu!: EndOfVotingMenu;
 
   constructor() {
-    super('hud')
+    super(SceneKeys.Hud)
   }
 
   create() {
@@ -101,5 +102,10 @@ export default class Hud extends Phaser.Scene {
       `Pending votes: ${votingStats.pendingVotes}`,
     ]
     this.votingStatsLabel.setText(votingStatsTextArray.join('\n'))
+  }
+
+  closeMenus() {
+    this.settingsMenu.closeMenu()
+    this.endOfVotingMenu.closeMenu()
   }
 }

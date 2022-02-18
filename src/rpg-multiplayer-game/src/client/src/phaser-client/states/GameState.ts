@@ -19,11 +19,18 @@ class GameState {
   // _playerWantsToRespawn = false
   _playerWantsToRespawn = false
 
+  // Flag to restart game
+  _restartGame = false
+
   constructor() {
     makeAutoObservable(this, {
       _playerWantsToRespawn: observable,
       enableRespawnFlag: action,
       disableRespawnFlag: action,
+
+      _restartGame: observable,
+      enableRestartGameFlag: action,
+      disableRestartGameFlag: action,
     })
 
   }
@@ -145,6 +152,18 @@ class GameState {
   // get playerWantsToRespawn() {
   //   return this._playerWantsToRespawn;
   // }
+
+  enableRestartGameFlag() {
+    this._restartGame = true;
+  }
+
+  disableRestartGameFlag() {
+    this._restartGame = false;
+  }
+
+  get restartGame(): boolean {
+    return this._restartGame;
+  }
 
   /**
    * Clear all state

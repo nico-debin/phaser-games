@@ -20,6 +20,9 @@ enum NetworkEventKeys {
   // A player has pressed a key
   PlayersInput = 'players-input',
 
+  // Restart game
+  RestartGame = 'restart-game',
+
   // An error happened in the server
   ServerError = 'server-error',
 
