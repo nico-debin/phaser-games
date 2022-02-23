@@ -230,9 +230,9 @@ export default class Game extends Phaser.Scene {
       this.playersStates[player.id].y = player.y
 
       if (playerHasMoved) {
-        playersStatesThatChanged[player.id] = {
-          ...this.playersStates[player.id]
-        }
+        // @ts-ignore
+        const { playerSettings, ...playerState } = this.playersStates[player.id]
+        playersStatesThatChanged[player.id] = playerState;
       }
     })
 
@@ -332,7 +332,7 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   // Player has updated his settings
   socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
     // Save new settings in players states object
-    gameScene.playersStates[playerId].playerSettings = playerSettings
+    // gameScene.playersStates[playerId].playerSettings = playerSettings
 
     // Update the rest of the players
     socket.broadcast.emit(

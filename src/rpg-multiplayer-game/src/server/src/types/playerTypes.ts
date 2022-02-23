@@ -24,7 +24,7 @@ export interface PlayerInitialState {
   playerSettings: PlayerSettings;
 }
 
-export interface PlayerState extends Omit<PlayerInitialState, "avatar"> {
+export interface PlayerState extends Omit<PlayerInitialState, "avatar" | "playerSettings"> {
   movementInput: MovementInput;
 }
 
