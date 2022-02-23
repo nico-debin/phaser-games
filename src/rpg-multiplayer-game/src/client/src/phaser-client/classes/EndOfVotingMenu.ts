@@ -26,7 +26,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
     });
 
     // Make the board larger on height
-    this.menuBoard.setScale(this.menuBoard.scaleX, 0.25);
+    this.menuBoard.setScale(this.menuBoard.scaleX, 0.98);
     this.menuTitle.setY(
       this.menuBoard.y -
         this.menuBoard.displayHeight * this.menuBoard.originY +

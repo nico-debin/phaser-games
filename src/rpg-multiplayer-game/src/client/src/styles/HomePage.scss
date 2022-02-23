@@ -33,7 +33,7 @@ body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background-image: url(../../public/backgrounds/simon-lee-Ue97JK9S0QE-unsplash.jpeg);
+  background-image: url(../../public/backgrounds/simon-lee-Ue97JK9S0QE-unsplash-2000x2000.jpeg);
   background-position: center; /* Center the image */
   background-repeat: no-repeat;
   // background-size: cover;
@@ -78,16 +78,16 @@ body {
 }
 
 .homepage-board {
-  top: 35%;
+  // top: max(50px, 35%);
   left: 50%;
   display: block;
   position: absolute;
-  background: url(../../public/homepage/homepage-board.png) no-repeat center center;
+  background: url(../../public/ui/settings-board-500x600.png) no-repeat center center;
   background-size: contain;
   width: 500px;
   height: 600px;
-  margin-top: -300px;
-  margin-left: -250px;
+  transform: translate(-50%, 0%);
+  margin-top: 30px;
 
   h1 {
     position: relative;

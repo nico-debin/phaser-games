@@ -24,7 +24,7 @@ export default abstract class AbstractMenu {
     this.menuBoard = scene.add
       .image(width * 0.5, height * 0.5, TextureKeys.SettingsBoard)
       .setOrigin(0.5, 0.5)
-      .setScale(0.2)
+      .setScale(0.8)
       .setVisible(false);
 
     if (options.disableCloseButton !== true) {
