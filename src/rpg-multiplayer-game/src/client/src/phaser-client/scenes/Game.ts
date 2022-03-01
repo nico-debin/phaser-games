@@ -123,6 +123,7 @@ export default class Game extends Phaser.Scene {
     const islandsTilesLayerGroup = this.add.layer([
       mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
       mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
+      mapIsland.createLayer('Island 2/Island', [tilesetIslandBeach, tilesetIslandShoreline]),
       mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
       mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
     ])
@@ -288,6 +289,13 @@ export default class Game extends Phaser.Scene {
       }
     })
 
+    autorun(() => {
+      if (gameState.gameFight.playerWantsToFight) {
+        console.log('PLAYER WANTS TO FIGHT')
+        this.socket.emit(NetworkEventKeys.PlayerJoinFight);
+      }
+    })
+
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
@@ -300,6 +308,19 @@ export default class Game extends Phaser.Scene {
     })
 
     this.socket.on(NetworkEventKeys.RestartGame, () => {
+      // Stop fight mode
+      gameState.gameFight.clear();
+
+      // Close open menus
+      const hudScene = this.scene.get(SceneKeys.Hud) as Hud
+      hudScene.closeMenus()
+    })
+
+    this.socket.on(NetworkEventKeys.StartFight, () => {
+      console.log('Received: ' + NetworkEventKeys.StartFight)
+      // Start fight mode
+      gameState.gameFight.fightMode = true;
+
       // Close open menus
       const hudScene = this.scene.get(SceneKeys.Hud) as Hud
       hudScene.closeMenus()

@@ -11,6 +11,7 @@ import SceneKeys from '../consts/SceneKeys';
 
 export default class Hud extends Phaser.Scene {
   // private votingLabel!: Phaser.GameObjects.Text
+  private votingStats!: Phaser.GameObjects.Group
   private votingStatsLabel!: Phaser.GameObjects.BitmapText
   private settingsMenu!: SettingsMenu;
   private endOfVotingMenu!: EndOfVotingMenu;
@@ -22,9 +23,18 @@ export default class Hud extends Phaser.Scene {
   create() {
     this.cameras.main.setRoundPixels(true)
 
-    this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
+    const votingLabelBackground = this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
 
     this.votingStatsLabel = this.add.bitmapText(25, 30, FontKeys.GEM, '', 16).setTint(0x000000);
+
+    this.votingStats = this.add.group();
+    this.votingStats.add(votingLabelBackground);
+    this.votingStats.add(this.votingStatsLabel);
+
+    // this.votingStats = this.add.group().addMultiple([
+    //   this.votingStatsLabel,
+    //   this.add.image(10, 50, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4).setVisible(true),
+    // ], false);
     
     // this.votingLabel = this.add.text(10, 100, '', {
     //   fontSize: '16px',
@@ -73,6 +83,7 @@ export default class Hud extends Phaser.Scene {
     // Show/hide voting results menu
     autorun(() => {
       gameVotingManager.votingIsClosed ? this.endOfVotingMenu.openMenu() : this.endOfVotingMenu.closeMenu()
+      gameState.gameFight.fightMode ? this.votingStats.setVisible(false) : this.votingStats.setVisible(true)
     })
   }
 

@@ -143,6 +143,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
         })
         .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
           // TODO: ADD ACTION HERE
+          gameState.gameFight.playerWantsToFight = true;
         });
       const fightButtonLabel = this.scene.add
         .bitmapText(

@@ -1,5 +1,6 @@
-import { action, computed, makeAutoObservable, makeObservable, observable } from 'mobx'
+import { action, computed, makeAutoObservable, observable } from 'mobx'
 import { PlayerId, PlayerSettings } from "../types/playerTypes";
+import { gameFightState } from './GameFightState';
 
 interface PlayerGameState extends PlayerSettings {
   id: PlayerId
@@ -22,7 +23,17 @@ class GameState {
   // Flag to restart game
   _restartGame = false
 
+  // Flag indicating if the game is in fight mode
+  // _fightMode = false
+
+  // Flag indicating that the player wants to join the fight
+  // _playerWantsToFight = false
+
+  readonly gameFight: typeof gameFightState;
+
   constructor() {
+    this.gameFight = gameFightState
+
     makeAutoObservable(this, {
       _playerWantsToRespawn: observable,
       enableRespawnFlag: action,
@@ -31,8 +42,15 @@ class GameState {
       _restartGame: observable,
       enableRestartGameFlag: action,
       disableRestartGameFlag: action,
-    })
 
+      // _fightMode: observable,
+      // enableFightModeFlag: action,
+      // disableFightModeFlag: action,
+
+      // _playerWantsToFight: observable,
+      // enablePlayerWantsToFightFlag: action,
+      // disablePlayerWantsToFightFlag: action,
+    })
   }
 
   /**
@@ -164,6 +182,30 @@ class GameState {
   get restartGame(): boolean {
     return this._restartGame;
   }
+
+  // enableFightModeFlag() {
+  //   this._fightMode = true;
+  // }
+
+  // disableFightModeFlag() {
+  //   this._fightMode = false;
+  // }
+
+  // get fightMode(): boolean {
+  //   return this._fightMode;
+  // }
+
+  // enablePlayerWantsToFightFlag() {
+  //   this._playerWantsToFight = true;
+  // }
+
+  // disablePlayerWantsToFightFlag() {
+  //   this._playerWantsToFight = false;
+  // }
+
+  // get playerWantsToFight(): boolean {
+  //   return this._playerWantsToFight;
+  // }
 
   /**
    * Clear all state

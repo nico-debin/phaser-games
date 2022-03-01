@@ -25,6 +25,16 @@ enum NetworkEventKeys {
 
   // An error happened in the server
   ServerError = 'server-error',
+
+  /**** FIGHT EVENTS ****/
+  // Player wants to fight
+  PlayerJoinFight = 'player-join-fight',
+
+  // Start waiting to other players to join
+  StartFightWaitingRoom = 'start-fight-waiting-room',
+
+  // Start fight
+  StartFight = 'start-fight',
 }
 
 export default NetworkEventKeys

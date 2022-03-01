@@ -28,6 +28,16 @@ enum NetworkEventKeys {
 
   // Server went offline or internet went down
   ServerOffline = 'disconnect',
+
+  /**** FIGHT EVENTS ****/
+  // Player wants to fight
+  PlayerJoinFight = 'player-join-fight',
+
+  // Start waiting to other players to join
+  StartFightWaitingRoom = 'start-fight-waiting-room',
+
+  // Start fight
+  StartFight = 'start-fight',
 }
 
 export default NetworkEventKeys

@@ -24,6 +24,7 @@ import {
   PlayerState,
   Position,
 } from '../types/playerTypes'
+import { gameFightState } from '~/states/GameFightState'
 
 declare global {
   interface Window {
@@ -44,6 +45,8 @@ export default class Game extends Phaser.Scene {
   movementInputQueue: PlayersInputQueue = {};
 
   mapIsland!: Phaser.Tilemaps.Tilemap
+
+
 
   constructor() {
     super(SceneKeys.Game)
@@ -101,6 +104,7 @@ export default class Game extends Phaser.Scene {
     const islandsLayerGroup = this.add.layer([
       this.mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
       this.mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
+      this.mapIsland.createLayer('Island 2/Island', [tilesetIslandBeach, tilesetIslandShoreline]),
     ])
     const pathsLayer = this.mapIsland.createLayer('Island 1/Paths', [
       tilesetIslandBeach,
@@ -249,13 +253,12 @@ export default class Game extends Phaser.Scene {
     this.handlePlayerUpdate()
   }
 
-  getPlayerRandomInitialPosition(): Position {
-    const playersLayer = this.mapIsland.getObjectLayer('Players')
+  private getPositionFromObjectLayer(layer: Phaser.Tilemaps.ObjectLayer): Position {
     const randomPlayerIndex = Phaser.Math.Between(
       0,
-      playersLayer.objects.length - 1,
+      layer.objects.length - 1,
     )
-    const playerObj = playersLayer.objects[randomPlayerIndex]
+    const playerObj = layer.objects[randomPlayerIndex]
     
     return {
       x: playerObj?.x!,
@@ -263,11 +266,21 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  getPlayerRandomInitialPosition(): Position {
+    const playersLayer = this.mapIsland.getObjectLayer('Players')
+    return this.getPositionFromObjectLayer(playersLayer);
+  }
+
+  getFighterRandomInitialPosition(): Position {
+    const playersLayer = this.mapIsland.getObjectLayer('Island 2/Players')
+    return this.getPositionFromObjectLayer(playersLayer);
+  }
+
   // Set a new random position to every player
-  resetPlayersPosition(): void {
+  resetPlayersPosition(useFightingPosition = false): void {
     this.players.getChildren().forEach((gameObject) => {
       const player = gameObject as Player
-      const randomPosition = this.getPlayerRandomInitialPosition()
+      const randomPosition = useFightingPosition ? this.getFighterRandomInitialPosition() : this.getPlayerRandomInitialPosition();
       player.setPosition(randomPosition.x, randomPosition.y).setUserLeftVotingZone()
     })
   }
@@ -353,8 +366,35 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   // Restart game: send all players to main island
   socket.on(NetworkEventKeys.RestartGame, () => {
     gameScene.resetPlayersPosition()
-    socket.broadcast.emit(NetworkEventKeys.RestartGame)
+    io.emit(NetworkEventKeys.RestartGame)
+    gameFightState.fightMode = false;
   })
+
+  socket.on(NetworkEventKeys.PlayerJoinFight, () => {
+    console.log('Recieved: ' + NetworkEventKeys.PlayerJoinFight)
+    gameFightState.addFighter(playerId);
+    if (gameFightState.fightMode === false) {
+      gameFightState.fightMode = true;
+      console.log('Sending: ' + NetworkEventKeys.StartFightWaitingRoom)
+      io.emit(NetworkEventKeys.StartFightWaitingRoom)
+
+      // Start countdown to start the fight if +1 fighters has joined
+      const delayTime = 10 * 1000
+      gameScene.time.delayedCall(delayTime, () => {
+        if (gameFightState.fightersCount >= 2) {
+          gameScene.resetPlayersPosition(true)
+          console.log('Sending: ' + NetworkEventKeys.StartFight)
+          io.emit(NetworkEventKeys.StartFight)
+        } else {
+          // No enough fighters - restart game
+          gameScene.resetPlayersPosition()
+          console.log('Sending: ' + NetworkEventKeys.RestartGame)
+          io.emit(NetworkEventKeys.RestartGame)
+          gameFightState.fightMode = false;
+        }
+      }, [], this);
+    }
+  });
 }
 
 const handlePlayerSettings = (socket: Socket, gameScene: Game, playerId: PlayerId): PlayerSettings | undefined => {

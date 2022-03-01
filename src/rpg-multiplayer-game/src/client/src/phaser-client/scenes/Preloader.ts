@@ -5,6 +5,7 @@ import FontKeys from '../consts/FontKeys'
 import NpcKeys from '../consts/NpcKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
+import TilemapKeys from '../consts/TilemapKeys'
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -13,9 +14,9 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     // Tilemaps
-    this.load.image('tiles-islands-beach', 'tiles/tf_beach_tileB.png')
-    this.load.image('tiles-islands-shoreline', 'tiles/tf_beach_tileA1.png')
-    this.load.tilemapTiledJSON('islands', 'tilemaps/islands-01.json')
+    this.load.image(TilemapKeys.BeachTiles, 'tiles/tf_beach_tileB.png')
+    this.load.image(TilemapKeys.BeachShoreTiles, 'tiles/tf_beach_tileA1.png')
+    this.load.tilemapTiledJSON(TilemapKeys.IslandsTilemap, 'tilemaps/islands-01.json')
 
     // TODO: remove this
     this.load.atlas(TextureKeys.Fauna, 'characters/fauna.png', 'characters/fauna.json')
