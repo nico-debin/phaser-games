@@ -8,6 +8,7 @@ import SettingsMenu from '../classes/SettingsMenu';
 import FontKeys from '../consts/FontKeys';
 import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 import SceneKeys from '../consts/SceneKeys';
+import Modal from '../classes/Modal';
 
 export default class Hud extends Phaser.Scene {
   // private votingLabel!: Phaser.GameObjects.Text
@@ -15,6 +16,7 @@ export default class Hud extends Phaser.Scene {
   private votingStatsLabel!: Phaser.GameObjects.BitmapText
   private settingsMenu!: SettingsMenu;
   private endOfVotingMenu!: EndOfVotingMenu;
+  private newFightModal!: Modal;
 
   constructor() {
     super(SceneKeys.Hud)
@@ -22,6 +24,7 @@ export default class Hud extends Phaser.Scene {
 
   create() {
     this.cameras.main.setRoundPixels(true)
+    const { width } = this.scale
 
     const votingLabelBackground = this.add.image(10, 10, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4)
 
@@ -42,7 +45,20 @@ export default class Hud extends Phaser.Scene {
     //   backgroundColor: '#333333'
     // })
 
-    const { width } = this.scale
+    this.newFightModal = new Modal(
+      this,
+      "A NEW FIGHT IS ABOUT TO BEGIN",
+      "Waiting other players to join...",
+      "10",
+      "DON'T FIGHT",
+      "JOIN FIGHT!"
+    )
+      .onConfirm(() => {
+        gameState.gameFight.playerWantsToFight = true
+        this.newFightModal.hideButtons()
+      })
+      .onCancel(() => this.newFightModal.hideButtons());
+
 
     const settingsButton = this.add.image(width - 10, 10, TextureKeys.UIMenu1, 'yellow-button').setScale(0.20).setOrigin(1, 0);
     const settingsWheelIcon = this.add.image(width - 17, 17, TextureKeys.UIMenu1, 'wheel-icon').setScale(0.20).setOrigin(1, 0);
@@ -83,7 +99,31 @@ export default class Hud extends Phaser.Scene {
     // Show/hide voting results menu
     autorun(() => {
       gameVotingManager.votingIsClosed ? this.endOfVotingMenu.openMenu() : this.endOfVotingMenu.closeMenu()
+    })
+
+    autorun(() => {
       gameState.gameFight.fightMode ? this.votingStats.setVisible(false) : this.votingStats.setVisible(true)
+
+      if (gameState.gameFight.onWaitingRoom) {
+        this.newFightModal.open()
+
+        // Set time countdown
+        let secondsToWait = 10 // TODO: Remove hardcoded value
+        this.newFightModal.setBodyText(`${secondsToWait}`)
+        const timedEvent = this.time.addEvent({
+          delay: 1000,
+          callback: () => {
+            --secondsToWait === 0 ? timedEvent.remove() : this.newFightModal.setBodyText(`${secondsToWait}`)
+          },
+          callbackScope: this,
+          loop: true,
+        });
+      } else {
+        this.newFightModal.close()
+      }
+      if (gameState.gameFight.playerWantsToFight) {
+        this.newFightModal.hideButtons();
+      }
     })
   }
 

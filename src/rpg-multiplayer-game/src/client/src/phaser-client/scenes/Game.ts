@@ -289,9 +289,9 @@ export default class Game extends Phaser.Scene {
       }
     })
 
+    // Send event to server to join fight
     autorun(() => {
       if (gameState.gameFight.playerWantsToFight) {
-        console.log('PLAYER WANTS TO FIGHT')
         this.socket.emit(NetworkEventKeys.PlayerJoinFight);
       }
     })
@@ -316,8 +316,16 @@ export default class Game extends Phaser.Scene {
       hudScene.closeMenus()
     })
 
+    this.socket.on(NetworkEventKeys.StartFightWaitingRoom, () => {
+      // Start fight mode
+      gameState.gameFight.onWaitingRoom = true;
+
+      // Close open menus
+      const hudScene = this.scene.get(SceneKeys.Hud) as Hud
+      hudScene.closeMenus()
+    })
+
     this.socket.on(NetworkEventKeys.StartFight, () => {
-      console.log('Received: ' + NetworkEventKeys.StartFight)
       // Start fight mode
       gameState.gameFight.fightMode = true;
 

@@ -44,9 +44,11 @@ export default class Game extends Phaser.Scene {
   // Queue to process movement inputs in order
   movementInputQueue: PlayersInputQueue = {};
 
+  // Tilemap
   mapIsland!: Phaser.Tilemaps.Tilemap
 
-
+  // Timed event for fight waiting room
+  fightWaitingRoomTimerEvent: Phaser.Time.TimerEvent | undefined;
 
   constructor() {
     super(SceneKeys.Game)
@@ -379,12 +381,20 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       io.emit(NetworkEventKeys.StartFightWaitingRoom)
 
       // Start countdown to start the fight if +1 fighters has joined
-      const delayTime = 10 * 1000
-      gameScene.time.delayedCall(delayTime, () => {
+      const delayTime = 10 * 1000 // TODO: Remove hardcoded value
+      gameScene.fightWaitingRoomTimerEvent = gameScene.time.delayedCall(delayTime, () => {
         if (gameFightState.fightersCount >= 2) {
           gameScene.resetPlayersPosition(true)
           console.log('Sending: ' + NetworkEventKeys.StartFight)
           io.emit(NetworkEventKeys.StartFight)
+
+          // DEBUG - REMOVE THIS!
+          gameScene.time.delayedCall(delayTime, () => {
+            gameScene.resetPlayersPosition()
+            console.log('[DEBUG] Sending: ' + NetworkEventKeys.RestartGame)
+            io.emit(NetworkEventKeys.RestartGame)
+            gameFightState.fightMode = false;
+          }, [], this)
         } else {
           // No enough fighters - restart game
           gameScene.resetPlayersPosition()
@@ -393,6 +403,9 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
           gameFightState.fightMode = false;
         }
       }, [], this);
+    } else if (gameFightState.fightersCount === gameScene.players.countActive()) {
+      gameScene.fightWaitingRoomTimerEvent?.remove(true);
+      gameScene.fightWaitingRoomTimerEvent = undefined;
     }
   });
 }

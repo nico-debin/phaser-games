@@ -25,6 +25,7 @@ export default class Preloader extends Phaser.Scene {
     // UI
     this.load.atlas(TextureKeys.UIMenu1, 'ui/ui-menu.png', 'ui/ui-menu_atlas.json')
     this.load.image(TextureKeys.SettingsBoard, 'ui/settings-board-500x600.png')
+    this.load.image(TextureKeys.Paper, 'ui/paper-small.png')
 
     // Characters
     this.load.spritesheet(AvatarKeys.ADRIAN_TOMKINS, 'characters/adrian-tomkins.png', {frameWidth: 64, frameHeight: 64})

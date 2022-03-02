@@ -81,6 +81,7 @@ export default abstract class AbstractMenu {
     this.menuBoard.setVisible(true);
     this.closeButton?.setVisible(true);
     this.menuTitle.setVisible(true);
+
     this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
     this.onOpenCallback()
   }
@@ -91,6 +92,7 @@ export default abstract class AbstractMenu {
     this.menuBoard.setVisible(false);
     this.closeButton?.setVisible(false);
     this.menuTitle.setVisible(false);
+
     this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
     this.onCloseCallback()
   }
