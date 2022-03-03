@@ -373,9 +373,10 @@ export default class Game extends Phaser.Scene {
 
   update(t: number, dt: number) {
     this.handleMovementInput()
+    this.handleFightInput()
   }
 
-  private handleMovementInput() {
+  private handleMovementInput(): void {
     if (!gameState.playerCanMove) return
 
     const newMovementInput: MovementInput = { ...this.lastMovementInput }
@@ -401,7 +402,7 @@ export default class Game extends Phaser.Scene {
     this.updateLastMovementInput(newMovementInput)
   }
 
-  private updateLastMovementInput(movementInput: MovementInput) {
+  private updateLastMovementInput(movementInput: MovementInput): void {
     // Capture last movement to compare what changed
     const { left, right, up, down } = this.lastMovementInput
     if (
@@ -414,6 +415,14 @@ export default class Game extends Phaser.Scene {
       this.socket.emit(NetworkEventKeys.PlayersInput, this.lastMovementInput)
 
       this.currentPlayer.update(this.lastMovementInput)
+    }
+  }
+
+  private handleFightInput(): void {
+    // if (!gameState.gameFight.fightMode) return
+
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+      this.currentPlayer.fight();
     }
   }
 

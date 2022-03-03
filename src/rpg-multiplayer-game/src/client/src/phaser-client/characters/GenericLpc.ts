@@ -63,4 +63,38 @@ export default class GenericLpc extends Player {
       this.anims.play(parts.join('-'))
     }
   }
+
+  throwArrow() {
+    const { avatar } = this.playerData;
+    let animation: string | undefined;
+
+    const currentAnimation = this.anims.getName();
+    let flipX = false;
+
+    switch (this.orientation) {
+      case 'left':
+        animation = `${avatar}-${AvatarAnimationKeys.SHOOT_SIDE}`;
+        flipX = true;
+        break;
+      case 'right':
+        animation = `${avatar}-${AvatarAnimationKeys.SHOOT_SIDE}`;
+        break;
+      case 'up':
+        animation = `${avatar}-${AvatarAnimationKeys.SHOOT_UP}`;
+        break;
+      case 'down':
+        animation = `${avatar}-${AvatarAnimationKeys.SHOOT_DOWN}`;
+        break;
+    }
+    if (animation) {
+      this.anims.play(animation);
+      this.anims.playAfterRepeat(currentAnimation);
+      this.setFlipX(flipX)
+    }
+  }
+
+  fight() {
+    super.fight();
+    this.throwArrow();
+  }
 }

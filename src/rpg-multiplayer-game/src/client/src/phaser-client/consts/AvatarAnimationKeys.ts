@@ -5,6 +5,10 @@ enum AvatarAnimationKeys {
   WALK_DOWN = 'walk-down',
   WALK_UP = 'walk-up',
   WALK_SIDE = 'walk-side',
+  SHOOT_DOWN = 'shoot-down',
+  SHOOT_UP = 'shoot-up',
+  SHOOT_SIDE = 'shoot-side',
+  DIE = 'die',
 };
 
 export default AvatarAnimationKeys
