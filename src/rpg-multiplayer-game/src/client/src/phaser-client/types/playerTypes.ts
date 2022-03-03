@@ -55,3 +55,10 @@ export interface PlayerSettings {
   isVoter: boolean
   hidePlayersWhileVoting: boolean
 }
+
+export interface PlayerFightAction {
+  playerId: PlayerId;
+  x: number;
+  y: number;
+  orientation: Orientation;
+}

@@ -7,6 +7,7 @@ import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
 
 import {
   MovementInput,
+  PlayerFightAction,
   PlayerId,
   PlayerInitialState,
   PlayerSettings,
@@ -47,6 +48,7 @@ export default class Game extends Phaser.Scene {
 
   // Available arrows for current player
   private currentPlayerThrowableWeapons!: Phaser.Physics.Arcade.Group
+  private restOfPlayersThrowableWeapons!: Phaser.Physics.Arcade.Group
 
   // Settings selected in the login page
   playerSettings: PlayerSettings;
@@ -120,6 +122,10 @@ export default class Game extends Phaser.Scene {
       maxSize: 5, // TODO: Remove hardcoded value
     })
 
+    this.restOfPlayersThrowableWeapons = this.physics.add.group({
+      classType: ThrowableWeaponArrow,
+    })
+
     // Create tilemap and layers
     const mapIsland = this.make.tilemap({
       key: 'islands',
@@ -178,7 +184,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(cobra, [...islandsTilesLayerGroup.getChildren()])
 
     // Enable collider between arrows and players
-    this.physics.add.overlap(this.currentPlayerThrowableWeapons, this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)
+    this.physics.add.overlap([this.currentPlayerThrowableWeapons, this.restOfPlayersThrowableWeapons], this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)
 
 
     // Animated Tiles (like sea water in the shore)
@@ -346,14 +352,32 @@ export default class Game extends Phaser.Scene {
       const hudScene = this.scene.get(SceneKeys.Hud) as Hud
       hudScene.closeMenus()
     })
+
+    this.socket.on(NetworkEventKeys.PlayerFightAction, (action: PlayerFightAction) => {
+      // DEBUG: Uncomment line below
+      // if (!gameState.gameFight.fightMode) return
+
+      console.log(`[${NetworkEventKeys.PlayerFightAction}]: `, { action })
+
+      const player = this.getPlayerById(action.playerId);
+      if (!player) {
+        console.error("Couldn't find player with id " + action.playerId);
+        return;
+      }
+
+      player.fight()
+      
+    })
+  }
+
+  private getPlayerById(playerId: PlayerId): Player | undefined {
+    return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
   }
 
   updatePlayerState(newPlayerState: PlayerState): void {
     const { playerId } = newPlayerState;
-    const gameObject = this.players.getChildren().find((gameObject) => (gameObject as Player).id === playerId);
-    if (!gameObject) return;
-
-    const player = gameObject as Player;
+    const player = this.getPlayerById(playerId);
+    if (!player) return;
 
     // UNCAUGHT BUG: For some reason I couldn't find yet, the player
     // rendering needs to be moved by 16 pixels in X and Y. 
@@ -394,7 +418,6 @@ export default class Game extends Phaser.Scene {
     // Avoid collisions with the player who thrown the weapon
     if (player.id === throwable.thrownBy) return;
 
-    console.log('handleThrowableWeaponPlayerOverlap', { obj1, obj2 })
     throwable.disableBody();
     throwable.setVisible(false);
   }
@@ -447,6 +470,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private handleFightInput(): void {
+    // DEBUG: Uncomment line below
     // if (!gameState.gameFight.fightMode) return
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
@@ -498,6 +522,8 @@ export default class Game extends Phaser.Scene {
     if (isMainPlayer) {
       this.currentPlayer = player
       this.currentPlayer.setThrowableWeapon(this.currentPlayerThrowableWeapons);
+    } else {
+      player.setThrowableWeapon(this.restOfPlayersThrowableWeapons);
     }
     
     // Add player to physics engine
@@ -533,13 +559,11 @@ export default class Game extends Phaser.Scene {
   }
 
   removePlayer(playerId: PlayerId) {
-    this.players.getChildren().forEach((gameObject) => {
-      const player = gameObject as Player
-      if (playerId === player.id) {
-        player.destroy()
-        gameVotingManager.removePlayer(playerId)
-        gameState.removePlayer(playerId)
-      }
-    })
+    const player = this.getPlayerById(playerId);
+    if (player) {
+      player.destroy()
+      gameVotingManager.removePlayer(playerId)
+      gameState.removePlayer(playerId)
+    }
   }
 }

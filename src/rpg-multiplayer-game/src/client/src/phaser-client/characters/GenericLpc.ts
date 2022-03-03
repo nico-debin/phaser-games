@@ -72,7 +72,10 @@ export default class GenericLpc extends Player {
   }
 
   throwArrow(): boolean {
-    if (!this.throwableWeaponGroup) return false
+    if (!this.throwableWeaponGroup) {
+      console.error('this.throwableWeaponGroup is undefined')
+      return false
+    }
 
     const arrow = this.throwableWeaponGroup.getFirstDead(
       true,

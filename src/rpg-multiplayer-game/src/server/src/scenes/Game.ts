@@ -411,12 +411,12 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   });
 
   socket.on(NetworkEventKeys.PlayerFightAction, () => {
-    // TODO: throw a knife
+    // TODO: throw an arrow
 
-    // Broadcast to other players to render the knife
+    // Broadcast the event to the rest of the players to render the arrow
     const player = gameScene.getPlayerById(playerId);
     if (!player) {
-      console.error();
+      console.error("Couldn't find player with id " + playerId);
       return;
     }
     const action: PlayerFightAction = {
@@ -424,7 +424,7 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       x: player.x,
       y: player.y,
       orientation: player.orientation,
-    };
+    };    
     socket.broadcast.emit(NetworkEventKeys.PlayerFightAction, action);
   });
 }
