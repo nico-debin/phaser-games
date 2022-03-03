@@ -35,6 +35,8 @@ import PlayerFactory from '../characters/PlayerFactory'
 // NPC Characters
 import Cobra from '../characters/npc/Cobra'
 import Hud from './Hud'
+import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow'
+import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -114,8 +116,8 @@ export default class Game extends Phaser.Scene {
     createNpcAnims(this.anims)
 
     this.currentPlayerThrowableWeapons = this.physics.add.group({
-      classType: Phaser.Physics.Arcade.Image,
-      maxSize: 1, // TODO: Remove hardcoded value
+      classType: ThrowableWeaponArrow,
+      maxSize: 5, // TODO: Remove hardcoded value
     })
 
     // Create tilemap and layers
@@ -176,7 +178,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(cobra, [...islandsTilesLayerGroup.getChildren()])
 
     // Enable collider between arrows and players
-    this.physics.add.collider(this.currentPlayerThrowableWeapons, this.players, this.handleThrowableWeaponPlayerCollision, undefined, this)
+    this.physics.add.overlap(this.currentPlayerThrowableWeapons, this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)
 
 
     // Animated Tiles (like sea water in the shore)
@@ -382,12 +384,19 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  handleThrowableWeaponPlayerCollision(
+  handleThrowableWeaponPlayerOverlap(
     obj1: Phaser.GameObjects.GameObject, // Weapon
     obj2: Phaser.GameObjects.GameObject, // Player
   ) {
-    console.log('handleThrowableWeaponPlayerCollision')
+    const player = obj1 as Player
+    const throwable = obj2 as AbstractThrowableWeapon
 
+    // Avoid collisions with the player who thrown the weapon
+    if (player.id === throwable.thrownBy) return;
+
+    console.log('handleThrowableWeaponPlayerOverlap', { obj1, obj2 })
+    throwable.disableBody();
+    throwable.setVisible(false);
   }
 
   update(t: number, dt: number) {
@@ -490,9 +499,28 @@ export default class Game extends Phaser.Scene {
       this.currentPlayer = player
       this.currentPlayer.setThrowableWeapon(this.currentPlayerThrowableWeapons);
     }
-
-    this.add.existing(player)
+    
+    // Add player to physics engine
     this.physics.add.existing(player)
+    const avatarSetting = playerInitialState.avatar
+    const { sizeFactor } = avatarSetting.body
+
+    // Set player's shape in physics engine
+    const playerBody = player.body as Phaser.Physics.Arcade.Body
+    playerBody.setSize(
+      sizeFactor * avatarSetting.body.size.width,
+      sizeFactor * avatarSetting.body.size.height,
+      avatarSetting.body.size.center,
+    )
+    playerBody.setOffset(
+      sizeFactor * avatarSetting.body.offset.x,
+      sizeFactor * avatarSetting.body.offset.y,
+    )
+
+    // Add player to scene
+    this.add.existing(player)
+
+    // Add player to players group
     this.players.add(player)
 
     if (playerInitialState.playerSettings.isVoter) {
