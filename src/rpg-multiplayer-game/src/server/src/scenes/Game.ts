@@ -15,6 +15,7 @@ import SceneKeys from '../consts/SceneKeys'
 
 import {
   MovementInput,
+  PlayerFightAction,
   PlayerId,
   PlayerInitialState,
   PlayerSettings,
@@ -407,6 +408,24 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       gameScene.fightWaitingRoomTimerEvent?.remove(true);
       gameScene.fightWaitingRoomTimerEvent = undefined;
     }
+  });
+
+  socket.on(NetworkEventKeys.PlayerFightAction, () => {
+    // TODO: throw a knife
+
+    // Broadcast to other players to render the knife
+    const player = gameScene.getPlayerById(playerId);
+    if (!player) {
+      console.error();
+      return;
+    }
+    const action: PlayerFightAction = {
+      playerId,
+      x: player.x,
+      y: player.y,
+      orientation: player.orientation,
+    };
+    socket.broadcast.emit(NetworkEventKeys.PlayerFightAction, action);
   });
 }
 

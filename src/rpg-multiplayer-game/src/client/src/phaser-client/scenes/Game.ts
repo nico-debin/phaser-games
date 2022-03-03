@@ -43,6 +43,9 @@ export default class Game extends Phaser.Scene {
   // Current player from this client
   currentPlayer!: Player
 
+  // Available arrows for current player
+  private currentPlayerThrowableWeapons!: Phaser.Physics.Arcade.Group
+
   // Settings selected in the login page
   playerSettings: PlayerSettings;
 
@@ -110,6 +113,11 @@ export default class Game extends Phaser.Scene {
     createLizardAnims(this.anims)
     createNpcAnims(this.anims)
 
+    this.currentPlayerThrowableWeapons = this.physics.add.group({
+      classType: Phaser.Physics.Arcade.Image,
+      maxSize: 1, // TODO: Remove hardcoded value
+    })
+
     // Create tilemap and layers
     const mapIsland = this.make.tilemap({
       key: 'islands',
@@ -166,6 +174,9 @@ export default class Game extends Phaser.Scene {
 
     // Enable collission between Cobra and map tiles
     this.physics.add.collider(cobra, [...islandsTilesLayerGroup.getChildren()])
+
+    // Enable collider between arrows and players
+    this.physics.add.collider(this.currentPlayerThrowableWeapons, this.players, this.handleThrowableWeaponPlayerCollision, undefined, this)
 
 
     // Animated Tiles (like sea water in the shore)
@@ -371,6 +382,14 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  handleThrowableWeaponPlayerCollision(
+    obj1: Phaser.GameObjects.GameObject, // Weapon
+    obj2: Phaser.GameObjects.GameObject, // Player
+  ) {
+    console.log('handleThrowableWeaponPlayerCollision')
+
+  }
+
   update(t: number, dt: number) {
     this.handleMovementInput()
     this.handleFightInput()
@@ -422,6 +441,7 @@ export default class Game extends Phaser.Scene {
     // if (!gameState.gameFight.fightMode) return
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+      this.socket.emit(NetworkEventKeys.PlayerFightAction)
       this.currentPlayer.fight();
     }
   }
@@ -468,9 +488,11 @@ export default class Game extends Phaser.Scene {
 
     if (isMainPlayer) {
       this.currentPlayer = player
+      this.currentPlayer.setThrowableWeapon(this.currentPlayerThrowableWeapons);
     }
 
     this.add.existing(player)
+    this.physics.add.existing(player)
     this.players.add(player)
 
     if (playerInitialState.playerSettings.isVoter) {

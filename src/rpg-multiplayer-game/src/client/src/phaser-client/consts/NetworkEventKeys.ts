@@ -20,6 +20,9 @@ enum NetworkEventKeys {
   // A player has pressed a key
   PlayersInput = 'players-input',
 
+  // Player fight (shoots an arrow)
+  PlayerFightAction = 'player-fight-action',
+
   // Restart game
   RestartGame = 'restart-game',
 

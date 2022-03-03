@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AvatarKeys from '../consts/AvatarKeys';
+import TextureKeys from '../consts/TextureKeys';
 import { MovementInput, PlayerId } from '../types/playerTypes'
 
 import Player from './Player'
@@ -64,7 +65,72 @@ export default class GenericLpc extends Player {
     }
   }
 
-  throwArrow() {
+  shootThrowableWeapon(): void {
+    super.shootThrowableWeapon();
+    this.throwArrow();
+  }
+
+  throwArrow(): boolean {
+    if (!this.throwableWeaponGroup) return false
+
+    const arrow = this.throwableWeaponGroup.get(
+      this.x,
+      this.y,
+      TextureKeys.UIMenu1,
+      'weapon-arrow',
+    ) as Phaser.Physics.Arcade.Image
+
+    if (!arrow) {
+      return false 
+    }
+
+    const vec = new Phaser.Math.Vector2(0, 0)
+
+    switch(this.orientation) {
+      case 'left':
+        vec.x = -1;
+        break;
+
+      case 'up':
+        vec.y = -1;
+        break;
+
+      case 'down':
+        vec.y = 1;
+        break;
+        
+      default:
+      case 'right':
+        vec.x = 1;
+        break;
+
+    }
+
+    const angle = vec.angle()
+
+    arrow.setActive(true)
+    arrow.setVisible(true)
+
+    arrow.setRotation(angle)
+
+    // arrow starting point spacing from player
+    arrow.x += vec.x * 14
+    arrow.y += vec.y * 20
+
+    const velocity = 500
+    arrow.setVelocity(vec.x * velocity, vec.y * velocity)
+
+    // kill arrow after 5 seconds
+    this.scene.time.delayedCall(2000, () => {
+      if (arrow && arrow.active) {
+        this.throwableWeaponGroup?.killAndHide(arrow);
+      } 
+    }, [], this)
+
+    return true
+  }
+
+  handleFightAnimation() {
     const { avatar } = this.playerData;
     let animation: string | undefined;
 
@@ -95,6 +161,8 @@ export default class GenericLpc extends Player {
 
   fight() {
     super.fight();
-    this.throwArrow();
+    if (this.throwArrow()) {
+      this.handleFightAnimation();
+    }
   }
 }

@@ -54,29 +54,25 @@ export class AnimationHandler {
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.SHOOT_DOWN}`,
       frames: scene.anims.generateFrameNumbers(avatar, { start: getFrameNumber(19, 1), end: getFrameNumber(19, 11) }),
-      frameRate: 15,
-      // repeat: -1
+      frameRate: 40,
     })
   
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.SHOOT_UP}`,
       frames: scene.anims.generateFrameNumbers(avatar, { start: getFrameNumber(17, 1), end: getFrameNumber(17, 11) }),
-      frameRate: 15,
-      // repeat: -1
+      frameRate: 40,
     })
   
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.SHOOT_SIDE}`,
       frames: scene.anims.generateFrameNumbers(avatar, { start: getFrameNumber(20, 1), end: getFrameNumber(20, 11) }),
-      frameRate: 15,
-      // repeat: -1
+      frameRate: 40,
     })
   
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.DIE}`,
       frames: scene.anims.generateFrameNumbers(avatar, { start: getFrameNumber(21, 1), end: getFrameNumber(21, 6) }),
       frameRate: 10,
-      // repeat: -1
     })
   }
 }

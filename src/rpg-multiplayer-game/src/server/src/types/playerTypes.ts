@@ -6,6 +6,8 @@ export type Position = {
   y: number;
 };
 
+export type Orientation = 'left' | 'right' | 'up' | 'down';
+
 export type MovementInput = {
   left: boolean;
   right: boolean;
@@ -46,4 +48,11 @@ export interface PlayerSettings {
   avatarName: string;
   isVoter: boolean;
   hidePlayersWhileVoting: boolean;
+}
+
+export interface PlayerFightAction {
+  playerId: PlayerId;
+  x: number;
+  y: number;
+  orientation: Orientation;
 }

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { MovementInput, PlayerId, PlayerInitialState } from '../types/playerTypes'
+import { MovementInput, Orientation, PlayerId, PlayerInitialState } from '../types/playerTypes'
 import { AvatarSetting, avatarSettings } from './AvatarSetting'
 
 declare global {
@@ -14,6 +14,7 @@ declare global {
 
 export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId
+  private _orientation: Orientation;
   readonly avatarSetting: AvatarSetting
 
   // The voting zone where the player is standing on (or undefined if not)
@@ -25,6 +26,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
     super(scene, x, y, '')
     this.playerId = playerId
+    this._orientation = 'down'
     
     // The only avatar setting allowed for now is generic-lpc
     this.avatarSetting = avatarSettings.find((setting) => setting.name === 'generic-lpc')!
@@ -40,12 +42,16 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     // Handle Movement
     if (movementInput.left) {
       this.setVelocity(-speed, 0)
+      this._orientation = 'left'
     } else if (movementInput.right) {
       this.setVelocity(speed, 0)
+      this._orientation = 'right'
     } else if (movementInput.up) {
       this.setVelocity(0, -speed)
+      this._orientation = 'up'
     } else if (movementInput.down) {
       this.setVelocity(0, speed)
+      this._orientation = 'down'
     } else {
       this.setVelocity(0, 0)
     }
@@ -61,6 +67,10 @@ export default class Player extends Phaser.Physics.Arcade.Image {
         this.setUserLeftVotingZone()
       }
     }
+  }
+
+  get orientation(): Orientation {
+    return this._orientation;
   }
 
   isOnVotingZone(): boolean {

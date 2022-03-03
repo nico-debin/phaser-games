@@ -1,5 +1,6 @@
 import AvatarKeys from "../consts/AvatarKeys";
-import { VotingZoneValue } from "./gameObjectsTypes";
+
+export type Orientation = 'left' | 'right' | 'up' | 'down';
 
 export type MovementInput = {
   left: boolean;
