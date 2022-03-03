@@ -18,8 +18,31 @@ export default class AbstractThrowableWeapon extends Phaser.Physics.Arcade.Image
     orientation: Orientation,
     thrownBy: PlayerId
   ): void {
+    // Set the playerId who fired
     this.thrownBy = thrownBy;
 
+    const vec = this.getVectorFromOrientation(orientation);
+    const angle = vec.angle();
+
+    // Rotate the image according to the orientation
+    this.setRotation(angle);
+
+    // Speed
+    const velocity = 500;
+    this.setVelocity(vec.x * velocity, vec.y * velocity);
+
+    // Make sure it's visible and active
+    this.setActive(true);
+    this.setVisible(true);
+
+    // Make sure the body is enabled
+    this.enableBody(true, x, y, true, true);
+
+    // Body size is 1 pixel
+    this.body.setSize(1, 1, true);
+  }
+
+  protected getVectorFromOrientation(orientation: Orientation): Phaser.Math.Vector2 {
     const vec = new Phaser.Math.Vector2(0, 0);
 
     switch (orientation) {
@@ -41,20 +64,6 @@ export default class AbstractThrowableWeapon extends Phaser.Physics.Arcade.Image
         break;
     }
 
-    const angle = vec.angle();
-
-    this.setActive(true);
-    this.setVisible(true);
-    this.setRotation(angle);
-
-    // Make sure the body is enabled
-    this.enableBody(true, x, y, true, true);
-
-    // Body size is 1 pixel
-    this.body.setSize(1, 1, true);
-
-    // Speed
-    const velocity = 500;
-    this.setVelocity(vec.x * velocity, vec.y * velocity);
+    return vec;
   }
 }
