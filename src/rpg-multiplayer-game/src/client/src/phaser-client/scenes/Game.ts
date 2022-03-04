@@ -8,6 +8,7 @@ import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
 import {
   MovementInput,
   PlayerFightAction,
+  PlayerHurt,
   PlayerId,
   PlayerInitialState,
   PlayerSettings,
@@ -48,6 +49,8 @@ export default class Game extends Phaser.Scene {
 
   // Available arrows for current player
   private currentPlayerThrowableWeapons!: Phaser.Physics.Arcade.Group
+
+  // Available arrows for the rest of the players
   private restOfPlayersThrowableWeapons!: Phaser.Physics.Arcade.Group
 
   // Settings selected in the login page
@@ -366,8 +369,24 @@ export default class Game extends Phaser.Scene {
       }
 
       player.fight()
-      
     })
+
+    this.socket.on(NetworkEventKeys.PlayerHurt, (data: PlayerHurt) => {
+      console.log(`[${NetworkEventKeys.PlayerHurt}]: `, { data })
+      const player = this.getPlayerById(data.playerId);
+      if (!player) {
+        console.error("Couldn't find player with id " + data.playerId);
+        return;
+      }
+
+      const { username } = gameState.getPlayer(data.playerId)!;
+
+      console.log(`${username} has been hit`);
+
+      // Paint player in red for half a second
+      player.setTint(0xff0000)
+      this.time.delayedCall(500, () => player.clearTint())
+    });
   }
 
   private getPlayerById(playerId: PlayerId): Player | undefined {

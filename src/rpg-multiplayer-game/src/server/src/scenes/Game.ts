@@ -6,8 +6,11 @@ import settings from '../settings'
 import Queue from '../classes/queue'
 import { socketIoServerMock } from '../debug/SocketIoServerMock'
 
+import { gameFightState } from '../states/GameFightState'
+
 import Player from '../characters/Player'
 import { noOpAvatar } from '../characters/AvatarSetting'
+import ThrowableWeapon from '../classes/ThrowableWeapon'
 
 import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SocketIOEventKeys from '../consts/SocketIOEventKeys'
@@ -16,6 +19,7 @@ import SceneKeys from '../consts/SceneKeys'
 import {
   MovementInput,
   PlayerFightAction,
+  PlayerHurt,
   PlayerId,
   PlayerInitialState,
   PlayerSettings,
@@ -25,7 +29,6 @@ import {
   PlayerState,
   Position,
 } from '../types/playerTypes'
-import { gameFightState } from '~/states/GameFightState'
 
 declare global {
   interface Window {
@@ -51,6 +54,9 @@ export default class Game extends Phaser.Scene {
   // Timed event for fight waiting room
   fightWaitingRoomTimerEvent: Phaser.Time.TimerEvent | undefined;
 
+  // Available throwable weapons for all players
+  private throwableWeapons!: Phaser.Physics.Arcade.Group
+
   constructor() {
     super(SceneKeys.Game)
   }
@@ -68,6 +74,7 @@ export default class Game extends Phaser.Scene {
   create() {
     this.createPlayers()
     this.createTilesets()
+    this.createWeapons()
     this.createSocketHandlers()
 
     if (settings.debugMode) {
@@ -78,6 +85,10 @@ export default class Game extends Phaser.Scene {
   private createPlayers() {
     this.players = this.physics.add.group({
       classType: Player,
+      createCallback: (gameObject: Phaser.GameObjects.GameObject) => {
+        const player = gameObject as Player;
+        player.setThrowableWeapon(this.throwableWeapons);
+      },
     })
     // this.physics.add.collider(this.players, this.players)
   }
@@ -151,11 +162,47 @@ export default class Game extends Phaser.Scene {
     ])
   }
 
+  private createWeapons() {
+    this.throwableWeapons = this.physics.add.group({
+      classType: ThrowableWeapon,
+    })
+
+    this.physics.add.overlap(this.throwableWeapons, this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)
+  }
+
   private createSocketHandlers() {
     const gameScene: Game = this
     io.on(SocketIOEventKeys.Connection, (socket: Socket) =>
       handleSocketConnect(socket, gameScene),
     )
+  }
+
+  handleThrowableWeaponPlayerOverlap(
+    obj1: Phaser.GameObjects.GameObject, // Weapon
+    obj2: Phaser.GameObjects.GameObject, // Player
+  ) {
+    const throwable = obj1 as ThrowableWeapon
+    const player = obj2 as Player
+
+    if (player.id === undefined) {
+      console.log({ obj1, obj2 })
+    }
+
+    // Avoid collisions with the player who thrown the weapon
+    if (player.id === throwable.thrownBy) {
+      // console.log('handleThrowableWeaponPlayerOverlap: SAME - player.id ' + player.id + 'thrownBy ' + throwable.thrownBy)
+      return;
+    }
+    
+    // console.log('handleThrowableWeaponPlayerOverlap: SUCCESS')
+
+    throwable.disableBody();
+
+    // TODO: brodcast event to all players indicating that an arrow impacted to a player
+    const data: PlayerHurt = {
+      playerId: player.id,
+    }
+    io.emit(NetworkEventKeys.PlayerHurt, data);
   }
 
   /*** START: Player handlers ***/
@@ -411,14 +458,16 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   });
 
   socket.on(NetworkEventKeys.PlayerFightAction, () => {
-    // TODO: throw an arrow
-
-    // Broadcast the event to the rest of the players to render the arrow
     const player = gameScene.getPlayerById(playerId);
     if (!player) {
       console.error("Couldn't find player with id " + playerId);
       return;
     }
+
+    // Throw an arrow
+    player.fight();
+
+    // Broadcast the event to the rest of the players to render the arrow
     const action: PlayerFightAction = {
       playerId,
       x: player.x,

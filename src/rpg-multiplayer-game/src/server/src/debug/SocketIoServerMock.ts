@@ -14,7 +14,18 @@ export class SocketMock {
   }
 
   get broadcast() {
-    return this
+    // return this
+    return {
+      emit: () => null,
+    }
+  }
+
+  get handshake() {
+    return {
+      query: {
+        playerSettings: '{ "username": "debugger", "avatarName": "nicolas-debin", "isVoter": true, "hidePlayersWhileVoting": true }',
+      }
+    }
   }
 
   emit(event: string, ...args: any[]) {

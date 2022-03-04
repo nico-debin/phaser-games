@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import ThrowableWeapon from '../classes/ThrowableWeapon';
 import { MovementInput, Orientation, PlayerId, PlayerInitialState } from '../types/playerTypes'
 import { AvatarSetting, avatarSettings } from './AvatarSetting'
 
@@ -15,6 +16,8 @@ declare global {
 export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId
   private _orientation: Orientation;
+  private throwableWeaponGroup?: Phaser.Physics.Arcade.Group;
+
   readonly avatarSetting: AvatarSetting
 
   // The voting zone where the player is standing on (or undefined if not)
@@ -89,6 +92,41 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     this.onPlayerLeftVotingZone()
     this.currentVotingZone = undefined
     return this
+  }
+
+  fight(): void {
+    this.shootThrowableWeapon();
+  }
+
+  setThrowableWeapon(weaponGroup: Phaser.Physics.Arcade.Group): void {
+    this.throwableWeaponGroup = weaponGroup;
+  }
+
+  shootThrowableWeapon(): void {
+    if (!this.throwableWeaponGroup) {
+      console.error('this.throwableWeaponGroup is undefined')
+      return
+    }
+
+    const arrow = this.throwableWeaponGroup.getFirstDead(
+      true,
+      this.x,
+      this.y,
+    ) as ThrowableWeapon
+
+    if (!arrow) {
+      return 
+    }
+
+    arrow.fire(this.x, this.y, this.orientation, this.id)
+
+    // kill arrow after 2 seconds
+    this.scene.time.delayedCall(2000, () => {
+      if (arrow && arrow.active) {
+        this.throwableWeaponGroup?.killAndHide(arrow);
+        arrow.disableBody()
+      } 
+    }, [], this)
   }
 }
 

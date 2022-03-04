@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { Orientation, PlayerId } from "../types/playerTypes";
 
-export default abstract class AbstractThrowableWeapon extends Phaser.Physics.Arcade.Image {
+export default class ThrowableWeapon extends Phaser.Physics.Arcade.Image {
   protected _thrownBy: PlayerId | undefined;
 
   get thrownBy(): PlayerId {
@@ -21,22 +21,22 @@ export default abstract class AbstractThrowableWeapon extends Phaser.Physics.Arc
     // Set the playerId who fired
     this.thrownBy = thrownBy;
 
-    // Make sure it's visible and active
+    // Make sure it's active
     this.setActive(true);
-    this.setVisible(true);
+
+    // UNCAUGHT BUG: For some reason I couldn't find yet, the player's
+    // body needs to be moved by 16 pixels in X and Y. 
+    // Remove this when the bug is fixed
+    const errorOffset = 16;
 
     // Make sure the body is enabled
-    this.enableBody(true, x, y, true, true);
+    this.enableBody(true, x + errorOffset, y + errorOffset, true, true);
 
     // Body size is 1 pixel
     this.body.setSize(1, 1, true);
 
     // Generate unit vector (vector unitario)
     const vec = this.getVectorFromOrientation(orientation);
-    const angle = vec.angle();
-
-    // Rotate the image according to the orientation
-    this.setRotation(angle);
 
     // Speed
     const velocity = 500;

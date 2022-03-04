@@ -62,3 +62,7 @@ export interface PlayerFightAction {
   y: number;
   orientation: Orientation;
 }
+
+export interface PlayerHurt {
+  playerId: PlayerId;
+}

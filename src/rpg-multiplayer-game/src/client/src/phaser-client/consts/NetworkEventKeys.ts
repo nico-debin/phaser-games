@@ -23,6 +23,9 @@ enum NetworkEventKeys {
   // Player fight (shoots an arrow)
   PlayerFightAction = 'player-fight-action',
 
+  // Player has been damaged by an arrow
+  PlayerHurt = 'player-hurt',
+
   // Restart game
   RestartGame = 'restart-game',
 

@@ -54,12 +54,13 @@ export default class GameDebug extends Phaser.Scene {
       'Running server in debug mode',
       'Use W A S D keys to move player',
       'Use N to add new player',
-      'Use LEFT and RIGHT keys to switch players'
+      'Use LEFT and RIGHT keys to switch players',
+      'Use SPACE to shoot an arrow',
     ]
     // Show display text
-    this.add.text(12, 20, displayMessage.join('\n'), {
+    this.add.text(5, 5, displayMessage.join('\n'), {
       // @ts-ignore
-      fontSize: 20,
+      fontSize: 18,
     })
 
     // Camera bounded to world limits
@@ -137,10 +138,18 @@ export default class GameDebug extends Phaser.Scene {
       socketIoServerMock.emit(SocketIOEventKeys.Connection)
     }
 
+    // Add players
     if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
       this.selectNextPlayer(true)
     } else if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
       this.selectNextPlayer()
+    }
+
+    // Shoot an arrow
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+      socketIoServerMock
+        .getSocketMock(this.selectedPlayerId)
+        .emit(NetworkEventKeys.PlayerFightAction);
     }
   }
 
