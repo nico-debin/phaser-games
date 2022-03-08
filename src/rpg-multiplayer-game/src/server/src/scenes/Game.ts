@@ -217,6 +217,7 @@ export default class Game extends Phaser.Scene {
       const data: PlayerHurt = {
         playerId: player.id,
         health: this.playersStates[player.id].health,
+        damage: HEALTH_DAMAGE_DECREASE,
       }
       io.emit(NetworkEventKeys.PlayerHurt, data);
     }

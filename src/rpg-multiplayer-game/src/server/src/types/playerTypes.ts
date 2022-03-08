@@ -61,6 +61,7 @@ export interface PlayerFightAction {
 export interface PlayerHurt {
   playerId: PlayerId;
   health: number;
+  damage: number;
 }
 
 export interface PlayerDead {

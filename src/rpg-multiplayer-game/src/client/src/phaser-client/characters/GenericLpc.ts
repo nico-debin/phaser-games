@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon';
+import HealthBar from '../classes/HealthBar';
 import AvatarKeys from '../consts/AvatarKeys';
 import { MovementInput, PlayerId } from '../types/playerTypes'
 
@@ -36,9 +37,9 @@ export default class GenericLpc extends Player {
   }
 
   update(movementInput: MovementInput) {
-    if (this.isDead) return;
-
     super.update(movementInput)
+    
+    if (this.isDead) return;
 
     const { avatar } = this.playerData;
 
@@ -66,11 +67,6 @@ export default class GenericLpc extends Player {
       this.anims.play(parts.join('-'))
     }
   }
-
-  // shootThrowableWeapon(): void {
-  //   super.shootThrowableWeapon();
-  //   this.throwArrow();
-  // }
 
   private throwArrow(): boolean {
     if (!this.throwableWeaponGroup) {
@@ -131,16 +127,29 @@ export default class GenericLpc extends Player {
   }
 
   fight() {
-    if (this.isDead) return;
     super.fight();
+    if (this.isDead) return;
     if (this.throwArrow()) {
       this.handleFightAnimation();
     }
   }
 
+  hurt(amount: number) {
+    super.hurt(amount);
+    if (this.isDead) return;
+    this.healthBar.decrease(amount);
+  }
+
   kill() {
+    if (this.isDead) return;
     super.kill();
     const animation = `${this.playerData.avatar}-${AvatarAnimationKeys.DIE}`;
     this.anims.play(animation, false);
+    this.healthBar.setVisible(false);
+  }
+
+  revive() {
+    super.revive();
+    this.healthBar.setValue(100).setVisible(false);
   }
 }

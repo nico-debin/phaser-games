@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import HealthBar from '../classes/HealthBar';
 
 import { MovementInput, Orientation, PlayerId } from '../types/playerTypes'
 
@@ -7,11 +8,14 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   protected orientation: Orientation;
   protected throwableWeaponGroup?: Phaser.Physics.Arcade.Group;
   protected _isDead: boolean = false;
+  protected healthBar: HealthBar;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number | undefined) {
     super(scene, x, y, texture)
     this.playerId = playerId
     this.orientation = 'down'
+
+    this.healthBar = new HealthBar(scene, x, y + this.displayHeight * 0.5 + 5, this.displayWidth, 10, true);
   }
 
   get id (){
@@ -19,6 +23,10 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   }
 
   update(movementInput: MovementInput) {
+    if (this.isDead) return;
+
+    this.healthBar.setPosition(this.x, this.y + this.displayHeight * 0.5 + 5, true)
+
     if (movementInput.left) {
       this.orientation = 'left';
     } else if (movementInput.right) {
@@ -32,6 +40,12 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
 
   fight() {
     // Override this method on child classes
+    if (this.isDead) return;
+  }
+
+  hurt(amount: number) {
+    // Override this method on child classes
+    if (this.isDead) return;
   }
 
   /**
@@ -40,7 +54,6 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   kill() {
     this._isDead = true;
   }
-
   
   /**
    * Set player as alive

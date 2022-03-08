@@ -388,6 +388,8 @@ export default class Game extends Phaser.Scene {
       // Paint player in red for half a second
       player.setTint(0xff0000)
       this.time.delayedCall(500, () => player.clearTint())
+
+      player.hurt(data.damage);
     });
 
     this.socket.on(NetworkEventKeys.PlayerDead, (data: PlayerDead) => {
@@ -520,7 +522,7 @@ export default class Game extends Phaser.Scene {
   private handleFightInput(): void {
     // DEBUG: Uncomment line below
     // if (!gameState.gameFight.fightMode) return
-    
+
     if (this.currentPlayer && this.currentPlayer.isDead) return;
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
