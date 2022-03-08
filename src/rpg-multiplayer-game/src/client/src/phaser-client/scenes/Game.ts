@@ -7,6 +7,7 @@ import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
 
 import {
   MovementInput,
+  PlayerDead,
   PlayerFightAction,
   PlayerHurt,
   PlayerId,
@@ -333,6 +334,9 @@ export default class Game extends Phaser.Scene {
       // Stop fight mode
       gameState.gameFight.clear();
 
+      // Revive dead players
+      this.restorePlayersHealth();
+
       // Close open menus
       const hudScene = this.scene.get(SceneKeys.Hud) as Hud
       hudScene.closeMenus()
@@ -379,18 +383,40 @@ export default class Game extends Phaser.Scene {
         return;
       }
 
-      const { username } = gameState.getPlayer(data.playerId)!;
-
-      console.log(`${username} has been hit`);
+      gameState.updatePlayerHealth(data.playerId, data.health)
 
       // Paint player in red for half a second
       player.setTint(0xff0000)
       this.time.delayedCall(500, () => player.clearTint())
     });
+
+    this.socket.on(NetworkEventKeys.PlayerDead, (data: PlayerDead) => {
+      console.log(`[${NetworkEventKeys.PlayerDead}]: `, { data })
+      const player = this.getPlayerById(data.playerId);
+      if (!player) {
+        console.error("Couldn't find player with id " + data.playerId);
+        return;
+      }
+
+      // console.log(`${username} has been hit. Health: ${data.health}`);
+      gameState.updatePlayerHealth(data.playerId, 0)
+
+      // Paint player in red for half a second
+      player.kill();
+
+      if (data.playerId === this.currentPlayerId) {
+        gameState.playerCanMove = false;
+      }
+    });
   }
 
   private getPlayerById(playerId: PlayerId): Player | undefined {
     return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
+  }
+
+  restorePlayersHealth(): void {
+    gameState.restorePlayersHealth();
+    (this.players.getChildren() as Player[]).forEach(player => player.revive());
   }
 
   updatePlayerState(newPlayerState: PlayerState): void {
@@ -436,6 +462,9 @@ export default class Game extends Phaser.Scene {
 
     // Avoid collisions with the player who thrown the weapon
     if (player.id === throwable.thrownBy) return;
+
+    // Avoid collisions with dead players
+    if (player.isDead) return;
 
     throwable.disableBody();
     throwable.setVisible(false);
@@ -491,6 +520,8 @@ export default class Game extends Phaser.Scene {
   private handleFightInput(): void {
     // DEBUG: Uncomment line below
     // if (!gameState.gameFight.fightMode) return
+    
+    if (this.currentPlayer && this.currentPlayer.isDead) return;
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
       this.socket.emit(NetworkEventKeys.PlayerFightAction)

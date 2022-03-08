@@ -8,7 +8,7 @@ import { socketIoServerMock } from '../debug/SocketIoServerMock'
 
 import { gameFightState } from '../states/GameFightState'
 
-import Player from '../characters/Player'
+import Player, { FULL_HEALTH, HEALTH_DAMAGE_DECREASE } from '../characters/Player'
 import { noOpAvatar } from '../characters/AvatarSetting'
 import ThrowableWeapon from '../classes/ThrowableWeapon'
 
@@ -18,6 +18,7 @@ import SceneKeys from '../consts/SceneKeys'
 
 import {
   MovementInput,
+  PlayerDead,
   PlayerFightAction,
   PlayerHurt,
   PlayerId,
@@ -190,19 +191,35 @@ export default class Game extends Phaser.Scene {
 
     // Avoid collisions with the player who thrown the weapon
     if (player.id === throwable.thrownBy) {
-      // console.log('handleThrowableWeaponPlayerOverlap: SAME - player.id ' + player.id + 'thrownBy ' + throwable.thrownBy)
       return;
     }
-    
-    // console.log('handleThrowableWeaponPlayerOverlap: SUCCESS')
 
-    throwable.disableBody();
+    // Player is dead
+    if (this.playersStates[player.id].health <= 0) return;
 
-    // TODO: brodcast event to all players indicating that an arrow impacted to a player
-    const data: PlayerHurt = {
-      playerId: player.id,
+    // Update health status
+    this.playersStates[player.id].health -= HEALTH_DAMAGE_DECREASE
+
+    console.log(`New health: ${this.playersStates[player.id].health}`)
+
+    if (this.playersStates[player.id].health === 0) {
+      // Brodcast event to all players indicating that a player died
+      const data: PlayerDead = {
+        playerId: player.id,
+      }
+      console.log(`[${NetworkEventKeys.PlayerDead}]: ${player.id}`)
+      io.emit(NetworkEventKeys.PlayerDead, data);
+    } else {
+      // Disable weapon
+      throwable.disableBody();
+
+      // Brodcast event to all players indicating that an arrow impacted to a player
+      const data: PlayerHurt = {
+        playerId: player.id,
+        health: this.playersStates[player.id].health,
+      }
+      io.emit(NetworkEventKeys.PlayerHurt, data);
     }
-    io.emit(NetworkEventKeys.PlayerHurt, data);
   }
 
   /*** START: Player handlers ***/
@@ -334,6 +351,14 @@ export default class Game extends Phaser.Scene {
       player.setPosition(randomPosition.x, randomPosition.y).setUserLeftVotingZone()
     })
   }
+
+  // Set full health to all players
+  resetPlayersHealth(): void {
+    this.players.getChildren().forEach((gameObject) => {
+      const player = gameObject as Player
+      this.playersStates[player.id].health = FULL_HEALTH;
+    })
+  }
 }
 
 const sendErrorMesage = (socket: Socket, msg: string, broadcast = false) => {
@@ -364,7 +389,8 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     y: randomPosition.y,
     avatar: noOpAvatar,
     votingZone: undefined,
-    playerSettings
+    playerSettings,
+    health: FULL_HEALTH,
   }
 
   // add player to server
@@ -416,6 +442,7 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   // Restart game: send all players to main island
   socket.on(NetworkEventKeys.RestartGame, () => {
     gameScene.resetPlayersPosition()
+    gameScene.resetPlayersHealth()
     io.emit(NetworkEventKeys.RestartGame)
     gameFightState.fightMode = false;
   })

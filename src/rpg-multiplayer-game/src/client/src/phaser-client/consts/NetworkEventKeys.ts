@@ -26,6 +26,9 @@ enum NetworkEventKeys {
   // Player has been damaged by an arrow
   PlayerHurt = 'player-hurt',
 
+  // A player has been killed
+  PlayerDead = 'player-dead',
+
   // Restart game
   RestartGame = 'restart-game',
 

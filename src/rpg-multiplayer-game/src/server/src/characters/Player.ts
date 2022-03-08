@@ -12,6 +12,8 @@ declare global {
     }
   }
 }
+export const FULL_HEALTH = 100;
+export const HEALTH_DAMAGE_DECREASE = 10;
 
 export default class Player extends Phaser.Physics.Arcade.Image {
   private playerId: PlayerId

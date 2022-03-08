@@ -5,6 +5,7 @@ import { gameFightState } from './GameFightState';
 interface PlayerGameState extends PlayerSettings {
   id: PlayerId
   isCurrentPlayer: boolean
+  health: number
 }
 
 class GameState {
@@ -58,11 +59,12 @@ class GameState {
    * @param id 
    * @param settings 
    */
-  addPlayer(id: PlayerId, settings: PlayerSettings, isCurrentPlayer = false): void {
+  addPlayer(id: PlayerId, settings: PlayerSettings, isCurrentPlayer = false, health = 100): void {
     this.players.push({
       ...settings,
       id,
       isCurrentPlayer,
+      health,
     })
   }
 
@@ -105,6 +107,28 @@ class GameState {
    */
   getPlayer(id: PlayerId): PlayerGameState | undefined {
     return this.players.find((player: PlayerGameState) => player.id === id)
+  }
+
+  updatePlayerHealth(id: PlayerId, health: number): void {
+    const player = this.getPlayer(id);
+    if (player) {
+      player.health = health;
+      console.log(`${player.username} health: ${health}`)
+    }
+  }
+
+  getPlayerHealth(id: PlayerId): number | undefined {
+    const player = this.getPlayer(id);
+    if (player) {
+      return player.health;
+    }
+  }
+
+  /**
+   * Restores health to all players
+   */
+  restorePlayersHealth(): void {
+    this.players.forEach(player => player.health = 100);
   }
 
   /**

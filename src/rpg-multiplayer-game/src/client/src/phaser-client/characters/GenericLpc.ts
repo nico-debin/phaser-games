@@ -3,7 +3,6 @@ import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon';
 import AvatarKeys from '../consts/AvatarKeys';
-import TextureKeys from '../consts/TextureKeys';
 import { MovementInput, PlayerId } from '../types/playerTypes'
 
 import Player from './Player'
@@ -37,6 +36,8 @@ export default class GenericLpc extends Player {
   }
 
   update(movementInput: MovementInput) {
+    if (this.isDead) return;
+
     super.update(movementInput)
 
     const { avatar } = this.playerData;
@@ -66,12 +67,12 @@ export default class GenericLpc extends Player {
     }
   }
 
-  shootThrowableWeapon(): void {
-    super.shootThrowableWeapon();
-    this.throwArrow();
-  }
+  // shootThrowableWeapon(): void {
+  //   super.shootThrowableWeapon();
+  //   this.throwArrow();
+  // }
 
-  throwArrow(): boolean {
+  private throwArrow(): boolean {
     if (!this.throwableWeaponGroup) {
       console.error('this.throwableWeaponGroup is undefined')
       return false
@@ -100,7 +101,7 @@ export default class GenericLpc extends Player {
     return true
   }
 
-  handleFightAnimation() {
+  private handleFightAnimation() {
     const { avatar } = this.playerData;
     let animation: string | undefined;
 
@@ -130,9 +131,16 @@ export default class GenericLpc extends Player {
   }
 
   fight() {
+    if (this.isDead) return;
     super.fight();
     if (this.throwArrow()) {
       this.handleFightAnimation();
     }
+  }
+
+  kill() {
+    super.kill();
+    const animation = `${this.playerData.avatar}-${AvatarAnimationKeys.DIE}`;
+    this.anims.play(animation, false);
   }
 }

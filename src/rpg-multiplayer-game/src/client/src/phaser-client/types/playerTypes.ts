@@ -34,6 +34,7 @@ export interface PlayerInitialState {
   avatar: AvatarSetting
   votingZone: string | undefined
   playerSettings: PlayerSettings
+  health: number
 }
 
 export interface PlayerState extends Omit<PlayerInitialState, "avatar" | "playerSettings"> {
@@ -64,5 +65,10 @@ export interface PlayerFightAction {
 }
 
 export interface PlayerHurt {
+  playerId: PlayerId;
+  health: number;
+}
+
+export interface PlayerDead {
   playerId: PlayerId;
 }

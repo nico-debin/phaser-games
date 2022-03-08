@@ -6,6 +6,7 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   private playerId: PlayerId
   protected orientation: Orientation;
   protected throwableWeaponGroup?: Phaser.Physics.Arcade.Group;
+  protected _isDead: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number | undefined) {
     super(scene, x, y, texture)
@@ -31,6 +32,25 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
 
   fight() {
     // Override this method on child classes
+  }
+
+  /**
+   * Set player as dead
+   */
+  kill() {
+    this._isDead = true;
+  }
+
+  
+  /**
+   * Set player as alive
+   */
+  revive() {
+    this._isDead = false;
+  }
+
+  get isDead() {
+    return this._isDead;
   }
 
   setThrowableWeapon(weaponGroup: Phaser.Physics.Arcade.Group) {
