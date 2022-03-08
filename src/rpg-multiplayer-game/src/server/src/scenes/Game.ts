@@ -200,8 +200,6 @@ export default class Game extends Phaser.Scene {
     // Update health status
     this.playersStates[player.id].health -= HEALTH_DAMAGE_DECREASE
 
-    console.log(`New health: ${this.playersStates[player.id].health}`)
-
     if (this.playersStates[player.id].health === 0) {
       // Brodcast event to all players indicating that a player died
       const data: PlayerDead = {
@@ -221,6 +219,27 @@ export default class Game extends Phaser.Scene {
       }
       io.emit(NetworkEventKeys.PlayerHurt, data);
     }
+
+    if (this.checkFightWinCondition()) {
+      const delayTime = 10 * 1000;
+      this.time.delayedCall(delayTime, () => {
+        this.restartGame();
+        io.emit(NetworkEventKeys.RestartGame);
+      }, [], this)
+    }
+  }
+
+  private checkFightWinCondition(): boolean {
+    // Fight is over when only one player is alive
+    // TODO: Fight is over when all players in same team is alive
+    let alivePlayers = 0;
+    (this.players.getChildren() as Player[]).forEach((player) => {
+      if (this.playersStates[player.id].health > 0) {
+        alivePlayers++;
+      }
+    })
+
+    return alivePlayers === 1;
   }
 
   /*** START: Player handlers ***/
@@ -252,12 +271,8 @@ export default class Game extends Phaser.Scene {
   }
 
   removePlayer = (playerId: PlayerId) => {
-    this.players.getChildren().forEach((gameObject) => {
-      const player = gameObject as Player
-      if (playerId === player.id) {
-        player.destroy()
-      }
-    })
+    const player = this.getPlayerById(playerId);
+    player?.destroy()
 
     // remove this player from our players object
     delete this.playersStates[playerId]
@@ -265,8 +280,7 @@ export default class Game extends Phaser.Scene {
   }
 
   handlePlayerMovementInput(playerId: PlayerId, input: MovementInput) {
-    this.players.getChildren().forEach((gameObject) => {
-      const player = gameObject as Player
+    (this.players.getChildren() as Player[]).forEach((player) => {
       if (playerId === player.id) {
         this.playersStates[player.id].movementInput = input
         this.movementInputQueue[player.id].enqueue(input)
@@ -290,10 +304,9 @@ export default class Game extends Phaser.Scene {
   }
 
   private handlePlayerUpdate() {
-    const playersStatesThatChanged: PlayersStates = {}
+    const playersStatesThatChanged: PlayersStates = {};
 
-    this.players.getChildren().forEach((gameObject) => {
-      const player = gameObject as Player
+    (this.players.getChildren() as Player[]).forEach((player) => {
       
       let playerHasMoved = this.playersStates[player.id].x != player.x || this.playersStates[player.id].y != player.y
 
@@ -359,6 +372,12 @@ export default class Game extends Phaser.Scene {
       const player = gameObject as Player
       this.playersStates[player.id].health = FULL_HEALTH;
     })
+  }
+
+  restartGame(): void {
+    this.resetPlayersPosition()
+    this.resetPlayersHealth()
+    gameFightState.fightMode = false;
   }
 }
 
@@ -442,10 +461,8 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
 
   // Restart game: send all players to main island
   socket.on(NetworkEventKeys.RestartGame, () => {
-    gameScene.resetPlayersPosition()
-    gameScene.resetPlayersHealth()
-    io.emit(NetworkEventKeys.RestartGame)
-    gameFightState.fightMode = false;
+    gameScene.restartGame();
+    io.emit(NetworkEventKeys.RestartGame);
   })
 
   socket.on(NetworkEventKeys.PlayerJoinFight, () => {
@@ -463,14 +480,6 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
           gameScene.resetPlayersPosition(true)
           console.log('Sending: ' + NetworkEventKeys.StartFight)
           io.emit(NetworkEventKeys.StartFight)
-
-          // DEBUG - REMOVE THIS!
-          gameScene.time.delayedCall(delayTime, () => {
-            gameScene.resetPlayersPosition()
-            console.log('[DEBUG] Sending: ' + NetworkEventKeys.RestartGame)
-            io.emit(NetworkEventKeys.RestartGame)
-            gameFightState.fightMode = false;
-          }, [], this)
         } else {
           // No enough fighters - restart game
           gameScene.resetPlayersPosition()
