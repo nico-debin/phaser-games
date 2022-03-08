@@ -57,7 +57,18 @@ export default class Hud extends Phaser.Scene {
         gameState.gameFight.playerWantsToFight = true
         this.newFightModal.hideButtons()
       })
-      .onCancel(() => this.newFightModal.hideButtons());
+      .onCancel(() => this.newFightModal.hideButtons())
+      .onOpen(() => {
+        settingsButton.setVisible(false)
+        settingsWheelIcon.setVisible(false)
+        this.votingStats.setVisible(false)
+        gameState.playerCanMove = false
+      }).onClose(() => {
+        settingsButton.setVisible(true)
+        settingsWheelIcon.setVisible(true)
+        this.votingStats.setVisible(true)
+        gameState.playerCanMove = true
+      })
 
 
     const settingsButton = this.add.image(width - 10, 10, TextureKeys.UIMenu1, 'yellow-button').setScale(0.20).setOrigin(1, 0);
@@ -105,6 +116,7 @@ export default class Hud extends Phaser.Scene {
       gameState.gameFight.fightMode ? this.votingStats.setVisible(false) : this.votingStats.setVisible(true)
 
       if (gameState.gameFight.onWaitingRoom) {
+        this.endOfVotingMenu.closeMenu()
         this.newFightModal.open()
 
         // Set time countdown

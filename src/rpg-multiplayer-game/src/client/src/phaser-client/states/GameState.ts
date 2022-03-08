@@ -113,7 +113,6 @@ class GameState {
     const player = this.getPlayer(id);
     if (player) {
       player.health = health;
-      console.log(`${player.username} health: ${health}`)
     }
   }
 

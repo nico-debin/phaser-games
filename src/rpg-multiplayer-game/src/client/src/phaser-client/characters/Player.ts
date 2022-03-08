@@ -16,6 +16,7 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
     this.orientation = 'down'
 
     this.healthBar = new HealthBar(scene, x, y + this.displayHeight * 0.5 + 5, this.displayWidth, 10, true);
+    this.healthBar.setVisible(false);
   }
 
   get id (){
@@ -46,6 +47,17 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   hurt(amount: number) {
     // Override this method on child classes
     if (this.isDead) return;
+  }
+
+  set health(amount: number) {
+    this.healthBar.setValue(amount);
+    if (amount === 0) {
+      this.kill();
+    }
+  }
+
+  set healthBarIsVisible(isVisible: boolean) {
+    this.healthBar.setVisible(isVisible);
   }
 
   /**

@@ -8,7 +8,7 @@ enum AvatarAnimationKeys {
   SHOOT_DOWN = 'shoot-down',
   SHOOT_UP = 'shoot-up',
   SHOOT_SIDE = 'shoot-side',
-  DIE = 'die',
+  DIE = 'die-down',
 };
 
 export default AvatarAnimationKeys

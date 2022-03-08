@@ -42,9 +42,10 @@ export default class PlayerFactory {
         playerId: playerInitialState.playerId,
       };
       const player = new GenericLpc(scene, playerInitialState.x, playerInitialState.y, playerData);
-      if (playerInitialState.health === 0) {
-        player.kill();
-      }
+      player.health = playerInitialState.health
+      // if (playerInitialState.health === 0) {
+      //   player.kill();
+      // }
       return player;
     }
     const classname = avatarPlayerMapper[playerInitialState.avatar.name];

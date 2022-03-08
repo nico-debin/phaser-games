@@ -56,6 +56,7 @@ export default class HealthBar {
 
   setValue(value: number): HealthBar {
     this.value = value;
+    this.draw();
     return this;
   }
 

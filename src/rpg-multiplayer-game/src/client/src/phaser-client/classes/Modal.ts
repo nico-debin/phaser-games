@@ -12,6 +12,8 @@ export default class Modal {
   protected buttonsContainer!: Phaser.GameObjects.Container;
   protected onCancelCallback!: () => void;
   protected onConfirmCallback!: () => void;
+  protected onOpenCallback: () => void;
+  protected onCloseCallback: () => void;
 
   constructor(scene: Phaser.Scene, title = "Default Title", subtitle = '', bodyText = '', cancelLabel = 'CANCEL', confirmLabel = 'CONFIRM') {
     const { width, height } = scene.scale;
@@ -58,6 +60,9 @@ export default class Modal {
       .setOrigin(0.5)
       .setVisible(this.isOpen);
 
+
+    this.onOpenCallback = () => null;
+    this.onCloseCallback = () => null;
     
     this.createButtons(cancelLabel, confirmLabel);
   }
@@ -149,6 +154,16 @@ export default class Modal {
     return this;
   }
 
+  onOpen(fn: () => void): Modal {
+    this.onOpenCallback = fn
+    return this
+  }
+
+  onClose(fn: () => void): Modal {
+    this.onCloseCallback = fn
+    return this
+  }
+
   open() {
     if (this.isOpen) return;
     this.isOpen = true;
@@ -159,6 +174,8 @@ export default class Modal {
     this.buttonsContainer.setVisible(true);
 
     this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
+
+    this.onOpenCallback()
   }
 
   close() {
@@ -171,6 +188,8 @@ export default class Modal {
     this.buttonsContainer.setVisible(false);
     
     this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
+
+    this.onCloseCallback()
   }
 
   hideButtons(): Modal {

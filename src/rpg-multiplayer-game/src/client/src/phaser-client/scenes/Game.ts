@@ -338,8 +338,11 @@ export default class Game extends Phaser.Scene {
       this.restorePlayersHealth();
 
       // Close open menus
-      const hudScene = this.scene.get(SceneKeys.Hud) as Hud
-      hudScene.closeMenus()
+      const hudScene = this.scene.get(SceneKeys.Hud) as Hud;
+      hudScene.closeMenus();
+
+      // Display player's health bar
+      this.setPlayersHealthBarVisibility(false);
     })
 
     this.socket.on(NetworkEventKeys.StartFightWaitingRoom, () => {
@@ -356,15 +359,15 @@ export default class Game extends Phaser.Scene {
       gameState.gameFight.fightMode = true;
 
       // Close open menus
-      const hudScene = this.scene.get(SceneKeys.Hud) as Hud
-      hudScene.closeMenus()
+      const hudScene = this.scene.get(SceneKeys.Hud) as Hud;
+      hudScene.closeMenus();
+
+      // Display player's health bar
+      this.setPlayersHealthBarVisibility(true);
     })
 
     this.socket.on(NetworkEventKeys.PlayerFightAction, (action: PlayerFightAction) => {
-      // DEBUG: Uncomment line below
-      // if (!gameState.gameFight.fightMode) return
-
-      console.log(`[${NetworkEventKeys.PlayerFightAction}]: `, { action })
+      if (!gameState.gameFight.fightMode) return
 
       const player = this.getPlayerById(action.playerId);
       if (!player) {
@@ -376,7 +379,8 @@ export default class Game extends Phaser.Scene {
     })
 
     this.socket.on(NetworkEventKeys.PlayerHurt, (data: PlayerHurt) => {
-      console.log(`[${NetworkEventKeys.PlayerHurt}]: `, { data })
+      if (!gameState.gameFight.fightMode) return
+
       const player = this.getPlayerById(data.playerId);
       if (!player) {
         console.error("Couldn't find player with id " + data.playerId);
@@ -393,14 +397,14 @@ export default class Game extends Phaser.Scene {
     });
 
     this.socket.on(NetworkEventKeys.PlayerDead, (data: PlayerDead) => {
-      console.log(`[${NetworkEventKeys.PlayerDead}]: `, { data })
+      if (!gameState.gameFight.fightMode) return
+
       const player = this.getPlayerById(data.playerId);
       if (!player) {
         console.error("Couldn't find player with id " + data.playerId);
         return;
       }
 
-      // console.log(`${username} has been hit. Health: ${data.health}`);
       gameState.updatePlayerHealth(data.playerId, 0)
 
       // Paint player in red for half a second
@@ -419,6 +423,11 @@ export default class Game extends Phaser.Scene {
   restorePlayersHealth(): void {
     gameState.restorePlayersHealth();
     (this.players.getChildren() as Player[]).forEach(player => player.revive());
+    gameState.playerCanMove =  true;
+  }
+
+  setPlayersHealthBarVisibility(visibility: boolean): void {
+    (this.players.getChildren() as Player[]).forEach(player => player.healthBarIsVisible = visibility);
   }
 
   updatePlayerState(newPlayerState: PlayerState): void {
@@ -520,8 +529,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private handleFightInput(): void {
-    // DEBUG: Uncomment line below
-    // if (!gameState.gameFight.fightMode) return
+    if (!gameState.gameFight.fightMode) return
 
     if (this.currentPlayer && this.currentPlayer.isDead) return;
 
@@ -608,6 +616,9 @@ export default class Game extends Phaser.Scene {
 
     // Hide the player if it's on voting islands
     this.handlePlayerVisibilityWhileVoting(player)
+
+    // Show health bar on fight mode
+    player.healthBarIsVisible = gameState.gameFight.fightMode;
   }
 
   removePlayer(playerId: PlayerId) {

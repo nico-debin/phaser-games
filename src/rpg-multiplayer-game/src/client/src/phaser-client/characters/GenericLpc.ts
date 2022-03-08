@@ -2,7 +2,6 @@ import Phaser from 'phaser'
 import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon';
-import HealthBar from '../classes/HealthBar';
 import AvatarKeys from '../consts/AvatarKeys';
 import { MovementInput, PlayerId } from '../types/playerTypes'
 
