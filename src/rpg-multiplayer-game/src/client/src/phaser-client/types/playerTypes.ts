@@ -68,6 +68,7 @@ export interface PlayerHurt {
   playerId: PlayerId;
   health: number;
   damage: number;
+  orientation: Orientation;
 }
 
 export interface PlayerDead {

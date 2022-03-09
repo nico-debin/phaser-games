@@ -18,6 +18,7 @@ import SceneKeys from '../consts/SceneKeys'
 
 import {
   MovementInput,
+  Orientation,
   PlayerDead,
   PlayerFightAction,
   PlayerHurt,
@@ -211,12 +212,26 @@ export default class Game extends Phaser.Scene {
       // Disable weapon
       throwable.disableBody();
 
+      let orientation: Orientation;
+
+      if (player.body.touching.up) {
+        orientation = 'up';
+      } else if (player.body.touching.down) {
+        orientation = 'down';
+      } else if (player.body.touching.right) {
+        orientation = 'right';
+      } else {
+        orientation = 'left';
+      }
+
       // Brodcast event to all players indicating that an arrow impacted to a player
       const data: PlayerHurt = {
         playerId: player.id,
         health: this.playersStates[player.id].health,
         damage: HEALTH_DAMAGE_DECREASE,
+        orientation,
       }
+
       io.emit(NetworkEventKeys.PlayerHurt, data);
     }
 
@@ -470,7 +485,6 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     gameFightState.addFighter(playerId);
     if (gameFightState.fightMode === false) {
       gameFightState.fightMode = true;
-      console.log('Sending: ' + NetworkEventKeys.StartFightWaitingRoom)
       io.emit(NetworkEventKeys.StartFightWaitingRoom)
 
       // Start countdown to start the fight if +1 fighters has joined
@@ -478,12 +492,10 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       gameScene.fightWaitingRoomTimerEvent = gameScene.time.delayedCall(delayTime, () => {
         if (gameFightState.fightersCount >= 2) {
           gameScene.resetPlayersPosition(true)
-          console.log('Sending: ' + NetworkEventKeys.StartFight)
           io.emit(NetworkEventKeys.StartFight)
         } else {
           // No enough fighters - restart game
           gameScene.resetPlayersPosition()
-          console.log('Sending: ' + NetworkEventKeys.RestartGame)
           io.emit(NetworkEventKeys.RestartGame)
           gameFightState.fightMode = false;
         }

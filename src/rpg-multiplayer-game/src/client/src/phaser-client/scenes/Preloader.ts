@@ -45,6 +45,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.bitmapFont(FontKeys.DESYREL, 'fonts/bitmap/desyrel.png', 'fonts/bitmap/desyrel.xml')
     this.load.bitmapFont(FontKeys.GEM, 'fonts/bitmap/gem.png', 'fonts/bitmap/gem.xml')
     this.load.bitmapFont(FontKeys.GOTHIC, 'fonts/bitmap/gothic.png', 'fonts/bitmap/gothic.xml')
+
+    // Effects
+    this.load.image(TextureKeys.Blood, 'effects/blood.png')
   }
 
   create() {

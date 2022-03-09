@@ -1,9 +1,10 @@
 import Phaser from 'phaser'
-import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys';
+import AvatarAnimationKeys from '../consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon';
 import AvatarKeys from '../consts/AvatarKeys';
-import { MovementInput, PlayerId } from '../types/playerTypes'
+import TextureKeys from '../consts/TextureKeys';
+import { MovementInput, Orientation, PlayerId } from '../types/playerTypes'
 
 import Player from './Player'
 
@@ -14,6 +15,8 @@ interface PlayerData {
 
 export default class GenericLpc extends Player {
   playerData: PlayerData;
+  bloodParticles: Phaser.GameObjects.Particles.ParticleEmitterManager;
+  bloodParticlesEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(
     scene: Phaser.Scene,
@@ -33,6 +36,19 @@ export default class GenericLpc extends Player {
     AnimationHandler.add(scene, playerData.avatar);
 
     this.anims.play(`${playerData.avatar}-${AvatarAnimationKeys.IDLE_DOWN}`)
+
+    this.bloodParticles = scene.add.particles(TextureKeys.Blood);
+    this.bloodParticlesEmitter = this.bloodParticles.createEmitter({
+      alpha: { start: 0.7, end: 0 },
+      lifespan: { min: 700, max: 1000 },
+      speed: { min: 10, max: 60 },
+      gravityY: 90,
+      quantity: 4,
+      angle: 360 - 20,
+      timeScale: 2,
+      on: false,
+    });
+    this.bloodParticlesEmitter.startFollow(this, 5, 10, true);
   }
 
   update(movementInput: MovementInput) {
@@ -65,6 +81,12 @@ export default class GenericLpc extends Player {
       parts[2] = 'idle'
       this.anims.play(parts.join('-'))
     }
+  }
+
+  setDepth(value: number): this {
+    super.setDepth(value);
+    this.bloodParticles.setDepth(value);
+    return this;
   }
 
   private throwArrow(): boolean {
@@ -133,10 +155,38 @@ export default class GenericLpc extends Player {
     }
   }
 
-  hurt(amount: number) {
+  hurt(amount: number, orientation?: Orientation) {
     super.hurt(amount);
     if (this.isDead) return;
+
     this.healthBar.decrease(amount);
+
+    switch (orientation) {
+      case 'up': 
+        this.bloodParticlesEmitter.setAngle(50);
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(0, 0)
+        break;
+
+      case 'down': 
+        this.bloodParticlesEmitter.setAngle(360 - 50);
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(0, 10)
+        break;
+
+      case 'right':
+        this.bloodParticlesEmitter.setAngle(360 - 180 + 20);
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(-5, 10)
+        break;
+
+      case 'left':
+      default:
+        this.bloodParticlesEmitter.setAngle(360 + 20);
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(5, 10)
+    }
+
+    this.bloodParticlesEmitter.start();
+    this.scene.time.delayedCall(500, () => {
+      this.bloodParticlesEmitter.stop();
+    })
   }
 
   kill() {

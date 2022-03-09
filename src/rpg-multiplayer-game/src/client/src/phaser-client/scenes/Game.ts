@@ -393,7 +393,7 @@ export default class Game extends Phaser.Scene {
       player.setTint(0xff0000)
       this.time.delayedCall(500, () => player.clearTint())
 
-      player.hurt(data.damage);
+      player.hurt(data.damage, data.orientation);
     });
 
     this.socket.on(NetworkEventKeys.PlayerDead, (data: PlayerDead) => {
