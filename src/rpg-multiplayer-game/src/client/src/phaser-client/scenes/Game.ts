@@ -77,6 +77,8 @@ export default class Game extends Phaser.Scene {
   private renderTexture!: Phaser.GameObjects.RenderTexture
   private rainParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
   private vision!: Phaser.GameObjects.Image
+  private visionMaskContainer!: Phaser.GameObjects.Container
+  private lightTweens: Phaser.Tweens.Tween[] = []
 
   constructor() {
     super(SceneKeys.Game)
@@ -159,14 +161,21 @@ export default class Game extends Phaser.Scene {
       width: mapIsland.widthInPixels,
       height: mapIsland.heightInPixels,
     }, true)
-    // this.renderTexture.setDepth(8)
     this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop]);
-    // set a dark blue tint
-    // this.renderTexture.setTint(0x0a2948)
-    // this.renderTexture.setDepth(10)
+    this.visionMaskContainer = this.make.container({}, false);
 
-    // Rain particles for dark mode
-    // this.createRainParticles()
+    const lightsLayer = mapIsland.getObjectLayer('Lights');
+    lightsLayer.objects.forEach((tiledObject) => {
+      const {x, y } = tiledObject
+      const campfireVision = this.make.image({
+        x,
+        y,
+        key: TextureKeys.VisionMask,
+        add: false,
+        scale: 1,
+      })
+      this.visionMaskContainer.add(campfireVision);
+    });
 
     // Voting Zones
     const votingZonesLayer = mapIsland.getObjectLayer('Voting Zones')
@@ -477,6 +486,25 @@ export default class Game extends Phaser.Scene {
   private startRain(): void {
     console.log('start rain');
 
+    if (this.lightTweens.length === 0) {
+      this.visionMaskContainer.each((gameObject: Phaser.GameObjects.GameObject) => {
+        if (gameObject !== this.vision) {
+          console.log('Adding new tween')
+          const tween = this.tweens.add({
+            targets: gameObject,
+            scale: 0.8,
+            duration: Phaser.Math.Between(1500, 2500),
+            ease: Phaser.Math.Easing.Bounce.InOut,
+            loop: -1,
+            yoyo: true,
+            loopDelay: Phaser.Math.Between(0, 250),
+          });
+          this.lightTweens.push(tween);
+        }
+      })
+    }
+    this.lightTweens.forEach((tween: Phaser.Tweens.Tween) => tween.restart())
+
     this.tweens.addCounter({
       from: 0,
       to: 100,
@@ -502,6 +530,8 @@ export default class Game extends Phaser.Scene {
 
   private stopRain(): void {
     console.log('stop rain');
+
+    this.lightTweens.forEach((tween: Phaser.Tweens.Tween) => tween.stop())
 
     this.tweens.addCounter({
       from: 0,
@@ -703,7 +733,8 @@ export default class Game extends Phaser.Scene {
         add: false,
         scale: 1,
       })
-      this.renderTexture.setMask(new Phaser.Display.Masks.BitmapMask(this, this.vision))
+      this.visionMaskContainer.add(this.vision);
+      this.renderTexture.setMask(new Phaser.Display.Masks.BitmapMask(this, this.visionMaskContainer))
       this.renderTexture.mask.invertAlpha = true;
       this.vision.setActive(false)
     } else {
