@@ -5,6 +5,8 @@ enum TextureKeys {
   SettingsBoard = 'settings-board',
   Paper = 'paper',
   Blood = 'blood',
+  Rain = 'rain',
+  VisionMask = 'vision-mask',
 }
 
 export default TextureKeys

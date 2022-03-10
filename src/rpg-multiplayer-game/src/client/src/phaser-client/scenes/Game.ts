@@ -40,6 +40,7 @@ import Cobra from '../characters/npc/Cobra'
 import Hud from './Hud'
 import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow'
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon'
+import TextureKeys from '../consts/TextureKeys'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -72,6 +73,10 @@ export default class Game extends Phaser.Scene {
   // Voting zones rectangles
   private votingZones: VotingZone[] = []
   private currentVotingZoneValue: VotingZoneValue
+
+  private renderTexture!: Phaser.GameObjects.RenderTexture
+  private rainParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
+  private vision!: Phaser.GameObjects.Image
 
   constructor() {
     super(SceneKeys.Game)
@@ -138,7 +143,7 @@ export default class Game extends Phaser.Scene {
     const tilesetIslandBeach = mapIsland.addTilesetImage('tf_beach_tileB', 'tiles-islands-beach', 32, 32, 0, 0)
     const tilesetIslandShoreline = mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
 
-    mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
+    const ocean = mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
     // Group all tilset layers
     const islandsTilesLayerGroup = this.add.layer([
       mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
@@ -147,7 +152,21 @@ export default class Game extends Phaser.Scene {
       mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
       mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
     ])
-    mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
+    const vegetationTop = mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
+
+    // make a RenderTexture that is the size of the screen
+    this.renderTexture = this.make.renderTexture({
+      width: mapIsland.widthInPixels,
+      height: mapIsland.heightInPixels,
+    }, true)
+    // this.renderTexture.setDepth(8)
+    this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop]);
+    // set a dark blue tint
+    // this.renderTexture.setTint(0x0a2948)
+    // this.renderTexture.setDepth(10)
+
+    // Rain particles for dark mode
+    // this.createRainParticles()
 
     // Voting Zones
     const votingZonesLayer = mapIsland.getObjectLayer('Voting Zones')
@@ -319,6 +338,17 @@ export default class Game extends Phaser.Scene {
       }
     })
 
+
+
+    // Dark mode
+    autorun(() => {
+      if (gameState.darkMode) {
+        this.startRain();
+      } else {
+        this.stopRain();
+      }
+    })
+
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
@@ -420,6 +450,81 @@ export default class Game extends Phaser.Scene {
     return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
   }
 
+  private createRainParticles(): void {
+    console.log({
+      w: this.cameras.main.getBounds().width,
+      h: this.cameras.main.getBounds().height,
+    })
+    this.rainParticlesEmitter = this.add.particles(TextureKeys.Rain).setDepth(100).createEmitter({
+      frame: 0,
+      x: { min: 0, max: this.cameras.main.getBounds().width },
+      y: { min: 0, max: this.cameras.main.getBounds().height },
+      lifespan: 3000,
+      speedY: 1500,
+      // scaleY: { min: 1, max: 4 },
+      // scaleX: 0.5,
+      quantity: { min: 15, max: 30 },
+      rotate: { min: 80, max: 100 },
+      // angle: 135,
+      scale: { start: 1, end: 0.2 },
+      blendMode: "LIGHTEN",
+      // blendMode: 'ADD'
+      on: false,
+      alpha: 0.6,
+    });
+  }
+
+  private startRain(): void {
+    console.log('start rain');
+
+    this.tweens.addCounter({
+      from: 0,
+      to: 100,
+      duration: 1500,
+      onStart: () => {
+        this.vision.setActive(true);
+        this.renderTexture.setTint(0x0a2948);
+        this.renderTexture.setAlpha(0);
+      },
+      onUpdate: (tween) => {
+          const value = Math.floor(tween.getValue());
+          this.renderTexture.setAlpha(value/100);              
+      },
+      onComplete: () => {
+        
+        if (!this.rainParticlesEmitter) {
+          this.createRainParticles()
+        }
+        this.rainParticlesEmitter?.start();
+      }
+    });
+  }
+
+  private stopRain(): void {
+    console.log('stop rain');
+
+    this.tweens.addCounter({
+      from: 0,
+      to: 100,
+      duration: 1500,
+      onStart: () => {
+        this.rainParticlesEmitter?.stop();
+      },
+      onUpdate: (tween) => {
+          if (!this.renderTexture.isTinted) {
+            return;
+          }
+          const value = Math.floor(tween.getValue());
+          this.renderTexture.setAlpha(1 - value/100);
+      },
+      onComplete: () => {
+        this.vision.setActive(false);
+        this.renderTexture.setAlpha(1);
+        this.renderTexture.clearTint();
+      }
+    });
+  }
+
   restorePlayersHealth(): void {
     gameState.restorePlayersHealth();
     (this.players.getChildren() as Player[]).forEach(player => player.revive());
@@ -510,6 +615,10 @@ export default class Game extends Phaser.Scene {
     }
 
     this.updateLastMovementInput(newMovementInput)
+
+    if (this.vision && this.vision.active && this.currentPlayer) {
+      this.vision.setPosition(this.currentPlayer.x, this.currentPlayer.y);
+    }
   }
 
   private updateLastMovementInput(movementInput: MovementInput): void {
@@ -529,6 +638,11 @@ export default class Game extends Phaser.Scene {
   }
 
   private handleFightInput(): void {
+    // DEBUG - REMOVE THIS
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.shift)) {
+      gameState.darkMode = !gameState.darkMode;
+    }
+
     if (!gameState.gameFight.fightMode) return
 
     if (this.currentPlayer && this.currentPlayer.isDead) return;
@@ -574,7 +688,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  addPlayer(playerInitialState: PlayerInitialState, isMainPlayer = true) {
+  addPlayer(playerInitialState: PlayerInitialState, isMainPlayer = true): void {
     const player = PlayerFactory.fromPlayerInitialState(this, playerInitialState)
 
     player.setDepth(5)
@@ -582,9 +696,21 @@ export default class Game extends Phaser.Scene {
     if (isMainPlayer) {
       this.currentPlayer = player
       this.currentPlayer.setThrowableWeapon(this.currentPlayerThrowableWeapons);
+      this.vision = this.make.image({
+        x: player.x,
+        y: player.y,
+        key: TextureKeys.VisionMask,
+        add: false,
+        scale: 1,
+      })
+      this.renderTexture.setMask(new Phaser.Display.Masks.BitmapMask(this, this.vision))
+      this.renderTexture.mask.invertAlpha = true;
+      this.vision.setActive(false)
     } else {
       player.setThrowableWeapon(this.restOfPlayersThrowableWeapons);
     }
+    // this.renderTexture.draw(player);
+    console.log(player.depth)
     
     // Add player to physics engine
     this.physics.add.existing(player)

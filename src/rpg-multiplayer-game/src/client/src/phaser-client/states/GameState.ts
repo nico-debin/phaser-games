@@ -1,4 +1,4 @@
-import { action, computed, makeAutoObservable, observable } from 'mobx'
+import { action, makeAutoObservable, observable } from 'mobx'
 import { PlayerId, PlayerSettings } from "../types/playerTypes";
 import { gameFightState } from './GameFightState';
 
@@ -30,6 +30,8 @@ class GameState {
   // Flag indicating that the player wants to join the fight
   // _playerWantsToFight = false
 
+  private _darkMode = false
+
   readonly gameFight: typeof gameFightState;
 
   constructor() {
@@ -52,6 +54,14 @@ class GameState {
       // enablePlayerWantsToFightFlag: action,
       // disablePlayerWantsToFightFlag: action,
     })
+  }
+
+  set darkMode(newValue: boolean) {
+    this._darkMode = newValue;
+  }
+
+  get darkMode(): boolean {
+    return this._darkMode;
   }
 
   /**

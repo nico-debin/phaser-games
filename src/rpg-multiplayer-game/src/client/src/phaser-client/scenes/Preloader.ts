@@ -48,6 +48,8 @@ export default class Preloader extends Phaser.Scene {
 
     // Effects
     this.load.image(TextureKeys.Blood, 'effects/blood.png')
+    this.load.image(TextureKeys.VisionMask, 'effects/bitmap-mask.png')
+    this.load.spritesheet(TextureKeys.Rain, 'effects/raindrops.png', {frameWidth: 32, frameHeight: 32})
   }
 
   create() {

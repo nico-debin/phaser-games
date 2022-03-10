@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import { gameState } from './GameState';
 
 class GameFightState {
 
@@ -23,6 +24,7 @@ class GameFightState {
     if (newValue === true) {
       this.onWaitingRoom = false;
     }
+    gameState.darkMode = newValue;
   }
 
   get fightMode(): boolean {
