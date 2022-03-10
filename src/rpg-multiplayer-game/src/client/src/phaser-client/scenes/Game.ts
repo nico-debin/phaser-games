@@ -74,10 +74,19 @@ export default class Game extends Phaser.Scene {
   private votingZones: VotingZone[] = []
   private currentVotingZoneValue: VotingZoneValue
 
+  // Render Texture where tilemaps layers are rendered to (useful for dark mode)
   private renderTexture!: Phaser.GameObjects.RenderTexture
+
+  // Rain effect
   private rainParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
-  private vision!: Phaser.GameObjects.Image
+
+  // Rounded light effect for current player in dark mode
+  private currentPlayerVision!: Phaser.GameObjects.Image
+
+  // Container that holds all lights in dark mode (except current player vision)
   private visionMaskContainer!: Phaser.GameObjects.Container
+
+  // Tweens for light's flickering effect
   private lightTweens: Phaser.Tweens.Tween[] = []
 
   constructor() {
@@ -460,10 +469,6 @@ export default class Game extends Phaser.Scene {
   }
 
   private createRainParticles(): void {
-    console.log({
-      w: this.cameras.main.getBounds().width,
-      h: this.cameras.main.getBounds().height,
-    })
     this.rainParticlesEmitter = this.add.particles(TextureKeys.Rain).setDepth(100).createEmitter({
       frame: 0,
       x: { min: 0, max: this.cameras.main.getBounds().width },
@@ -488,8 +493,7 @@ export default class Game extends Phaser.Scene {
 
     if (this.lightTweens.length === 0) {
       this.visionMaskContainer.each((gameObject: Phaser.GameObjects.GameObject) => {
-        if (gameObject !== this.vision) {
-          console.log('Adding new tween')
+        if (gameObject !== this.currentPlayerVision) {
           const tween = this.tweens.add({
             targets: gameObject,
             scale: 0.8,
@@ -510,7 +514,7 @@ export default class Game extends Phaser.Scene {
       to: 100,
       duration: 1500,
       onStart: () => {
-        this.vision.setActive(true);
+        this.currentPlayerVision.setActive(true);
         this.renderTexture.setTint(0x0a2948);
         this.renderTexture.setAlpha(0);
       },
@@ -548,7 +552,7 @@ export default class Game extends Phaser.Scene {
           this.renderTexture.setAlpha(1 - value/100);
       },
       onComplete: () => {
-        this.vision.setActive(false);
+        this.currentPlayerVision.setActive(false);
         this.renderTexture.setAlpha(1);
         this.renderTexture.clearTint();
       }
@@ -646,8 +650,8 @@ export default class Game extends Phaser.Scene {
 
     this.updateLastMovementInput(newMovementInput)
 
-    if (this.vision && this.vision.active && this.currentPlayer) {
-      this.vision.setPosition(this.currentPlayer.x, this.currentPlayer.y);
+    if (this.currentPlayerVision && this.currentPlayerVision.active && this.currentPlayer) {
+      this.currentPlayerVision.setPosition(this.currentPlayer.x, this.currentPlayer.y);
     }
   }
 
@@ -726,22 +730,20 @@ export default class Game extends Phaser.Scene {
     if (isMainPlayer) {
       this.currentPlayer = player
       this.currentPlayer.setThrowableWeapon(this.currentPlayerThrowableWeapons);
-      this.vision = this.make.image({
+      this.currentPlayerVision = this.make.image({
         x: player.x,
         y: player.y,
         key: TextureKeys.VisionMask,
         add: false,
         scale: 1,
       })
-      this.visionMaskContainer.add(this.vision);
+      this.visionMaskContainer.add(this.currentPlayerVision);
       this.renderTexture.setMask(new Phaser.Display.Masks.BitmapMask(this, this.visionMaskContainer))
       this.renderTexture.mask.invertAlpha = true;
-      this.vision.setActive(false)
+      this.currentPlayerVision.setActive(false)
     } else {
       player.setThrowableWeapon(this.restOfPlayersThrowableWeapons);
     }
-    // this.renderTexture.draw(player);
-    console.log(player.depth)
     
     // Add player to physics engine
     this.physics.add.existing(player)
