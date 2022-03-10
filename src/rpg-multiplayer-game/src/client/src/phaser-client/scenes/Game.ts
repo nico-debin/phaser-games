@@ -471,18 +471,15 @@ export default class Game extends Phaser.Scene {
   private createRainParticles(): void {
     this.rainParticlesEmitter = this.add.particles(TextureKeys.Rain).setDepth(100).createEmitter({
       frame: 0,
-      x: { min: 0, max: this.cameras.main.getBounds().width },
-      y: { min: 0, max: this.cameras.main.getBounds().height },
-      lifespan: 3000,
+      x: { min: this.cameras.main.worldView.left - 150, max: this.cameras.main.worldView.right + 150 },
+      y: { min: this.cameras.main.worldView.top - 200, max: this.cameras.main.worldView.top },
+      lifespan: 600,
+      speedX: { min: 0, max: 200 },
       speedY: 1500,
-      // scaleY: { min: 1, max: 4 },
-      // scaleX: 0.5,
       quantity: { min: 15, max: 30 },
       rotate: { min: 80, max: 100 },
-      // angle: 135,
-      scale: { start: 1, end: 0.2 },
-      blendMode: "LIGHTEN",
-      // blendMode: 'ADD'
+      scale: { start: 0.8, end: 0 },
+      blendMode: 'ADD',
       on: false,
       alpha: 0.6,
     });
@@ -652,6 +649,7 @@ export default class Game extends Phaser.Scene {
 
     if (this.currentPlayerVision && this.currentPlayerVision.active && this.currentPlayer) {
       this.currentPlayerVision.setPosition(this.currentPlayer.x, this.currentPlayer.y);
+      this.rainParticlesEmitter?.setPosition({ min: this.cameras.main.worldView.left - 150, max: this.cameras.main.worldView.right + 150 }, { min: this.cameras.main.worldView.top - 200, max: this.cameras.main.worldView.top })
     }
   }
 
