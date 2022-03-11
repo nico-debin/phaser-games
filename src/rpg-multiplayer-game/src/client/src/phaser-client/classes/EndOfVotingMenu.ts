@@ -172,8 +172,44 @@ export default class EndOfVotingMenu extends AbstractMenu {
     return votingResults;
   }
 
+  private sortVotingResultsRows(votingResults: VotingResultRow[]): VotingResultRow[] {
+    return votingResults.sort((a: VotingResultRow, b: VotingResultRow) => {
+      const vote1 = a.vote ? parseInt(a.vote) : NaN;
+      const vote2 = b.vote ? parseInt(b.vote) : NaN;
+
+      // Send NaN to the bottom
+      if (isNaN(vote1) && isNaN(vote2)) {
+        return 0;
+      } else if (isNaN(vote1) && !isNaN(vote2)) {
+        return 1;
+      } else if (!isNaN(vote1) && isNaN(vote2)) {
+        return -1
+      }
+
+      // Sort by number
+      if (vote1 < vote2) {
+        return -1;
+      }
+      if (vote1 > vote2) {
+        return 1;
+      }
+
+      // Sort by string (username)
+      if (a.player?.username && b.player?.username) {
+        if (a.player.username < b.player.username) {
+          return -1;
+        } else if (a.player.username > b.player.username) {
+          return 1;
+        }
+      }
+      
+      return 0;
+    })
+  }
+
   private showVotingResults() {
     const votingResults = this.generateVotingResultsRows();
+    this.sortVotingResultsRows(votingResults);
     this.votingResultsRows.addRows(votingResults);
   }
 
