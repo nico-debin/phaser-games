@@ -1,4 +1,5 @@
 enum AvatarKeys {
+  // Main Characters
   ADRIAN_TOMKINS = 'adrian-tomkins',
   CALVIN_KOEPKE = 'calvin-koepke',
   JOEL_BOWEN = 'joel-bowen',
@@ -8,6 +9,19 @@ enum AvatarKeys {
   NICK_TAYLOR = 'nick-taylor',
   NICOLAS_DEBIN = 'nicolas-debin',
   RYAN_MCKAY = 'ryan-mckay',
+
+  // Default Characters
+  BOY_01 = 'boy-01',
+  NIGHTELF = 'nightelf',
+  ORC = 'orc',
+  PIRATE_BLUE = 'pirate-blue',
+  GIRL_01 = 'girl-01',
+  GIRL_02 = 'girl-02',
+  GIRL_03 = 'girl-03',
+  GIRL_04 = 'girl-04',
+  GIRL_05 = 'girl-05',
+  GIRL_06 = 'girl-06',
+  GIRL_07 = 'girl-07',
 };
 
 export default AvatarKeys

@@ -13,6 +13,15 @@ export const avatarSlides: Slide[] = [
 ]
 
 export const defaultAvatarSlides: Slide[] = [
-  { url: 'characters/pink-girl.png', name: 'pink-girl' },
-  { url: 'characters/cool-girl.png', name: 'cool-girl' },
+  { url: 'characters/boy-01.png', name: 'boy-01' },
+  { url: 'characters/nightelf.png', name: 'nightelf' },
+  { url: 'characters/orc.png', name: 'orc' },
+  { url: 'characters/pirate-blue.png', name: 'pirate-blue' },
+  { url: 'characters/girl-01.png', name: 'girl-01' },
+  { url: 'characters/girl-02.png', name: 'girl-02' },
+  { url: 'characters/girl-03.png', name: 'girl-03' },
+  { url: 'characters/girl-04.png', name: 'girl-04' },
+  { url: 'characters/girl-05.png', name: 'girl-05' },
+  { url: 'characters/girl-06.png', name: 'girl-06' },
+  { url: 'characters/girl-07.png', name: 'girl-07' },
 ]

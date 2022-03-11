@@ -44,7 +44,12 @@ const HomePage = () => {
 
   useEffect(() => {
     // Set active avatar slides based on selected username
-    username && setActiveSlides([...avatarSlides.filter((slide: Slide) => slide.name === username), ...defaultAvatarSlides])
+    username && setActiveSlides([...avatarSlides.filter((slide: Slide) => {
+      if (username === 'cowabungapeppercorn') {
+        return slide.name === 'nick-taylor';
+      }
+      return slide.name === username;
+    }), ...defaultAvatarSlides])
   }, [username])
 
   const showPlayButton: boolean = isReadyToPlay();

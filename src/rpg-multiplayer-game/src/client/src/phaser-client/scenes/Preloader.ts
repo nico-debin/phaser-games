@@ -27,7 +27,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(TextureKeys.SettingsBoard, 'ui/settings-board-500x600.png')
     this.load.image(TextureKeys.Paper, 'ui/paper-small.png')
 
-    // Characters
+    // Main Characters
     this.load.spritesheet(AvatarKeys.ADRIAN_TOMKINS, 'characters/adrian-tomkins.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.CALVIN_KOEPKE, 'characters/calvin-koepke.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.JOEL_BOWEN, 'characters/joel-bowen.png', {frameWidth: 64, frameHeight: 64})
@@ -37,6 +37,19 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet(AvatarKeys.NICK_TAYLOR, 'characters/nick-taylor.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.NICOLAS_DEBIN, 'characters/nicolas-debin.png', { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet(AvatarKeys.RYAN_MCKAY, 'characters/ryan-mckay.png', {frameWidth: 64, frameHeight: 64})
+
+    // Default Characters
+    this.load.spritesheet(AvatarKeys.BOY_01, 'characters/boy-01.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.NIGHTELF, 'characters/nightelf.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.ORC, 'characters/orc.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.PIRATE_BLUE, 'characters/pirate-blue.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_01, 'characters/girl-01.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_02, 'characters/girl-02.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_03, 'characters/girl-03.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_04, 'characters/girl-04.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_05, 'characters/girl-05.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_06, 'characters/girl-06.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.GIRL_07, 'characters/girl-07.png', {frameWidth: 64, frameHeight: 64})
 
     // NPC
     this.load.spritesheet(NpcKeys.COBRA, 'characters/npc/cobra-finder.png', { frameWidth: 64, frameHeight: 64 })

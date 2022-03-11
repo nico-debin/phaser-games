@@ -271,10 +271,10 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
         avatar.x + avatar.displayWidth * 0.5 + 0,
         this.currentY,
         FontKeys.GEM,
-        votingResult.player.avatarName,
+        votingResult.player.username,
         16
       )
-      .setTint(0x000000)
+      .setTint(0x222222)
       .setOrigin(0, 0.5);
 
     const votingLabel = this.scene.add
