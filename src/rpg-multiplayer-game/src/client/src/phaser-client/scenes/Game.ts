@@ -627,18 +627,18 @@ export default class Game extends Phaser.Scene {
 
     const newMovementInput: MovementInput = { ...this.lastMovementInput }
 
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown && !this.cursors.right.isDown) {
       newMovementInput.left = true
-    } else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown && !this.cursors.left.isDown) {
       newMovementInput.right = true
     } else {
       newMovementInput.left = false
       newMovementInput.right = false
     }
 
-    if (this.cursors.up.isDown) {
+    if (this.cursors.up.isDown && !this.cursors.down.isDown) {
       newMovementInput.up = true
-    } else if (this.cursors.down.isDown) {
+    } else if (this.cursors.down.isDown && !this.cursors.up.isDown) {
       newMovementInput.down = true
     } else {
       newMovementInput.up = false

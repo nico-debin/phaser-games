@@ -45,7 +45,19 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     const speed = 300
   
     // Handle Movement
-    if (movementInput.left) {
+    if (movementInput.left && movementInput.up) {
+      this.setVelocity(-speed * 0.75, -speed * 0.75)
+      this._orientation = 'left'
+    } else if (movementInput.left && movementInput.down) {
+      this.setVelocity(-speed * 0.75, speed * 0.75)
+      this._orientation = 'left'
+    } else if (movementInput.right && movementInput.up) {
+      this.setVelocity(speed * 0.75, -speed * 0.75)
+      this._orientation = 'right'
+    } else if (movementInput.right && movementInput.down) {
+      this.setVelocity(speed * 0.75, speed * 0.75)
+      this._orientation = 'right'
+    } else if (movementInput.left) {
       this.setVelocity(-speed, 0)
       this._orientation = 'left'
     } else if (movementInput.right) {

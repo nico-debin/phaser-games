@@ -294,6 +294,7 @@ export default class Game extends Phaser.Scene {
     delete this.movementInputQueue[playerId]
   }
 
+  // Handler for player movement network event
   handlePlayerMovementInput(playerId: PlayerId, input: MovementInput) {
     (this.players.getChildren() as Player[]).forEach((player) => {
       if (playerId === player.id) {
@@ -303,10 +304,7 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  getPlayerById(playerId: PlayerId): Player | undefined {
-    return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
-  }
-
+  // Handler for player movement scene update
   private handlePlayerMovementInputUpdate() {
     for (const playerId in this.movementInputQueue) {
       const player = this.getPlayerById(playerId);
@@ -316,6 +314,10 @@ export default class Game extends Phaser.Scene {
 
       player?.update(movementInput)
     }
+  }
+
+  getPlayerById(playerId: PlayerId): Player | undefined {
+    return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
   }
 
   private handlePlayerUpdate() {
