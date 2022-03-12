@@ -41,6 +41,7 @@ import Hud from './Hud'
 import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow'
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon'
 import TextureKeys from '../consts/TextureKeys'
+import SpeechBubble from '../classes/SpeechBubble'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -214,6 +215,14 @@ export default class Game extends Phaser.Scene {
     this.add.existing(cobra)
     this.physics.add.existing(cobra)
     cobra.body.onCollide = true
+
+    // Make the cobra talk
+    this.physics.add.overlap(cobra, this.players, (go1: Phaser.GameObjects.GameObject, go2: Phaser.GameObjects.GameObject) => {
+      const player = go2 as Player;
+      if (this.currentPlayerId === player.id && Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+        cobra.speak()
+      }
+    })
 
     // Enable collision by property on all layers
     islandsTilesLayerGroup.getChildren().forEach((islandTileLayer) => {

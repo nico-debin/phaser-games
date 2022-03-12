@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
-import AvatarAnimationKeys from '~/phaser-client/consts/AvatarAnimationKeys'
-import AvatarKeys from '~/phaser-client/consts/AvatarKeys'
+import SpeechBubble from '../../classes/SpeechBubble'
+import AvatarAnimationKeys from '../../consts/AvatarAnimationKeys'
 
 import NpcKeys from '../../consts/NpcKeys'
 
@@ -23,6 +23,8 @@ const randomDirection = (exclude: Direction) => {
 export default class Cobra extends Phaser.Physics.Arcade.Sprite {
   private direction = Direction.DOWN
   private moveEvent: Phaser.Time.TimerEvent
+  private speechBubble?: SpeechBubble
+  private isSpeaking = false
 
   constructor(
     scene: Phaser.Scene,
@@ -44,12 +46,28 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
       },
       loop: true,
     })
+
+    this.speechBubble = new SpeechBubble(scene, x, y, 100, 35, "Go Cobras!", {
+      // @ts-ignore
+      fontSize: 14,
+    });
+    this.speechBubble.setOffset(3, -this.displayHeight).setVisible(false);
   }
 
-  destroy(fromScene?: boolean | undefined)
-  {
+  destroy(fromScene?: boolean | undefined): void {
     this.moveEvent.destroy()
     super.destroy(fromScene)
+    this.speechBubble?.destroy()
+  }
+
+  speak() {
+    if (this.isSpeaking) return;
+    this.isSpeaking = true;
+    this.speechBubble?.setVisible(true);
+    this.scene.time.delayedCall(3000, () => {
+      this.speechBubble?.setVisible(false);
+      this.isSpeaking = false;
+    })
   }
 
   private handleTileCollision(gameObject: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) {
@@ -60,7 +78,7 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
     this.direction = randomDirection(this.direction)
   }
   
-  preUpdate(t: number, dt: number) {
+  preUpdate(t: number, dt: number): void {
     super.preUpdate(t, dt)
 
     const speed = 100
@@ -87,5 +105,7 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
         this.setFlipX(false)
         break
     }
+
+    this.speechBubble?.setPosition(this.x, this.y);
   }
 }
