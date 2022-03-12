@@ -26,7 +26,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   currentVotingZone: Phaser.GameObjects.Zone | undefined;
 
   // Callback to trigger when player leaves the voting zone
-  onPlayerLeftVotingZone!: () => void
+  onPlayerLeftVotingZone?: () => void
 
   constructor(scene: Phaser.Scene, x: number, y: number, playerId: PlayerId) {
     super(scene, x, y, '')
@@ -103,7 +103,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 
   // Method to call when the user leaves the voting zone
   setUserLeftVotingZone(): Player {
-    this.onPlayerLeftVotingZone()
+    this.onPlayerLeftVotingZone && this.onPlayerLeftVotingZone()
     this.currentVotingZone = undefined
     return this
   }
