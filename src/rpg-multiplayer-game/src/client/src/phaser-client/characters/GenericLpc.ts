@@ -7,6 +7,8 @@ import TextureKeys from '../consts/TextureKeys';
 import { MovementInput, Orientation, PlayerId } from '../types/playerTypes'
 
 import Player from './Player'
+import SceneKeys from '../consts/SceneKeys';
+import Game from '../scenes/Game';
 
 interface PlayerData {
   avatar: AvatarKeys;
@@ -182,6 +184,18 @@ export default class GenericLpc extends Player {
         this.bloodParticlesEmitter.setAngle(360 + 20);
         this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(5, 10)
     }
+
+    this.bloodParticlesEmitter.onParticleDeath((particle: Phaser.GameObjects.Particles.Particle) => {
+      const scene = this.scene.scene.get(SceneKeys.Game) as Game;
+      const x = particle.x + Phaser.Math.Between(0, 20);
+      const y = particle.y + Phaser.Math.Between(0, 20);
+      scene.bloodSplatterRenderTexture.draw(TextureKeys.Blood, x, y);
+
+      const disolveBlood = (alpha) => scene.bloodSplatterRenderTexture.erase(TextureKeys.Blood, x, y).draw(TextureKeys.Blood, x, y, alpha);
+
+      // Disolve blood after 3 seconds
+      this.scene.time.delayedCall(3000, () => disolveBlood(Phaser.Math.Between(5, 10)/10))
+    })
 
     this.bloodParticlesEmitter.start();
     this.scene.time.delayedCall(500, () => {

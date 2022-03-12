@@ -78,6 +78,9 @@ export default class Game extends Phaser.Scene {
   // Render Texture where tilemaps layers are rendered to (useful for dark mode)
   private renderTexture!: Phaser.GameObjects.RenderTexture
 
+  // Render texture to draw blood splatters on fight mode
+  public bloodSplatterRenderTexture!: Phaser.GameObjects.RenderTexture
+
   // Rain effect
   private rainParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
 
@@ -173,6 +176,9 @@ export default class Game extends Phaser.Scene {
     }, true)
     this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop]);
     this.visionMaskContainer = this.make.container({}, false);
+
+    // Render texture to draw blood splatters on fight mode
+    this.bloodSplatterRenderTexture = this.add.renderTexture(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
 
     const lightsLayer = mapIsland.getObjectLayer('Lights');
     lightsLayer.objects.forEach((tiledObject) => {
@@ -365,7 +371,10 @@ export default class Game extends Phaser.Scene {
       }
     })
 
-
+    // Show/Hide HUD on fight mode
+    autorun(() => {
+      this.scene.setVisible(!gameState.gameFight.fightMode, SceneKeys.Hud);
+    })
 
     // Dark mode
     autorun(() => {
@@ -400,6 +409,9 @@ export default class Game extends Phaser.Scene {
 
       // Display player's health bar
       this.setPlayersHealthBarVisibility(false);
+
+      // Clear blood
+      this.bloodSplatterRenderTexture.clear();
     })
 
     this.socket.on(NetworkEventKeys.StartFightWaitingRoom, () => {
@@ -421,6 +433,9 @@ export default class Game extends Phaser.Scene {
 
       // Display player's health bar
       this.setPlayersHealthBarVisibility(true);
+
+      // Clear blood
+      this.bloodSplatterRenderTexture.clear();
     })
 
     this.socket.on(NetworkEventKeys.PlayerFightAction, (action: PlayerFightAction) => {
