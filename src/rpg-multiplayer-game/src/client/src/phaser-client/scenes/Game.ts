@@ -41,7 +41,6 @@ import Hud from './Hud'
 import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow'
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon'
 import TextureKeys from '../consts/TextureKeys'
-import SpeechBubble from '../classes/SpeechBubble'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -410,6 +409,12 @@ export default class Game extends Phaser.Scene {
       // Display player's health bar
       this.setPlayersHealthBarVisibility(false);
 
+      // Make sure our player is visible
+      this.currentPlayer.setVisible(true);
+      (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
+      this.currentPlayerVision.setVisible(true);
+      gameState.playerCanMove = true;
+
       // Clear blood
       this.bloodSplatterRenderTexture.clear();
     })
@@ -431,8 +436,16 @@ export default class Game extends Phaser.Scene {
       const hudScene = this.scene.get(SceneKeys.Hud) as Hud;
       hudScene.closeMenus();
 
-      // Display player's health bar
-      this.setPlayersHealthBarVisibility(true);
+      if (gameState.gameFight.playerWantsToFight) {
+        // Display player's health bar
+        this.setPlayersHealthBarVisibility(true);
+      } else {
+        this.currentPlayer.setVisible(false);
+        (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
+        this.currentPlayerVision.setVisible(false);
+        gameState.playerCanMove = false;
+      }
+
 
       // Clear blood
       this.bloodSplatterRenderTexture.clear();
@@ -700,6 +713,7 @@ export default class Game extends Phaser.Scene {
     }
 
     if (!gameState.gameFight.fightMode) return
+    if (!gameState.gameFight.playerWantsToFight) return
 
     if (this.currentPlayer && this.currentPlayer.isDead) return;
 
