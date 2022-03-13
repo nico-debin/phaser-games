@@ -74,3 +74,7 @@ export interface PlayerHurt {
 export interface PlayerDead {
   playerId: PlayerId;
 }
+
+export interface StartFight {
+  fighters: PlayerId[];
+}

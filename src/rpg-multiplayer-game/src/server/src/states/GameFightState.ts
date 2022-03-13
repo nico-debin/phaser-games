@@ -19,6 +19,10 @@ class GameFightState {
     this.fighters.add(playerId);
   }
 
+  getAllFighters(): PlayerId[] {
+    return Array.from(this.fighters);
+  }
+
   get fightersCount(): number {
     return this.fighters.size;
   }

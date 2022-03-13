@@ -16,6 +16,7 @@ import {
   PlayersInitialStates,
   PlayersStates,
   PlayerState,
+  StartFight,
 } from '../types/playerTypes'
 import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes'
 
@@ -410,10 +411,11 @@ export default class Game extends Phaser.Scene {
       this.setPlayersHealthBarVisibility(false);
 
       // Make sure our player is visible
-      this.currentPlayer.setVisible(true);
-      (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
-      this.currentPlayerVision.setVisible(true);
-      gameState.playerCanMove = true;
+      this.renderPlayersAsDefault();
+      // this.currentPlayer.setVisible(true);
+      // (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
+      // this.currentPlayerVision.setVisible(true);
+      // gameState.playerCanMove = true;
 
       // Clear blood
       this.bloodSplatterRenderTexture.clear();
@@ -428,24 +430,35 @@ export default class Game extends Phaser.Scene {
       hudScene.closeMenus()
     })
 
-    this.socket.on(NetworkEventKeys.StartFight, () => {
+    this.socket.on(NetworkEventKeys.StartFight, (data: StartFight) => {
       // Start fight mode
       gameState.gameFight.fightMode = true;
+
+      // Set players who are going to fight (the rest of the players will be viewers)
+      gameState.gameFight.addFighters(data.fighters);
+
+      // Render options depending if the player is a fighter or a viewer
+      (this.players.getChildren() as Player[]).forEach(player => {
+        if (data.fighters.includes(player.id)) {
+          this.renderPlayerAsFighter(player);
+        } else {
+          this.renderPlayerAsFightViewer(player);
+        }
+      });
 
       // Close open menus
       const hudScene = this.scene.get(SceneKeys.Hud) as Hud;
       hudScene.closeMenus();
 
-      if (gameState.gameFight.playerWantsToFight) {
-        // Display player's health bar
-        this.setPlayersHealthBarVisibility(true);
-      } else {
-        this.currentPlayer.setVisible(false);
-        (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
-        this.currentPlayerVision.setVisible(false);
-        gameState.playerCanMove = false;
-      }
-
+      // if (gameState.gameFight.playerWantsToFight) {
+      //   // Display player's health bar
+      //   this.setPlayersHealthBarVisibility(true);
+      // } else {
+      //   this.currentPlayer.setVisible(false);
+      //   (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
+      //   this.currentPlayerVision.setVisible(false);
+      //   gameState.playerCanMove = false;
+      // }
 
       // Clear blood
       this.bloodSplatterRenderTexture.clear();
@@ -497,6 +510,39 @@ export default class Game extends Phaser.Scene {
 
       if (data.playerId === this.currentPlayerId) {
         gameState.playerCanMove = false;
+      }
+    });
+  }
+
+  // The player is fighting and fightmode is enabled
+  private renderPlayerAsFighter(player: Player): void {
+    this.setPlayersHealthBarVisibility(true);
+  }
+
+ // The player is NOT fighting and fightmode is enabled
+  private renderPlayerAsFightViewer(player: Player): void {
+    console.log(`Fight viewer: `, player)
+    player.setVisible(false);
+    // For some reason, set visible is not enough
+    player.setAlpha(0);
+    player.healthBarIsVisible = false;
+    (player.body as Phaser.Physics.Arcade.Body).setEnable(false);
+    if (player.id === this.currentPlayerId) {
+      this.currentPlayerVision.setVisible(false);
+      gameState.playerCanMove = false;
+    }
+  }
+
+  // Fightmode is not enabled. Default render to all players.
+  private renderPlayersAsDefault(): void {
+    (this.players.getChildren() as Player[]).forEach(player => {
+      player.setVisible(true);
+      player.setAlpha(1);
+      player.healthBarIsVisible = true;
+      (player.body as Phaser.Physics.Arcade.Body).setEnable(true);
+      if (player.id === this.currentPlayerId) {
+        this.currentPlayerVision.setVisible(true);
+        gameState.playerCanMove = true;
       }
     });
   }

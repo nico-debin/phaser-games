@@ -215,4 +215,10 @@ export default class GenericLpc extends Player {
     super.revive();
     this.healthBar.setValue(100).setVisible(false);
   }
+
+  setVisible(value: boolean): this {
+    super.setVisible(value);
+    console.log(`${this.playerData.avatar}: setVisible(${value})`)
+    return this;
+  }
 }

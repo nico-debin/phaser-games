@@ -30,6 +30,7 @@ import {
   PlayersStates,
   PlayerState,
   Position,
+  StartFight,
 } from '../types/playerTypes'
 
 declare global {
@@ -494,7 +495,10 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       gameScene.fightWaitingRoomTimerEvent = gameScene.time.delayedCall(delayTime, () => {
         if (gameFightState.fightersCount >= 2) {
           gameScene.resetPlayersPosition(true)
-          io.emit(NetworkEventKeys.StartFight)
+          const data: StartFight = {
+            fighters: gameFightState.getAllFighters()
+          }
+          io.emit(NetworkEventKeys.StartFight, data)
         } else {
           // No enough fighters - restart game
           gameScene.resetPlayersPosition()
