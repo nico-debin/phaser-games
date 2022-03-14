@@ -218,7 +218,6 @@ export default class GenericLpc extends Player {
 
   setVisible(value: boolean): this {
     super.setVisible(value);
-    console.log(`${this.playerData.avatar}: setVisible(${value})`)
     return this;
   }
 }

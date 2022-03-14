@@ -196,6 +196,9 @@ export default class Game extends Phaser.Scene {
       return;
     }
 
+    // Player is not fighting
+    if (!gameFightState.isFighter(player.id)) return;
+
     // Player is dead
     if (this.playersStates[player.id].health <= 0) return;
 
@@ -236,26 +239,31 @@ export default class Game extends Phaser.Scene {
       io.emit(NetworkEventKeys.PlayerHurt, data);
     }
 
-    if (this.checkFightWinCondition()) {
-      const delayTime = 10 * 1000;
-      this.time.delayedCall(delayTime, () => {
-        this.restartGame();
-        io.emit(NetworkEventKeys.RestartGame);
-      }, [], this)
-    }
+    this.handleWinCondition();
   }
 
   private checkFightWinCondition(): boolean {
     // Fight is over when only one player is alive
     // TODO: Fight is over when all players in same team is alive
     let alivePlayers = 0;
-    (this.players.getChildren() as Player[]).forEach((player) => {
-      if (this.playersStates[player.id].health > 0) {
+    gameFightState.getAllFighters().forEach((playerId: PlayerId) => {
+      if (this.playersStates[playerId].health > 0) {
         alivePlayers++;
       }
     })
 
     return alivePlayers === 1;
+  }
+
+  private handleWinCondition(): void {
+    if (gameFightState.fightMode && this.checkFightWinCondition()) {
+      console.log('win condition')
+      const delayTime = 10 * 1000;
+      this.time.delayedCall(delayTime, () => {
+        this.restartGame();
+        io.emit(NetworkEventKeys.RestartGame);
+      }, [], this)
+    }
   }
 
   /*** START: Player handlers ***/
@@ -286,13 +294,20 @@ export default class Game extends Phaser.Scene {
     this.players.add(player)
   }
 
-  removePlayer = (playerId: PlayerId) => {
+  removePlayer(playerId: PlayerId): void {
+    gameFightState.removeFighter(playerId);
+
     const player = this.getPlayerById(playerId);
-    player?.destroy()
+    if (player) {
+      this.players.remove(player, true, true)
+    }
 
     // remove this player from our players object
     delete this.playersStates[playerId]
     delete this.movementInputQueue[playerId]
+
+    // A fighter as left the fight
+    this.handleWinCondition();
   }
 
   // Handler for player movement network event
@@ -562,5 +577,10 @@ const handleSocketDisconnect = (gameScene: Game, playerId: PlayerId) => {
 
   // emit a message to all players to remove this player
   io.emit(NetworkEventKeys.PlayersLeft, playerId)
+
+  if (gameScene.players.countActive() === 0) {
+    console.log('All players left: restarting game.')
+    gameScene.restartGame();
+  }
 }
 /*** END: Socket Handlers ***/

@@ -48,6 +48,10 @@ class GameFightState {
     ];
   }
 
+  getAllFighters(): PlayerId[] {
+    return this.fighters;
+  }
+
   clear(): void {
     this.fightMode = false;
     this.playerWantsToFight = false;

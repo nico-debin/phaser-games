@@ -93,6 +93,10 @@ export default class Game extends Phaser.Scene {
   // Tweens for light's flickering effect
   private lightTweens: Phaser.Tweens.Tween[] = []
 
+  // The fighter INDEX from gameFightState.fighters that the camera is currently following
+  // This is only for players that are viewers and not fighting
+  private fightCameraFollowedPlayerIndex?: number
+
   constructor() {
     super(SceneKeys.Game)
 
@@ -450,15 +454,10 @@ export default class Game extends Phaser.Scene {
       const hudScene = this.scene.get(SceneKeys.Hud) as Hud;
       hudScene.closeMenus();
 
-      // if (gameState.gameFight.playerWantsToFight) {
-      //   // Display player's health bar
-      //   this.setPlayersHealthBarVisibility(true);
-      // } else {
-      //   this.currentPlayer.setVisible(false);
-      //   (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setEnable(false);
-      //   this.currentPlayerVision.setVisible(false);
-      //   gameState.playerCanMove = false;
-      // }
+      if (!gameState.gameFight.playerWantsToFight) {
+        // Make the camara to follow a fighter
+        this.followNextFighter();
+      } 
 
       // Clear blood
       this.bloodSplatterRenderTexture.clear();
@@ -516,19 +515,17 @@ export default class Game extends Phaser.Scene {
 
   // The player is fighting and fightmode is enabled
   private renderPlayerAsFighter(player: Player): void {
-    this.setPlayersHealthBarVisibility(true);
+    player.healthBarIsVisible = true;
   }
 
  // The player is NOT fighting and fightmode is enabled
   private renderPlayerAsFightViewer(player: Player): void {
-    console.log(`Fight viewer: `, player)
     player.setVisible(false);
     // For some reason, set visible is not enough
     player.setAlpha(0);
     player.healthBarIsVisible = false;
     (player.body as Phaser.Physics.Arcade.Body).setEnable(false);
     if (player.id === this.currentPlayerId) {
-      this.currentPlayerVision.setVisible(false);
       gameState.playerCanMove = false;
     }
   }
@@ -538,13 +535,14 @@ export default class Game extends Phaser.Scene {
     (this.players.getChildren() as Player[]).forEach(player => {
       player.setVisible(true);
       player.setAlpha(1);
-      player.healthBarIsVisible = true;
+      player.healthBarIsVisible = false;
       (player.body as Phaser.Physics.Arcade.Body).setEnable(true);
       if (player.id === this.currentPlayerId) {
-        this.currentPlayerVision.setVisible(true);
         gameState.playerCanMove = true;
       }
     });
+
+    this.cameras.main.startFollow(this.currentPlayer, true)
   }
 
   private getPlayerById(playerId: PlayerId): Player | undefined {
@@ -569,8 +567,6 @@ export default class Game extends Phaser.Scene {
   }
 
   private startRain(): void {
-    console.log('start rain');
-
     if (this.lightTweens.length === 0) {
       this.visionMaskContainer.each((gameObject: Phaser.GameObjects.GameObject) => {
         if (gameObject !== this.currentPlayerVision) {
@@ -613,8 +609,6 @@ export default class Game extends Phaser.Scene {
   }
 
   private stopRain(): void {
-    console.log('stop rain');
-
     this.lightTweens.forEach((tween: Phaser.Tweens.Tween) => tween.stop())
 
     this.tweens.addCounter({
@@ -633,8 +627,8 @@ export default class Game extends Phaser.Scene {
       },
       onComplete: () => {
         this.currentPlayerVision.setActive(false);
-        this.renderTexture.setAlpha(1);
         this.renderTexture.clearTint();
+        this.renderTexture.setAlpha(1);
       }
     });
   }
@@ -703,6 +697,8 @@ export default class Game extends Phaser.Scene {
   update(t: number, dt: number) {
     this.handleMovementInput()
     this.handleFightInput()
+    this.handleFightCamera()
+    this.handleFightEffects()
   }
 
   private handleMovementInput(): void {
@@ -729,11 +725,6 @@ export default class Game extends Phaser.Scene {
     }
 
     this.updateLastMovementInput(newMovementInput)
-
-    if (this.currentPlayerVision && this.currentPlayerVision.active && this.currentPlayer) {
-      this.currentPlayerVision.setPosition(this.currentPlayer.x, this.currentPlayer.y);
-      this.rainParticlesEmitter?.setPosition({ min: this.cameras.main.worldView.left - 150, max: this.cameras.main.worldView.right + 150 }, { min: this.cameras.main.worldView.top - 200, max: this.cameras.main.worldView.top })
-    }
   }
 
   private updateLastMovementInput(movementInput: MovementInput): void {
@@ -753,12 +744,10 @@ export default class Game extends Phaser.Scene {
   }
 
   private handleFightInput(): void {
-    // DEBUG - REMOVE THIS
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.shift)) {
-      gameState.darkMode = !gameState.darkMode;
-    }
-
+    // Only in fight mode
     if (!gameState.gameFight.fightMode) return
+
+    // Only if the player is a fighting
     if (!gameState.gameFight.playerWantsToFight) return
 
     if (this.currentPlayer && this.currentPlayer.isDead) return;
@@ -767,6 +756,56 @@ export default class Game extends Phaser.Scene {
       this.socket.emit(NetworkEventKeys.PlayerFightAction)
       this.currentPlayer.fight();
     }
+  }
+
+  private handleFightCamera(): void {
+    // Only in fight mode
+    if (!gameState.gameFight.fightMode) return
+
+    // Only if the player is a fight viewer (not a fighter)
+    if (gameState.gameFight.playerWantsToFight) return
+
+    // Start following a fighter
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+      this.followNextFighter();
+    }
+  }
+
+  private followNextFighter(): void {
+      const currentIdx = this.fightCameraFollowedPlayerIndex || 0;
+      const fighters = gameState.gameFight.getAllFighters();
+
+      let nextIdx = currentIdx + 1;
+      if (fighters.length === nextIdx || !fighters[nextIdx]) {
+        nextIdx = 0;
+      }
+
+      const playerId = fighters[nextIdx]
+      const player = this.getPlayerById(playerId)
+      this.fightCameraFollowedPlayerIndex = nextIdx;
+
+      player && this.cameras.main.startFollow(player, true)
+  }
+
+  private handleFightEffects(): void {
+    // Only in fight mode
+    if (!gameState.gameFight.fightMode) return
+
+    // The player that is beeing followed by the camera
+    let followedPlayer: Player; 
+
+    if (gameState.gameFight.playerWantsToFight) {
+      followedPlayer = this.currentPlayer;
+    } else {
+      const index = this.fightCameraFollowedPlayerIndex || 0;
+      const fighters = gameState.gameFight.getAllFighters();
+      followedPlayer = this.getPlayerById(fighters[index])!
+    }
+
+    if (this.currentPlayerVision && this.currentPlayerVision.active && followedPlayer) {
+      this.currentPlayerVision.setPosition(followedPlayer.x, followedPlayer.y);
+    }
+    this.rainParticlesEmitter?.setPosition({ min: this.cameras.main.worldView.left - 150, max: this.cameras.main.worldView.right + 150 }, { min: this.cameras.main.worldView.top - 200, max: this.cameras.main.worldView.top })
   }
 
   hardStopCurrentPlayerMovement() {

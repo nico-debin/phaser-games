@@ -15,19 +15,27 @@ class GameFightState {
     return this._fightMode;
   }
 
-  addFighter(playerId: PlayerId) {
+  addFighter(playerId: PlayerId): void {
     this.fighters.add(playerId);
+  }
+
+  removeFighter(playerId: PlayerId): boolean {
+    return this.fighters.delete(playerId);
   }
 
   getAllFighters(): PlayerId[] {
     return Array.from(this.fighters);
   }
 
+  isFighter(playerId: PlayerId): boolean {
+    return this.fighters.has(playerId);
+  }
+
   get fightersCount(): number {
     return this.fighters.size;
   }
 
-  clearFighters() {
+  clearFighters(): void {
     this.fighters.clear();
   }
 }
