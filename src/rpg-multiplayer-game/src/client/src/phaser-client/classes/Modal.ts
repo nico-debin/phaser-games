@@ -4,7 +4,7 @@ import TextureKeys from "../consts/TextureKeys";
 
 export default class Modal {
   protected scene: Phaser.Scene;
-  protected isOpen: boolean = false;
+  protected _isOpen: boolean = false;
   protected backgroundImage: Phaser.GameObjects.Image;
   protected title: Phaser.GameObjects.BitmapText;
   protected subtitle: Phaser.GameObjects.BitmapText;
@@ -65,6 +65,14 @@ export default class Modal {
     this.onCloseCallback = () => null;
     
     this.createButtons(cancelLabel, confirmLabel);
+  }
+
+  get isOpen(): boolean {
+    return this._isOpen;
+  }
+
+  private set isOpen(value: boolean) {
+    this._isOpen = value;
   }
 
   private createButtons(cancelLabel: string, confirmLabel: string) {

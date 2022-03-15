@@ -147,7 +147,7 @@ export default class Game extends Phaser.Scene {
 
     this.currentPlayerThrowableWeapons = this.physics.add.group({
       classType: ThrowableWeaponArrow,
-      maxSize: 5, // TODO: Remove hardcoded value
+      maxSize: 3, // TODO: Remove hardcoded value
     })
 
     this.restOfPlayersThrowableWeapons = this.physics.add.group({

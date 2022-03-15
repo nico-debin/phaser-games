@@ -112,12 +112,21 @@ export default class Hud extends Phaser.Scene {
       gameVotingManager.votingIsClosed ? this.endOfVotingMenu.openMenu() : this.endOfVotingMenu.closeMenu()
     })
 
+    // Handle endOfVotingMenu to newFightModal switch
     autorun(() => {
-      gameState.gameFight.fightMode ? this.votingStats.setVisible(false) : this.votingStats.setVisible(true)
+      if (gameState.gameFight.fightMode || gameState.gameFight.onWaitingRoom) {
+        this.votingStats.setVisible(false);
+      } else {
+        this.votingStats.setVisible(true);
+      }
 
-      if (gameState.gameFight.onWaitingRoom) {
+      if (gameState.gameFight.onWaitingRoom && !this.newFightModal.isOpen) {
         this.endOfVotingMenu.closeMenu()
         this.newFightModal.open()
+
+        if (gameState.gameFight.playerWantsToFight) {
+          this.newFightModal.hideButtons();
+        }
 
         // Set time countdown
         let secondsToWait = 10 // TODO: Remove hardcoded value
@@ -130,12 +139,16 @@ export default class Hud extends Phaser.Scene {
           callbackScope: this,
           loop: true,
         });
-      } else {
+      } else if (!gameState.gameFight.onWaitingRoom) {
         this.newFightModal.close()
       }
+    })
+
+    // Hide modal buttons when player wants to fight
+    autorun(() => {
       if (gameState.gameFight.playerWantsToFight) {
         this.newFightModal.hideButtons();
-      }
+      }  
     })
   }
 
