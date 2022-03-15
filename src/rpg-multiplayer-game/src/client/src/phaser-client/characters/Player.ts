@@ -39,9 +39,10 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  fight() {
+  fight(): boolean {
     // Override this method on child classes
-    if (this.isDead) return;
+    if (this.isDead) return false;
+    return true;
   }
 
   hurt(amount: number, orientation?: Orientation) {

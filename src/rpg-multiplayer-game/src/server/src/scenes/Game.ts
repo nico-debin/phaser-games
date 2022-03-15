@@ -168,7 +168,6 @@ export default class Game extends Phaser.Scene {
   private createWeapons() {
     this.throwableWeapons = this.physics.add.group({
       classType: ThrowableWeapon,
-      maxSize: 3, // TODO: Remove hardcoded value
     })
 
     this.physics.add.overlap(this.throwableWeapons, this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)

@@ -753,8 +753,9 @@ export default class Game extends Phaser.Scene {
     if (this.currentPlayer && this.currentPlayer.isDead) return;
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
-      this.socket.emit(NetworkEventKeys.PlayerFightAction)
-      this.currentPlayer.fight();
+      if (this.currentPlayer.fight()) {
+        this.socket.emit(NetworkEventKeys.PlayerFightAction)
+      }
     }
   }
 

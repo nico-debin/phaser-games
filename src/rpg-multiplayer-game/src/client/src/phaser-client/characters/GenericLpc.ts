@@ -60,6 +60,9 @@ export default class GenericLpc extends Player {
 
     const { avatar } = this.playerData;
 
+    // Don't override fighting animation
+    if (this.isThrowingArrow()) return;
+
     if (movementInput.left) {
       // Moving Left
       this.anims.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
@@ -97,13 +100,13 @@ export default class GenericLpc extends Player {
       return false
     }
 
-    const arrow = this.throwableWeaponGroup.getFirstDead(
-      true,
+    const arrow = this.throwableWeaponGroup.get(
       this.x,
       this.y,
     ) as AbstractThrowableWeapon
 
     if (!arrow) {
+      // No more arrows: max reached
       return false 
     }
 
@@ -118,6 +121,16 @@ export default class GenericLpc extends Player {
     }, [], this)
 
     return true
+  }
+
+  // Indicates is the shooting animation is playing
+  private isThrowingArrow(): boolean {
+    const { avatar } = this.playerData;
+    return [
+      `${avatar}-${AvatarAnimationKeys.SHOOT_SIDE}`,
+      `${avatar}-${AvatarAnimationKeys.SHOOT_UP}`,
+      `${avatar}-${AvatarAnimationKeys.SHOOT_DOWN}`,
+    ].includes(this.anims.currentAnim.key);
   }
 
   private handleFightAnimation() {
@@ -143,18 +156,19 @@ export default class GenericLpc extends Player {
         break;
     }
     if (animation) {
-      this.anims.play(animation);
+      this.anims.play(animation, true);
       this.anims.playAfterRepeat(currentAnimation);
       this.setFlipX(flipX)
     }
   }
 
-  fight() {
-    super.fight();
-    if (this.isDead) return;
+  fight(): boolean {
+    if (!super.fight()) return false;
     if (this.throwArrow()) {
       this.handleFightAnimation();
+      return true;
     }
+    return false;
   }
 
   hurt(amount: number, orientation?: Orientation) {
