@@ -156,9 +156,7 @@ export default class Game extends Phaser.Scene {
     })
 
     // Create tilemap and layers
-    const mapIsland = this.make.tilemap({
-      key: 'islands',
-    })
+    const mapIsland = this.add.tilemap('islands');
 
     const tilesetIslandBeach = mapIsland.addTilesetImage('tf_beach_tileB', 'tiles-islands-beach', 32, 32, 0, 0)
     const tilesetIslandShoreline = mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
@@ -174,17 +172,22 @@ export default class Game extends Phaser.Scene {
     ])
     const vegetationTop = mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
 
+    // Animated Tiles (like sea water in the shore)
+    // @ts-ignore
+    this.sys.animatedTiles.init(mapIsland);
+
     // make a RenderTexture that is the size of the screen
     this.renderTexture = this.make.renderTexture({
       width: mapIsland.widthInPixels,
       height: mapIsland.heightInPixels,
-    }, true)
-    this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop]);
+    }, true);
+    this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop]).setAlpha(0);
     this.visionMaskContainer = this.make.container({}, false);
 
     // Render texture to draw blood splatters on fight mode
     this.bloodSplatterRenderTexture = this.add.renderTexture(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
 
+    // Illuminate palmtrees and campfires
     const lightsLayer = mapIsland.getObjectLayer('Lights');
     lightsLayer.objects.forEach((tiledObject) => {
       const {x, y } = tiledObject
@@ -246,11 +249,6 @@ export default class Game extends Phaser.Scene {
 
     // Enable collider between arrows and players
     this.physics.add.overlap([this.currentPlayerThrowableWeapons, this.restOfPlayersThrowableWeapons], this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)
-
-
-    // Animated Tiles (like sea water in the shore)
-    // @ts-ignore
-    this.sys.animatedTiles.init(mapIsland);
 
     // Camara limited to the map
     this.cameras.main.setBounds(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
@@ -600,10 +598,9 @@ export default class Game extends Phaser.Scene {
       },
       onUpdate: (tween) => {
           const value = Math.floor(tween.getValue());
-          this.renderTexture.setAlpha(value/100);              
+          this.renderTexture.setAlpha(value/100);
       },
       onComplete: () => {
-        
         if (!this.rainParticlesEmitter) {
           this.createRainParticles()
         }
@@ -635,7 +632,6 @@ export default class Game extends Phaser.Scene {
       onComplete: () => {
         this.currentPlayerVision.setActive(false);
         this.renderTexture.clearTint();
-        this.renderTexture.setAlpha(1);
       }
     });
   }
