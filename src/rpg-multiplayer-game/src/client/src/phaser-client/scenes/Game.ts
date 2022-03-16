@@ -82,6 +82,7 @@ export default class Game extends Phaser.Scene {
   public bloodSplatterRenderTexture!: Phaser.GameObjects.RenderTexture
 
   // Rain effect
+  private isRaining: boolean = false;
   private rainParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
 
   // Rounded light effect for current player in dark mode
@@ -567,6 +568,9 @@ export default class Game extends Phaser.Scene {
   }
 
   private startRain(): void {
+    if (this.isRaining) return;
+    this.isRaining = true;
+
     if (this.lightTweens.length === 0) {
       this.visionMaskContainer.each((gameObject: Phaser.GameObjects.GameObject) => {
         if (gameObject !== this.currentPlayerVision) {
@@ -609,6 +613,9 @@ export default class Game extends Phaser.Scene {
   }
 
   private stopRain(): void {
+    if (!this.isRaining) return;
+    this.isRaining = false;
+
     this.lightTweens.forEach((tween: Phaser.Tweens.Tween) => tween.stop())
 
     this.tweens.addCounter({

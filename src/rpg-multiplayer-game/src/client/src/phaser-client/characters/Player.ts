@@ -23,6 +23,11 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
     return this.playerId
   }
 
+  destroy (fromScene?: boolean | undefined) {
+    super.destroy(fromScene);
+    this.healthBar.destroy();
+  }
+
   update(movementInput: MovementInput) {
     if (this.isDead) return;
 

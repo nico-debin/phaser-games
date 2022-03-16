@@ -48,6 +48,15 @@ class GameFightState {
     ];
   }
 
+  removeFighter(playerId: PlayerId): boolean {
+    const filteredFighters = this.fighters.filter(id => id !== playerId);
+    if (filteredFighters.length < this.fighters.length) {
+      this.fighters = filteredFighters
+      return true
+    }
+    return false
+  }
+
   getAllFighters(): PlayerId[] {
     return this.fighters;
   }

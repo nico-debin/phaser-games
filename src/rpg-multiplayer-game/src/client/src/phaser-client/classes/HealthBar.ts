@@ -27,6 +27,10 @@ export default class HealthBar {
     scene.add.existing(this.bar);
   }
 
+  destroy(fromScene?: boolean | undefined) {
+    this.bar.destroy(fromScene);
+  }
+
   set width(w: number) {
     this._width = w;
   }

@@ -455,6 +455,14 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     gameScene.playersInitialStates,
   )
 
+  // if the game is alrady in fight mode, send player to view the fight
+  if (gameFightState.fightMode) {
+    const data: StartFight = {
+      fighters: gameFightState.getAllFighters()
+    }
+    socket.emit(NetworkEventKeys.StartFight, data)
+  }
+
   // update all other players of the new player
   socket.broadcast.emit(
     NetworkEventKeys.PlayersNew,

@@ -84,6 +84,7 @@ class GameState {
    * @returns boolean false if the player doesn't exists
    */
   removePlayer(id: PlayerId): boolean {
+    this.gameFight.removeFighter(id);
     const filteredPlayers = this.players.filter((player: PlayerGameState) => player.id !== id)
     if (filteredPlayers.length < this.players.length) {
       this.players = filteredPlayers
