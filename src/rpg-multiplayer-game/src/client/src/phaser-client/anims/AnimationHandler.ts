@@ -70,6 +70,13 @@ export class AnimationHandler {
     })
   
     scene.anims.create({
+      key: `${avatar}-${AvatarAnimationKeys.WINNER}`,
+      frames: scene.anims.generateFrameNumbers(avatar, { start: getFrameNumber(3, 1), end: getFrameNumber(3, 7) }),
+      frameRate: 7,
+      repeat: -1,
+    })
+  
+    scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.DIE}`,
       frames: scene.anims.generateFrameNumbers(avatar, { start: getFrameNumber(21, 1), end: getFrameNumber(21, 6) }),
       frameRate: 10,

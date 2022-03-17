@@ -17,6 +17,7 @@ import SocketIOEventKeys from '../consts/SocketIOEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 
 import {
+  EndFight,
   MovementInput,
   Orientation,
   PlayerDead,
@@ -242,22 +243,33 @@ export default class Game extends Phaser.Scene {
     this.handleWinCondition();
   }
 
-  private checkFightWinCondition(): boolean {
+  // Check if there's a winner and returns it's playerId
+  private checkFightWinCondition(): PlayerId | undefined {
     // Fight is over when only one player is alive
-    // TODO: Fight is over when all players in same team is alive
+    let winner: PlayerId = '';
     let alivePlayers = 0;
     gameFightState.getAllFighters().forEach((playerId: PlayerId) => {
       if (this.playersStates[playerId].health > 0) {
         alivePlayers++;
+        winner = playerId;
       }
     })
 
-    return alivePlayers === 1;
+    return alivePlayers === 1 ? winner : undefined;
   }
 
   private handleWinCondition(): void {
-    if (gameFightState.fightMode && this.checkFightWinCondition()) {
+    if (!gameFightState.fightMode) return;
+    const winnerId = this.checkFightWinCondition();
+
+    if (winnerId) {
       console.log('win condition')
+      const data: EndFight = {
+        winnerId
+      };
+      io.emit(NetworkEventKeys.EndFight, data);
+
+      // Restart game in 10 seconds
       const delayTime = 10 * 1000;
       this.time.delayedCall(delayTime, () => {
         this.restartGame();

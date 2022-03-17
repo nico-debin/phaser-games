@@ -44,6 +44,9 @@ enum NetworkEventKeys {
 
   // Start fight
   StartFight = 'start-fight',
+
+  // End fight
+  EndFight = 'end-fight',
 }
 
 export default NetworkEventKeys

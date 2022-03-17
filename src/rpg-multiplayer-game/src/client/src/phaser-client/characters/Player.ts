@@ -67,6 +67,13 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   }
 
   /**
+   * Set player as fight winner
+   */
+  winner() {
+    // Override this method on child classes
+  }
+
+  /**
    * Set player as dead
    */
   kill() {

@@ -65,26 +65,27 @@ export default class GenericLpc extends Player {
 
     if (movementInput.left) {
       // Moving Left
-      this.anims.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
 
       // Flip sprite to the left
       this.setFlipX(true)
     } else if (movementInput.right) {
       // Moving Right
-      this.anims.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
 
       // Flip sprite to the right
       this.setFlipX(false)
     } else if (movementInput.up) {
       // Moving Up
-      this.anims.play(`${avatar}-${AvatarAnimationKeys.WALK_UP}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_UP}`, true)
     } else if (movementInput.down) {
       // Moving Down
-      this.anims.play(`${avatar}-${AvatarAnimationKeys.WALK_DOWN}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_DOWN}`, true)
     } else {
       const parts = this.anims.currentAnim.key.split('-')
-      parts[2] = 'idle'
-      this.anims.play(parts.join('-'))
+      const index = avatar.includes('-') ? 2 : 1;
+      parts[index] = 'idle';
+      this.play(parts.join('-'));
     }
   }
 
@@ -222,15 +223,22 @@ export default class GenericLpc extends Player {
     })
   }
 
-  kill() {
+  winner(): void {
+    if (this.isDead) return;
+    super.winner();
+    const animation = `${this.playerData.avatar}-${AvatarAnimationKeys.WINNER}`;
+    this.play(animation);
+  }
+
+  kill(): void {
     if (this.isDead) return;
     super.kill();
     const animation = `${this.playerData.avatar}-${AvatarAnimationKeys.DIE}`;
-    this.anims.play(animation, false);
+    this.play(animation, false);
     this.healthBar.setVisible(false);
   }
 
-  revive() {
+  revive(): void {
     super.revive();
     this.healthBar.setValue(100).setVisible(false);
   }

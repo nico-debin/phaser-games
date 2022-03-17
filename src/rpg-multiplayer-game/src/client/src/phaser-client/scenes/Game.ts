@@ -6,6 +6,7 @@ import Phaser from 'phaser'
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles'
 
 import {
+  EndFight,
   MovementInput,
   PlayerDead,
   PlayerFightAction,
@@ -464,6 +465,19 @@ export default class Game extends Phaser.Scene {
       // Clear blood
       this.bloodSplatterRenderTexture.clear();
     })
+
+    this.socket.on(NetworkEventKeys.EndFight, (data: EndFight) => {
+      const player = this.getPlayerById(data.winnerId);
+      if (!player) return;
+
+      // Set player as winner (stars an animation)
+      player.winner();
+
+      // Freeze player
+      if (this.currentPlayerId === data.winnerId) {
+        gameState.playerCanMove = false;
+      }
+    });
 
     this.socket.on(NetworkEventKeys.PlayerFightAction, (action: PlayerFightAction) => {
       if (!gameState.gameFight.fightMode) return

@@ -34,7 +34,7 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
   ) {
     super(scene, x, y, NpcKeys.COBRA, frame)
 
-    this.anims.play(`${NpcKeys.COBRA}-idle-down`)
+    this.play(`${NpcKeys.COBRA}-idle-down`)
 
     scene.physics.world.on(Phaser.Physics.Arcade.Events.TILE_COLLIDE, this.handleTileCollision, this)
 
