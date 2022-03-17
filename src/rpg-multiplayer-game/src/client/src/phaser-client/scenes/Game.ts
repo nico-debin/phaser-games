@@ -31,7 +31,7 @@ import NetworkEventKeys from '../consts/NetworkEventKeys'
 import SceneKeys from '../consts/SceneKeys'
 
 // Animations
-import { createCharacterAnims, createLizardAnims, createNpcAnims } from '../anims'
+import { createNpcAnims } from '../anims'
 
 // Characters
 import Player from '../characters/Player'
@@ -143,8 +143,6 @@ export default class Game extends Phaser.Scene {
     this.cameras.main.setRoundPixels(true)
 
     // Create animations
-    createCharacterAnims(this.anims)
-    createLizardAnims(this.anims)
     createNpcAnims(this.anims)
 
     this.currentPlayerThrowableWeapons = this.physics.add.group({

@@ -1,14 +1,7 @@
 import AvatarKeys from "../consts/AvatarKeys";
-import { PlayerInitialState, PlayerState } from "../types/playerTypes";
-import Fauna from "./Fauna";
+import { PlayerInitialState } from "../types/playerTypes";
 import GenericLpc from "./GenericLpc";
-import Lizard from "./Lizard";
 import Player from "./Player";
-
-const avatarPlayerMapper = {
-  fauna: Fauna,
-  lizard: Lizard,
-};
 
 export default class PlayerFactory {
   private static players: Set<AvatarKeys> = new Set();
@@ -36,21 +29,15 @@ export default class PlayerFactory {
   };
 
   public static fromPlayerInitialState(scene: Phaser.Scene, playerInitialState: PlayerInitialState): Player {
-    if (playerInitialState.avatar.name === "generic-lpc") {
-      const playerData = {
-        avatar: playerInitialState.playerSettings.avatarName,
-        playerId: playerInitialState.playerId,
-      };
-      const player = new GenericLpc(scene, playerInitialState.x, playerInitialState.y, playerData);
-      player.health = playerInitialState.health
-      return player;
+    if (playerInitialState.avatar.name !== "generic-lpc") {
+      console.error('Expecting a generic-lpc');
     }
-    const classname = avatarPlayerMapper[playerInitialState.avatar.name];
-    return new classname(
-      scene,
-      playerInitialState.x,
-      playerInitialState.y,
-      playerInitialState.playerId
-    );
+    const playerData = {
+      avatar: playerInitialState.playerSettings.avatarName,
+      playerId: playerInitialState.playerId,
+    };
+    const player = new GenericLpc(scene, playerInitialState.x, playerInitialState.y, playerData);
+    player.health = playerInitialState.health
+    return player;
   }
 }

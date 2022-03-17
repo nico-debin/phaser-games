@@ -18,10 +18,6 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(TilemapKeys.BeachShoreTiles, 'tiles/tf_beach_tileA1.png')
     this.load.tilemapTiledJSON(TilemapKeys.IslandsTilemap, 'tilemaps/islands-01.json')
 
-    // TODO: remove this
-    this.load.atlas(TextureKeys.Fauna, 'characters/fauna.png', 'characters/fauna.json')
-    this.load.atlas(TextureKeys.Lizard, 'enemies/lizard.png', 'enemies/lizard.json')
-
     // UI
     this.load.atlas(TextureKeys.UIMenu1, 'ui/ui-menu.png', 'ui/ui-menu_atlas.json')
     this.load.image(TextureKeys.SettingsBoard, 'ui/settings-board-500x600.png')
