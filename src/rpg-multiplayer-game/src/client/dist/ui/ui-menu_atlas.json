@@ -1,0 +1,190 @@
+{
+    "frames": [
+        {
+            "filename": "wood-medium",
+            "frame": {
+                "w": 803,
+                "h": 201,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wood-small",
+            "frame": {
+                "w": 463,
+                "h": 201,
+                "x": 0,
+                "y": 201
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "green-wood-button",
+            "frame": {
+                "w": 373,
+                "h": 142,
+                "x": 0,
+                "y": 402
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "red-wood-button",
+            "frame": {
+                "w": 373,
+                "h": 142,
+                "x": 373,
+                "y": 402
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "yellow-wood-button",
+            "frame": {
+                "w": 336,
+                "h": 121,
+                "x": 463,
+                "y": 201
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "yellow-button",
+            "frame": {
+                "w": 241,
+                "h": 239,
+                "x": 0,
+                "y": 544
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "close-button",
+            "frame": {
+                "w": 236,
+                "h": 219,
+                "x": 241,
+                "y": 544
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "game-icon",
+            "frame": {
+                "w": 168,
+                "h": 124,
+                "x": 477,
+                "y": 544
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wheel-icon",
+            "frame": {
+                "w": 162,
+                "h": 163,
+                "x": 0,
+                "y": 783
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "right-arrow",
+            "frame": {
+                "w": 120,
+                "h": 128,
+                "x": 162,
+                "y": 783
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "green-wood-square",
+            "frame": {
+                "w": 116,
+                "h": 110,
+                "x": 645,
+                "y": 544
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "checkbox-on",
+            "frame": {
+                "w": 96,
+                "h": 101,
+                "x": 645,
+                "y": 654
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "checkbox-off",
+            "frame": {
+                "w": 96,
+                "h": 101,
+                "x": 477,
+                "y": 668
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon-arrow",
+            "frame": {
+                "w": 31,
+                "h": 5,
+                "x": 241,
+                "y": 769
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}
