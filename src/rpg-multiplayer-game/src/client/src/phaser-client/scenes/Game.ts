@@ -167,10 +167,13 @@ export default class Game extends Phaser.Scene {
       mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
       mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
       mapIsland.createLayer('Island 2/Island', [tilesetIslandBeach, tilesetIslandShoreline]),
+      mapIsland.createLayer('Island 2/Paths', [tilesetIslandBeach]),
       mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
       mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
+      mapIsland.createLayer('Island 2/Vegetation bottom', tilesetIslandBeach),
     ])
-    const vegetationTop = mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
+    const vegetationTop1 = mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
+    const vegetationTop2 = mapIsland.createLayer('Island 2/Vegetation top', tilesetIslandBeach).setDepth(10)
 
     // Animated Tiles (like sea water in the shore)
     // @ts-ignore
@@ -181,7 +184,7 @@ export default class Game extends Phaser.Scene {
       width: mapIsland.widthInPixels,
       height: mapIsland.heightInPixels,
     }, true);
-    this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop]).setAlpha(0);
+    this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop1, vegetationTop2]).setAlpha(0);
     this.visionMaskContainer = this.make.container({}, false);
 
     // Render texture to draw blood splatters on fight mode
