@@ -100,6 +100,11 @@ export default class GenericLpc extends Player {
       return false
     }
 
+    // Player is already throwing an arrow
+    if (this.isThrowingArrow()) {
+      return false;
+    }
+
     const arrow = this.throwableWeaponGroup.get(
       this.x,
       this.y,
@@ -133,7 +138,7 @@ export default class GenericLpc extends Player {
     ].includes(this.anims.currentAnim.key);
   }
 
-  private handleFightAnimation() {
+  private handleFightAnimation(): void {
     const { avatar } = this.playerData;
     let animation: string | undefined;
 
@@ -156,8 +161,8 @@ export default class GenericLpc extends Player {
         break;
     }
     if (animation) {
-      this.anims.play(animation, true);
-      this.anims.playAfterRepeat(currentAnimation);
+      this.play(animation);
+      this.playAfterRepeat(currentAnimation);
       this.setFlipX(flipX)
     }
   }
