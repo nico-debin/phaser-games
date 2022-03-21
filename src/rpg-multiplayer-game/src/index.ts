@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { JSDOM, VirtualConsole } from 'jsdom'
 import DatauriParser from 'datauri/parser'
 
-const PORT = process.env.NODE_ENV ? 80 : process.env.PORT || 8081
+const PORT = process.env.PORT || 8081
 
 const app: Application = express()
 const httpServer = new HttpServer(app)
