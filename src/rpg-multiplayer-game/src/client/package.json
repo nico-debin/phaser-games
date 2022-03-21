@@ -1,7 +1,7 @@
 {
-	"name": "simple-multiplayer-game-phaser-client",
+	"name": "grooming-wars-client",
 	"version": "1.0.0",
-	"description": "Phaser client",
+	"description": "Grooming Wars - Phaser client",
 	"scripts": {
 		"start": "parcel src/index.html -p 8050",
 		"build": "parcel build src/index.html --out-dir dist && yarn fix-index",
@@ -16,20 +16,21 @@
 		"@typescript-eslint/parser": "^2.29.0",
 		"eslint": "^6.8.0",
 		"minimist": ">=1.2.2",
-		"parcel-bundler": "^1.12.5",
-		"parcel-plugin-clean-easy": "^1.0.2",
-		"parcel-plugin-static-files-copy": "^2.4.3",
 		"sass": "^1.49.7",
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
 		"mobx": "^6.3.12",
+		"parcel-bundler": "^1.12.5",
+		"parcel-plugin-clean-easy": "^1.0.2",
+		"parcel-plugin-static-files-copy": "^2.4.3",
 		"phaser": "^3.55.2",
 		"phaser-animated-tiles": "^2.0.2",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-responsive-spritesheet": "^2.3.9",
 		"socket.io-client": "^4.4.0",
+		"tslib": "^2.3.1",
 		"zustand": "^3.6.9"
 	},
 	"parcelCleanPaths": [

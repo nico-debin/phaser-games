@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io'
 
 import { objectMap, omit } from '../utils'
 import settings from '../settings'
-import Queue from '../classes/queue'
+import Queue from '../classes/Queue'
 import { socketIoServerMock } from '../debug/SocketIoServerMock'
 
 import { gameFightState } from '../states/GameFightState'
