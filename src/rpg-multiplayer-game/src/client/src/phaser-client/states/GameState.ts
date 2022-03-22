@@ -24,12 +24,6 @@ class GameState {
   // Flag to restart game
   _restartGame = false
 
-  // Flag indicating if the game is in fight mode
-  // _fightMode = false
-
-  // Flag indicating that the player wants to join the fight
-  // _playerWantsToFight = false
-
   private _darkMode = false
 
   private _connectingToServer = true
@@ -47,14 +41,6 @@ class GameState {
       _restartGame: observable,
       enableRestartGameFlag: action,
       disableRestartGameFlag: action,
-
-      // _fightMode: observable,
-      // enableFightModeFlag: action,
-      // disableFightModeFlag: action,
-
-      // _playerWantsToFight: observable,
-      // enablePlayerWantsToFightFlag: action,
-      // disablePlayerWantsToFightFlag: action,
     })
   }
 
@@ -218,30 +204,6 @@ class GameState {
   get restartGame(): boolean {
     return this._restartGame;
   }
-
-  // enableFightModeFlag() {
-  //   this._fightMode = true;
-  // }
-
-  // disableFightModeFlag() {
-  //   this._fightMode = false;
-  // }
-
-  // get fightMode(): boolean {
-  //   return this._fightMode;
-  // }
-
-  // enablePlayerWantsToFightFlag() {
-  //   this._playerWantsToFight = true;
-  // }
-
-  // disablePlayerWantsToFightFlag() {
-  //   this._playerWantsToFight = false;
-  // }
-
-  // get playerWantsToFight(): boolean {
-  //   return this._playerWantsToFight;
-  // }
 
   set connectingToServer(newValue: boolean) {
     this._connectingToServer = newValue;

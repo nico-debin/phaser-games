@@ -1,5 +1,5 @@
 grooming-wars-deploy:
-	git subtree push --prefix src/rpg-multiplayer-game heroku master --force
+	git subtree push --prefix src/rpg-multiplayer-game heroku master
 
 grooming-wars-deploy-force:
 	git push heroku `git subtree split --prefix src/rpg-multiplayer-game master`:master --force
