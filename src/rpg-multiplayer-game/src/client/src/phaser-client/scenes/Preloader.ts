@@ -41,6 +41,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet(AvatarKeys.NIGHTELF, 'characters/nightelf.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.ORC, 'characters/orc.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.PIRATE_BLUE, 'characters/pirate-blue.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.MAN_01, 'characters/man-01.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.MAN_02, 'characters/man-02.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.GIRL_01, 'characters/girl-01.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.GIRL_02, 'characters/girl-02.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.GIRL_03, 'characters/girl-03.png', {frameWidth: 64, frameHeight: 64})

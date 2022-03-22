@@ -15,6 +15,8 @@ enum AvatarKeys {
   NIGHTELF = 'nightelf',
   ORC = 'orc',
   PIRATE_BLUE = 'pirate-blue',
+  MAN_01 = 'man-01',
+  MAN_02 = 'man-02',
   GIRL_01 = 'girl-01',
   GIRL_02 = 'girl-02',
   GIRL_03 = 'girl-03',
