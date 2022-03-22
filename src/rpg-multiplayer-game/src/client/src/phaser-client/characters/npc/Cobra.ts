@@ -48,8 +48,7 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
     })
 
     this.speechBubble = new SpeechBubble(scene, x, y, 100, 35, "Go Cobras!", {
-      // @ts-ignore
-      fontSize: 14,
+      fontSize: '14px',
     });
     this.speechBubble.setOffset(3, -this.displayHeight).setVisible(false);
   }

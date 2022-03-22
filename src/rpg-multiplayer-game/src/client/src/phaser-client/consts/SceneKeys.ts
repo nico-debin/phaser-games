@@ -1,4 +1,5 @@
 enum SceneKeys {
+  Bootstrap = 'bootstrap',
   Preloader = 'preloader',
   Game = 'game',
   Hud = 'hud',

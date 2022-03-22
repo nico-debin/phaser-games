@@ -15,7 +15,7 @@ class GameState {
   votingFrontierY?: number
 
   // Flag to enable/disable current player movment
-  _playerCanMove = true
+  _playerCanMove = false
 
   // Flag to send back player to main island
   // _playerWantsToRespawn = false
@@ -31,6 +31,8 @@ class GameState {
   // _playerWantsToFight = false
 
   private _darkMode = false
+
+  private _connectingToServer = true
 
   readonly gameFight: typeof gameFightState;
 
@@ -240,6 +242,15 @@ class GameState {
   // get playerWantsToFight(): boolean {
   //   return this._playerWantsToFight;
   // }
+
+  set connectingToServer(newValue: boolean) {
+    this._connectingToServer = newValue;
+    this.playerCanMove = !newValue;
+  }
+
+  get connectingToServer(): boolean {
+    return this._connectingToServer;
+  }
 
   /**
    * Clear all state

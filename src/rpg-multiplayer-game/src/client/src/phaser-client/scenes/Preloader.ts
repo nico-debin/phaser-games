@@ -6,6 +6,8 @@ import NpcKeys from '../consts/NpcKeys'
 import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 import TilemapKeys from '../consts/TilemapKeys'
+import { gameState } from '../states/GameState'
+import { autorun } from 'mobx'
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -62,6 +64,14 @@ export default class Preloader extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start(SceneKeys.Game)
+    this.scene.launch(SceneKeys.Game);
+    this.scene.bringToTop(SceneKeys.Bootstrap);
+
+    autorun(() => {
+      if (gameState.connectingToServer === false) {
+        this.scene.stop(SceneKeys.Bootstrap);
+        this.scene.stop(SceneKeys.Preloader);
+      }
+    })
   }
 }

@@ -42,7 +42,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
   }
 
   update(movementInput: MovementInput) {
-    const speed = 300
+    const speed = 250
   
     // Handle Movement
     if (movementInput.left && movementInput.up) {

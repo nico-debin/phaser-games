@@ -100,7 +100,7 @@ export default class Game extends Phaser.Scene {
   private fightCameraFollowedPlayerIndex?: number
 
   constructor() {
-    super(SceneKeys.Game)
+    super({ key: SceneKeys.Game })
 
     // Login page settings
     const { getState } = useStore
@@ -131,6 +131,9 @@ export default class Game extends Phaser.Scene {
       query: {
         playerSettings: JSON.stringify(this.playerSettings),
       }
+    })
+    this.socket.once('connect', () => {
+      gameState.connectingToServer = false;
     })
 
     // Players will be stored in this group

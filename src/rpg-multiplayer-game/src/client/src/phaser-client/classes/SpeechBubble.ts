@@ -24,8 +24,7 @@ export default class SpeechBubble {
 
     const defaultTextStyle: Phaser.Types.GameObjects.Text.TextStyle = {
       fontFamily: "Arial",
-      // @ts-ignore
-      fontSize: 20,
+      fontSize: '20px',
       color: "#000000",
       align: "center",
     };
