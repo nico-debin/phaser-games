@@ -1,5 +1,5 @@
+import { autorun } from 'mobx'
 import Phaser from 'phaser'
-
 import AvatarKeys from '../consts/AvatarKeys'
 import FontKeys from '../consts/FontKeys'
 import NpcKeys from '../consts/NpcKeys'
@@ -7,7 +7,7 @@ import SceneKeys from '../consts/SceneKeys'
 import TextureKeys from '../consts/TextureKeys'
 import TilemapKeys from '../consts/TilemapKeys'
 import { gameState } from '../states/GameState'
-import { autorun } from 'mobx'
+
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -40,9 +40,16 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet(AvatarKeys.BOY_01, 'characters/boy-01.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.NIGHTELF, 'characters/nightelf.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.ORC, 'characters/orc.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.WOLF, 'characters/wolf.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.PIRATE_BLUE, 'characters/pirate-blue.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.JEDI, 'characters/jedi.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.JEDI_DARK_SIDE, 'characters/jedi-dark-side.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.SKELETON, 'characters/skeleton.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.FLESHY_SKELETON, 'characters/skeleton-fleshy.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.REPTILE, 'characters/reptile.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.MAN_01, 'characters/man-01.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.MAN_02, 'characters/man-02.png', {frameWidth: 64, frameHeight: 64})
+    this.load.spritesheet(AvatarKeys.WARRIOR_01, 'characters/warrior-01.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.GIRL_01, 'characters/girl-01.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.GIRL_02, 'characters/girl-02.png', {frameWidth: 64, frameHeight: 64})
     this.load.spritesheet(AvatarKeys.GIRL_03, 'characters/girl-03.png', {frameWidth: 64, frameHeight: 64})

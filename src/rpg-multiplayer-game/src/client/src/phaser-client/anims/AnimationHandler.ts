@@ -17,17 +17,17 @@ export class AnimationHandler {
 
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.IDLE_DOWN}`,
-      frames: [{ key: avatar, frame: getFrameNumber(3, 1) }],
+      frames: [{ key: avatar, frame: getFrameNumber(11, 1) }],
     })
 
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.IDLE_UP}`,
-      frames: [{ key: avatar, frame: getFrameNumber(5, 1) }],
+      frames: [{ key: avatar, frame: getFrameNumber(9, 1) }],
     })
   
     scene.anims.create({
       key: `${avatar}-${AvatarAnimationKeys.IDLE_SIDE}`,
-      frames: [{ key: avatar, frame: getFrameNumber(4, 1) }],
+      frames: [{ key: avatar, frame: getFrameNumber(12, 1) }],
     })
 
     scene.anims.create({
