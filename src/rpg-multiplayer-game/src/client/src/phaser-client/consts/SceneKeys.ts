@@ -1,4 +1,5 @@
 enum SceneKeys {
+  CobraCutScene = 'cobra-cutscene',
   Bootstrap = 'bootstrap',
   Preloader = 'preloader',
   Game = 'game',

@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 
+import CobraCutScene from './scenes/CobraCutScene'
 import Bootstrap from './scenes/Bootstrap'
 import Preloader from './scenes/Preloader'
 import Game from './scenes/Game'
@@ -7,7 +8,7 @@ import Hud from './scenes/Hud'
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
-	scene: [Bootstrap, Preloader, Game, Hud],
+	scene: [CobraCutScene, Bootstrap, Preloader, Game, Hud],
 	scale: {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH,

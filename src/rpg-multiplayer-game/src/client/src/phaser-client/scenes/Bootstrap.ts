@@ -4,7 +4,7 @@ import SceneKeys from "../consts/SceneKeys";
 
 export default class Bootstrap extends Phaser.Scene {
   constructor() {
-    super(SceneKeys.Bootstrap);
+    super({ key: SceneKeys.Bootstrap });
   }
 
   preload() {

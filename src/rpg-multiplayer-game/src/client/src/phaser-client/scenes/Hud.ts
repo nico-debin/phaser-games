@@ -19,7 +19,7 @@ export default class Hud extends Phaser.Scene {
   private newFightModal!: Modal;
 
   constructor() {
-    super(SceneKeys.Hud)
+    super({ key: SceneKeys.Hud })
   }
 
   create() {

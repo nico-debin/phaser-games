@@ -11,7 +11,7 @@ import { gameState } from '../states/GameState'
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
-    super(SceneKeys.Preloader)
+    super({ key: SceneKeys.Preloader })
   }
 
   preload() {

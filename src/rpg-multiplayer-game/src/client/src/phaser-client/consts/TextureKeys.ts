@@ -5,6 +5,7 @@ enum TextureKeys {
   Blood = 'blood',
   Rain = 'rain',
   VisionMask = 'vision-mask',
+  CobraLogo = 'cobra-logo',
 }
 
 export default TextureKeys
