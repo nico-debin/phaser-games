@@ -34,6 +34,7 @@ export default class PlayerFactory {
     }
     const playerData = {
       avatar: playerInitialState.playerSettings.avatarName,
+      username: playerInitialState.playerSettings.username,
       playerId: playerInitialState.playerId,
     };
     const player = new GenericLpc(scene, playerInitialState.x, playerInitialState.y, playerData);

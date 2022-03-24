@@ -393,6 +393,14 @@ export default class Game extends Phaser.Scene {
       }
     })
 
+    // Show/Hide Username labeles
+    autorun(() => {
+      const newValue = gameState.showPlayersUsernames;
+      (this.players.getChildren() as Player[]).forEach((player) => {
+        player.setRenderUsername(newValue);
+      })
+    })
+
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
@@ -461,6 +469,9 @@ export default class Game extends Phaser.Scene {
       if (!gameState.gameFight.playerWantsToFight) {
         // Make the camara to follow a fighter
         this.followNextFighter();
+
+        // Show player's usernames
+        gameState.showPlayersUsernames = true;
       } 
 
       // Clear blood
@@ -869,6 +880,9 @@ export default class Game extends Phaser.Scene {
     const player = PlayerFactory.fromPlayerInitialState(this, playerInitialState)
 
     player.setDepth(5)
+
+    // Show player's username
+    player.setRenderUsername(gameState.showPlayersUsernames);
 
     if (isMainPlayer) {
       this.currentPlayer = player

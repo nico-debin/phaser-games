@@ -8,6 +8,7 @@ import CheckboxInput from "./CheckboxInput";
 export default class SettingsMenu extends AbstractMenu {
   voterCheckbox: CheckboxInput;
   hidePlayersWhileVotingCheckbox: CheckboxInput;
+  showPlayersUsernamesCheckbox: CheckboxInput;
 
   constructor(scene: Phaser.Scene) {
     super(scene);
@@ -72,6 +73,23 @@ export default class SettingsMenu extends AbstractMenu {
           });
       });
 
+    this.showPlayersUsernamesCheckbox = new CheckboxInput(
+      scene,
+      menuBoardScaledPositionX + 60,
+      menuBoardScaledPositionY + 190,
+      "Show players' usernames",
+      gameState.showPlayersUsernames
+    )
+      .setScale(0.2)
+      .setOrigin(0.5, 0.5)
+      .setVisible(false)
+      .onCheck(() => {
+        gameState.showPlayersUsernames = true;
+      })
+      .onUncheck(() => {
+        gameState.showPlayersUsernames = false;
+      });
+
     // wait until the current player state is built to set the according settings
     autorun((reaction) => {
       const { currentPlayer } = gameState;
@@ -90,6 +108,7 @@ export default class SettingsMenu extends AbstractMenu {
     super.openMenu();
     this.voterCheckbox.setVisible(true);
     this.hidePlayersWhileVotingCheckbox.setVisible(true);
+    this.showPlayersUsernamesCheckbox.setVisible(true);
   }
 
   closeMenu() {
@@ -97,5 +116,6 @@ export default class SettingsMenu extends AbstractMenu {
     super.closeMenu();
     this.voterCheckbox.setVisible(false);
     this.hidePlayersWhileVotingCheckbox.setVisible(false);
+    this.showPlayersUsernamesCheckbox.setVisible(false);
   }
 }

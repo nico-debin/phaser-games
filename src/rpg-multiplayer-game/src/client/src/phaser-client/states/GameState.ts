@@ -24,6 +24,8 @@ class GameState {
   // Flag to restart game
   _restartGame = false
 
+  private _showPlayersUsernames = false;
+
   private _darkMode = false
 
   private _connectingToServer = true
@@ -147,6 +149,14 @@ class GameState {
       return this.currentPlayer.hidePlayersWhileVoting
     }
     return true
+  }
+
+  set showPlayersUsernames(newValue: boolean) {
+    this._showPlayersUsernames = newValue;
+  }
+
+  get showPlayersUsernames(): boolean {
+    return this._showPlayersUsernames;
   }
 
   /**

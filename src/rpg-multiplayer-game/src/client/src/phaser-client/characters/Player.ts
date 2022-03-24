@@ -9,14 +9,15 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   protected throwableWeaponGroup?: Phaser.Physics.Arcade.Group;
   protected _isDead: boolean = false;
   protected healthBar: HealthBar;
+  protected usernameLabel?: Phaser.GameObjects.Text;
+  protected displayUsernameLabel = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number | undefined) {
     super(scene, x, y, texture)
     this.playerId = playerId
     this.orientation = 'down'
 
-    this.healthBar = new HealthBar(scene, x, y + this.displayHeight * 0.5 + 5, this.displayWidth, 10, true);
-    this.healthBar.setVisible(false);
+    this.healthBar = new HealthBar(scene, 0, 0, this.displayWidth, 10, true).setVisible(false);
   }
 
   get id (){
@@ -26,12 +27,13 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   destroy (fromScene?: boolean | undefined) {
     super.destroy(fromScene);
     this.healthBar.destroy();
+    this.usernameLabel?.destroy();
   }
 
   update(movementInput: MovementInput) {
     if (this.isDead) return;
 
-    this.healthBar.setPosition(this.x, this.y + this.displayHeight * 0.5 + 5, true)
+    this.updateHealthBarPosition();
 
     if (movementInput.left) {
       this.orientation = 'left';
@@ -64,6 +66,12 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
 
   set healthBarIsVisible(isVisible: boolean) {
     this.healthBar.setVisible(isVisible);
+    isVisible && this.updateHealthBarPosition();
+  }
+
+  private updateHealthBarPosition(): void {
+    const offset = this.displayUsernameLabel ? 8 : 0;
+    this.healthBar.setPosition(this.x, this.y + this.displayHeight * 0.5 + 5 + offset, true);
   }
 
   /**
@@ -96,4 +104,10 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   }
 
   shootThrowableWeapon(): void {}
+
+  setRenderUsername(newValue: boolean): this {
+    this.displayUsernameLabel = newValue;
+    this.updateHealthBarPosition();
+    return this;
+  }
 }

@@ -12,13 +12,15 @@ import Game from '../scenes/Game';
 
 interface PlayerData {
   avatar: AvatarKeys;
+  username?: string;
   playerId: PlayerId;
 }
 
 export default class GenericLpc extends Player {
-  playerData: PlayerData;
-  bloodParticles: Phaser.GameObjects.Particles.ParticleEmitterManager;
-  bloodParticlesEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+  private playerData: PlayerData;
+  private bloodParticles: Phaser.GameObjects.Particles.ParticleEmitterManager;
+  private bloodParticlesEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+  private errorOffset = 0;
 
   constructor(
     scene: Phaser.Scene,
@@ -31,9 +33,23 @@ export default class GenericLpc extends Player {
     // rendering needs to be moved by 16 pixels in X and Y. 
     // Remove this when the bug is fixed
     // const errorOffset = 16;
-
     super(scene, x + errorOffset, y + errorOffset, playerData.avatar, playerData.playerId)
+    this.errorOffset = errorOffset;
     this.playerData = playerData;
+
+    if (playerData.username) {
+      this.usernameLabel = scene.add
+        .text(0, 0, " " + playerData.username.substring(0, 25) + " ", {
+          fontSize: "10px",
+          color: "white",
+          backgroundColor: "black",
+          align: "center",
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.6)
+        .setVisible(this.displayUsernameLabel);
+      this.usernameLabel.autoRound = true;
+    }
 
     AnimationHandler.add(scene, playerData.avatar);
 
@@ -51,6 +67,11 @@ export default class GenericLpc extends Player {
       on: false,
     });
     this.bloodParticlesEmitter.startFollow(this, 5, 10, true);
+  }
+
+  protected preUpdate(time: number, delta: number) {
+    super.preUpdate(time, delta);
+    this.usernameLabel?.setPosition(this.x, this.y + this.displayHeight - 10 - this.errorOffset).setDepth(this.depth).setVisible(this.displayUsernameLabel && this.visible);
   }
 
   update(movementInput: MovementInput) {
@@ -241,10 +262,5 @@ export default class GenericLpc extends Player {
   revive(): void {
     super.revive();
     this.healthBar.setValue(100).setVisible(false);
-  }
-
-  setVisible(value: boolean): this {
-    super.setVisible(value);
-    return this;
   }
 }
