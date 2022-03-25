@@ -552,6 +552,7 @@ export default class Game extends Phaser.Scene {
     // For some reason, set visible is not enough
     player.setAlpha(0);
     player.healthBarIsVisible = false;
+    player.setRenderUsername(false);
     (player.body as Phaser.Physics.Arcade.Body).setEnable(false);
     if (player.id === this.currentPlayerId) {
       gameState.playerCanMove = false;
@@ -564,6 +565,7 @@ export default class Game extends Phaser.Scene {
       player.setVisible(true);
       player.setAlpha(1);
       player.healthBarIsVisible = false;
+      player.setRenderUsername(gameState.showPlayersUsernames);
       (player.body as Phaser.Physics.Arcade.Body).setEnable(true);
       if (player.id === this.currentPlayerId) {
         gameState.playerCanMove = true;

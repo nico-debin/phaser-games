@@ -523,7 +523,6 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
   })
 
   socket.on(NetworkEventKeys.PlayerJoinFight, () => {
-    console.log('Recieved: ' + NetworkEventKeys.PlayerJoinFight)
     gameFightState.addFighter(playerId);
     if (gameFightState.fightMode === false) {
       gameFightState.fightMode = true;
