@@ -332,34 +332,37 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  getPlayerById(playerId: PlayerId): Player | undefined {
+    return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
+  }
+
   // Handler for player movement scene update
   private handlePlayerMovementInputUpdate() {
     for (const playerId in this.movementInputQueue) {
       const player = this.getPlayerById(playerId);
-      const movementInput = this.movementInputQueue[playerId].dequeue()
-
+      const movementInput = this.movementInputQueue[playerId].dequeue();
+      
       if (!player || !movementInput) continue;
 
       player?.update(movementInput)
     }
   }
 
-  getPlayerById(playerId: PlayerId): Player | undefined {
-    return (this.players.getChildren() as Player[]).find(player => player.id === playerId);
-  }
-
+  // Handler to update players in scene update
   private handlePlayerUpdate() {
     const playersStatesThatChanged: PlayersStates = {};
 
     (this.players.getChildren() as Player[]).forEach((player) => {
       
       let playerHasMoved = this.playersStates[player.id].x != player.x || this.playersStates[player.id].y != player.y
+      let orientationHasChanged = this.playersStates[player.id].orientation != player.orientation;
 
       // Update new player position      
       this.playersStates[player.id].x = player.x
       this.playersStates[player.id].y = player.y
+      this.playersStates[player.id].orientation = player.orientation
 
-      if (playerHasMoved) {
+      if (playerHasMoved || orientationHasChanged) {
         // @ts-ignore
         const { playerSettings, ...playerState } = this.playersStates[player.id]
         playersStatesThatChanged[player.id] = playerState;
@@ -456,6 +459,7 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
     votingZone: undefined,
     playerSettings,
     health: FULL_HEALTH,
+    orientation: 'down',
   }
 
   // add player to server

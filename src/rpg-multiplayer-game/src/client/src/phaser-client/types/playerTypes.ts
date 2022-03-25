@@ -35,6 +35,7 @@ export interface PlayerInitialState {
   votingZone: string | undefined
   playerSettings: PlayerSettings
   health: number
+  orientation: Orientation
 }
 
 export interface PlayerState extends Omit<PlayerInitialState, "avatar" | "playerSettings"> {
