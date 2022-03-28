@@ -552,10 +552,11 @@ export default class Game extends Phaser.Scene {
     if (!this.votingZoneParticlesEmitter) {
       // Emitter when the voting zone is active
       this.votingZoneParticlesEmitter = this.add.particles(TextureKeys.Stars).createEmitter({
-        frame: { frames: [ 0, 1, 2, 3 ], cycle: true },
+        frame: { frames: [ 0, 1, 2, 3 ], cycle: false },
         tint: 0xfaff74,
-        quantity: 1,
-        scale: { start: 0.8, end: 0, ease: Phaser.Math.Easing.Linear },
+        // quantity: 48,
+        lifespan: 500,
+        scale: { start: 0.6, end: 0, ease: Phaser.Math.Easing.Sine.InOut },
         blendMode: Phaser.BlendModes.ADD,
         on: false,
       });
@@ -564,15 +565,21 @@ export default class Game extends Phaser.Scene {
     if (!this.votingZoneExplodeParticlesEmitter) {
       // Emitter when the voting zone turns to inactive
       this.votingZoneExplodeParticlesEmitter = this.add.particles(TextureKeys.Stars).createEmitter({
-        frame: { frames: [ 0, 1, 2, 3 ], cycle: true },
+        frame: { frames: [ 0, 1, 2, 3 ], cycle: false },
         tint: 0xfaff74,
         speed: 90,
         lifespan: 2000,
-        quantity: 48,
+        quantity: 28,
         frequency: 6000,
-        scale: { start: 0.7, end: 0 },
+        scale: { start: 0.5, end: 0 },
         blendMode: Phaser.BlendModes.ADD,
         on: false,
+      })
+      .onParticleDeath(() => {
+        if (this.votingZoneExplodeParticlesEmitter?.getAliveParticleCount() === 0) {
+          // Stop itself
+          this.votingZoneExplodeParticlesEmitter?.stop();
+        }
       });
     }
   }
@@ -761,6 +768,34 @@ export default class Game extends Phaser.Scene {
       const playerIsVoting = player.y < gameState.votingFrontierY
       const isHidden = gameState.hidePlayersWhileVoting && playerIsVoting
       player.setVisible(!isHidden)
+
+      if (
+        player.y - 2 <= gameState.votingFrontierY &&
+        gameState.votingFrontierY <= player.y + 2
+      ) {
+        // Emit particles when the voting frontier is crossed
+        const emitter = this.add
+          .particles(TextureKeys.Stars)
+          .createEmitter({
+            frame: { frames: [0, 1, 2, 3], cycle: true },
+            tint: 0xfaff74,
+            speed: 90,
+            lifespan: 1000,
+            quantity: 100,
+            frequency: 6000,
+            scale: { start: 1, end: 0 },
+            blendMode: Phaser.BlendModes.ADD,
+            on: false,
+          })
+          .onParticleDeath(() => {
+            if (emitter.getAliveParticleCount() === 0) {
+              // Self destroy
+              emitter.stop().remove();
+            }
+          })
+          .setPosition(player.x, player.y)
+          .start();
+      }
     }
   }
 
@@ -924,9 +959,6 @@ export default class Game extends Phaser.Scene {
         votingZone?.zone.setFillStyle(0x9966ff, 0.5)
         this.votingZoneParticlesEmitter?.stop()
         this.votingZoneExplodeParticlesEmitter?.start()
-        this.time.delayedCall(3000, () => {
-          this.votingZoneExplodeParticlesEmitter?.stop();
-        });
       }
     }
   }
