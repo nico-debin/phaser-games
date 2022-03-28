@@ -4,6 +4,7 @@ enum TextureKeys {
   Paper = 'paper',
   Blood = 'blood',
   Rain = 'rain',
+  Stars = 'stars',
   VisionMask = 'vision-mask',
   CobraLogo = 'cobra-logo',
 }

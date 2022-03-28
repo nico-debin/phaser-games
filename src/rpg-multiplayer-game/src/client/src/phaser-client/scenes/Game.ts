@@ -76,6 +76,13 @@ export default class Game extends Phaser.Scene {
   private votingZones: VotingZone[] = []
   private currentVotingZoneValue: VotingZoneValue
 
+  // Emitter when the voting zone is active
+  private votingZoneParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
+
+  // Emitter when the voting zone turns to inactive
+  private votingZoneExplodeParticlesEmitter?: Phaser.GameObjects.Particles.ParticleEmitter
+  
+
   // Render Texture where tilemaps layers are rendered to (useful for dark mode)
   private renderTexture!: Phaser.GameObjects.RenderTexture
 
@@ -541,6 +548,52 @@ export default class Game extends Phaser.Scene {
     });
   }
 
+  createVotingZoneEmitter(): void {
+    if (!this.votingZoneParticlesEmitter) {
+      // Emitter when the voting zone is active
+      this.votingZoneParticlesEmitter = this.add.particles(TextureKeys.Stars).createEmitter({
+        frame: { frames: [ 0, 1, 2, 3 ], cycle: true },
+        tint: 0xfaff74,
+        quantity: 1,
+        scale: { start: 0.8, end: 0, ease: Phaser.Math.Easing.Linear },
+        blendMode: Phaser.BlendModes.ADD,
+        on: false,
+      });
+    }
+
+    if (!this.votingZoneExplodeParticlesEmitter) {
+      // Emitter when the voting zone turns to inactive
+      this.votingZoneExplodeParticlesEmitter = this.add.particles(TextureKeys.Stars).createEmitter({
+        frame: { frames: [ 0, 1, 2, 3 ], cycle: true },
+        tint: 0xfaff74,
+        speed: 90,
+        lifespan: 2000,
+        quantity: 48,
+        frequency: 6000,
+        scale: { start: 0.7, end: 0 },
+        blendMode: Phaser.BlendModes.ADD,
+        on: false,
+      });
+    }
+  }
+
+  updateVotingZoneEmitter(x: number, y: number, votingZone: Phaser.Types.GameObjects.Particles.RandomZoneSource): void {
+    if (!this.votingZoneParticlesEmitter || !this.votingZoneExplodeParticlesEmitter) {
+      this.createVotingZoneEmitter();
+    }
+
+    const emitZone: Phaser.Types.GameObjects.Particles.ParticleEmitterRandomZoneConfig = {
+      type: 'random',
+      source: votingZone,
+    };
+
+    this.votingZoneParticlesEmitter?.setEmitZone(emitZone);
+    this.votingZoneParticlesEmitter?.setPosition(x, y);
+    
+    this.votingZoneExplodeParticlesEmitter?.setEmitZone(emitZone);
+    this.votingZoneExplodeParticlesEmitter?.setPosition(x, y);
+  }
+
   // The player is fighting and fightmode is enabled
   private renderPlayerAsFighter(player: Player): void {
     player.healthBarIsVisible = true;
@@ -859,12 +912,21 @@ export default class Game extends Phaser.Scene {
         this.currentVotingZoneValue = newVotingZoneValue
         const votingZone = getVotingZone(newVotingZoneValue)
         votingZone?.zone.setFillStyle(0x9966ff, 0.8)
+        if (votingZone?.zone) {
+          this.updateVotingZoneEmitter(votingZone.zone.x, votingZone.zone.y, votingZone.zone.geom)
+          this.votingZoneParticlesEmitter?.start()
+        }
       }
     } else {
       if (newVotingZoneValue === undefined) {
         const votingZone = getVotingZone(this.currentVotingZoneValue)
         this.currentVotingZoneValue = undefined
         votingZone?.zone.setFillStyle(0x9966ff, 0.5)
+        this.votingZoneParticlesEmitter?.stop()
+        this.votingZoneExplodeParticlesEmitter?.start()
+        this.time.delayedCall(3000, () => {
+          this.votingZoneExplodeParticlesEmitter?.stop();
+        });
       }
     }
   }
