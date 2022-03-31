@@ -7,6 +7,7 @@ enum TextureKeys {
   Stars = 'stars',
   VisionMask = 'vision-mask',
   CobraLogo = 'cobra-logo',
+  Footprints = 'footprints',
 }
 
 export default TextureKeys

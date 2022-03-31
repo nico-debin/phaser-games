@@ -3059,6 +3059,69 @@
          "tileheight":32,
          "tiles":[
                 {
+                 "id":1,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":2,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":3,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":4,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":5,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":6,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":7,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
                  "id":8,
                  "properties":[
                         {
@@ -3128,6 +3191,51 @@
                          "name":"collides",
                          "type":"bool",
                          "value":false
+                        }]
+                }, 
+                {
+                 "id":16,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":17,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":18,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":19,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
+                        }]
+                }, 
+                {
+                 "id":20,
+                 "properties":[
+                        {
+                         "name":"groundType",
+                         "type":"string",
+                         "value":"sand"
                         }]
                 }, 
                 {

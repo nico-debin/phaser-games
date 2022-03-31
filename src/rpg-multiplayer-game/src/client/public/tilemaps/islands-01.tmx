@@ -888,6 +888,41 @@
  </tileset>
  <tileset firstgid="193" name="tf_beach_tileB" tilewidth="32" tileheight="32" tilecount="256" columns="16">
   <image source="../tiles/tf_beach_tileB.png" width="512" height="512"/>
+  <tile id="1">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
   <tile id="8">
    <properties>
     <property name="collides" type="bool" value="false"/>
@@ -926,6 +961,31 @@
   <tile id="15">
    <properties>
     <property name="collides" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="16">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="groundType" value="sand"/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="groundType" value="sand"/>
    </properties>
   </tile>
   <tile id="24">

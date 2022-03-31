@@ -5,7 +5,7 @@ import { MovementInput, Orientation, PlayerId } from '../types/playerTypes'
 
 export default abstract class Player extends Phaser.GameObjects.Sprite {
   private playerId: PlayerId
-  protected orientation: Orientation;
+  protected _orientation: Orientation;
   protected throwableWeaponGroup?: Phaser.Physics.Arcade.Group;
   protected _isDead: boolean = false;
   protected healthBar: HealthBar;
@@ -15,13 +15,17 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number | undefined) {
     super(scene, x, y, texture)
     this.playerId = playerId
-    this.orientation = 'down'
+    this._orientation = 'down'
 
     this.healthBar = new HealthBar(scene, 0, 0, this.displayWidth, 10, true).setVisible(false);
   }
 
   get id (){
     return this.playerId
+  }
+
+  get orientation (): Orientation {
+    return this._orientation;
   }
 
   destroy (fromScene?: boolean | undefined) {
@@ -36,13 +40,13 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
     this.updateHealthBarPosition();
 
     if (movementInput.left) {
-      this.orientation = 'left';
+      this._orientation = 'left';
     } else if (movementInput.right) {
-      this.orientation = 'right';
+      this._orientation = 'right';
     } else if (movementInput.up) {
-      this.orientation = 'up';
+      this._orientation = 'up';
     } else if (movementInput.down) {
-      this.orientation = 'down';
+      this._orientation = 'down';
     }
   }
 

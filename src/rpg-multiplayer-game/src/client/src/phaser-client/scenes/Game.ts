@@ -43,6 +43,7 @@ import Hud from './Hud'
 import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow'
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon'
 import TextureKeys from '../consts/TextureKeys'
+import TilemapKeys from '../consts/TilemapKeys'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -50,6 +51,9 @@ export default class Game extends Phaser.Scene {
 
   // Current player from this client
   currentPlayer!: Player
+
+  // Game tilemap
+  private mapIsland!: Phaser.Tilemaps.Tilemap;
 
   // Available arrows for current player
   private currentPlayerThrowableWeapons!: Phaser.Physics.Arcade.Group
@@ -105,6 +109,8 @@ export default class Game extends Phaser.Scene {
   // The fighter INDEX from gameFightState.fighters that the camera is currently following
   // This is only for players that are viewers and not fighting
   private fightCameraFollowedPlayerIndex?: number
+
+  private steps: Phaser.GameObjects.Image[] = []
 
   constructor() {
     super({ key: SceneKeys.Game })
@@ -165,42 +171,44 @@ export default class Game extends Phaser.Scene {
     })
 
     // Create tilemap and layers
-    const mapIsland = this.add.tilemap('islands');
+    this.mapIsland = this.add.tilemap('islands');
 
-    const tilesetIslandBeach = mapIsland.addTilesetImage('tf_beach_tileB', 'tiles-islands-beach', 32, 32, 0, 0)
-    const tilesetIslandShoreline = mapIsland.addTilesetImage('tf_beach_tileA1', 'tiles-islands-shoreline', 32, 32, 0, 0)
+    const tilesetIslandBeach = this.mapIsland.addTilesetImage('tf_beach_tileB', TilemapKeys.BeachTiles, 32, 32, 0, 0)
+    const tilesetIslandShoreline = this.mapIsland.addTilesetImage('tf_beach_tileA1', TilemapKeys.BeachShoreTiles, 32, 32, 0, 0)
 
-    const ocean = mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
+    const ocean = this.mapIsland.createLayer('Ocean', [tilesetIslandShoreline])
     // Group all tilset layers
     const islandsTilesLayerGroup = this.add.layer([
-      mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
-      mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
-      mapIsland.createLayer('Island 2/Island', [tilesetIslandBeach, tilesetIslandShoreline]),
-      mapIsland.createLayer('Island 2/Paths', [tilesetIslandBeach]),
-      mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
-      mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
-      mapIsland.createLayer('Island 2/Vegetation bottom', tilesetIslandBeach),
+      this.mapIsland.createLayer('Island 1/Main Island', [tilesetIslandBeach, tilesetIslandShoreline]),
+      this.mapIsland.createLayer('Island 1/Voting Islands', [tilesetIslandBeach, tilesetIslandShoreline]),
+      this.mapIsland.createLayer('Island 2/Island', [tilesetIslandBeach, tilesetIslandShoreline]),
+      this.mapIsland.createLayer('Island 2/Paths', [tilesetIslandBeach]),
+      this.mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
+      this.mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
+      this.mapIsland.createLayer('Island 2/Vegetation bottom', tilesetIslandBeach),
     ])
-    const vegetationTop1 = mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
-    const vegetationTop2 = mapIsland.createLayer('Island 2/Vegetation top', tilesetIslandBeach).setDepth(10)
+    const vegetationTop1 = this.mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
+    const vegetationTop2 = this.mapIsland.createLayer('Island 2/Vegetation top', tilesetIslandBeach).setDepth(10)
 
     // Animated Tiles (like sea water in the shore)
     // @ts-ignore
-    this.sys.animatedTiles.init(mapIsland);
+    this.sys.animatedTiles.init(this.mapIsland);
+
+    this.steps.push(this.add.image(0, 0, TextureKeys.Footprints, Phaser.Math.Between(0, 3)).setAlpha(1));
 
     // make a RenderTexture that is the size of the screen
     this.renderTexture = this.make.renderTexture({
-      width: mapIsland.widthInPixels,
-      height: mapIsland.heightInPixels,
+      width: this.mapIsland.widthInPixels,
+      height: this.mapIsland.heightInPixels,
     }, true);
     this.renderTexture.draw([ocean, ...islandsTilesLayerGroup.getAll(), vegetationTop1, vegetationTop2]).setAlpha(0);
     this.visionMaskContainer = this.make.container({}, false);
 
     // Render texture to draw blood splatters on fight mode
-    this.bloodSplatterRenderTexture = this.add.renderTexture(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
+    this.bloodSplatterRenderTexture = this.add.renderTexture(0, 0, this.mapIsland.widthInPixels, this.mapIsland.heightInPixels);
 
     // Illuminate palmtrees and campfires
-    const lightsLayer = mapIsland.getObjectLayer('Lights');
+    const lightsLayer = this.mapIsland.getObjectLayer('Lights');
     lightsLayer.objects.forEach((tiledObject) => {
       const {x, y } = tiledObject
       const campfireVision = this.make.image({
@@ -214,7 +222,7 @@ export default class Game extends Phaser.Scene {
     });
 
     // Voting Zones
-    const votingZonesLayer = mapIsland.getObjectLayer('Voting Zones')
+    const votingZonesLayer = this.mapIsland.getObjectLayer('Voting Zones')
     votingZonesLayer.objects.forEach((tiledObject) => {
         const {x, y, height, width, properties } = tiledObject
         const votingValue = properties[0]['value'] as string
@@ -226,14 +234,14 @@ export default class Game extends Phaser.Scene {
     })
 
     // Voting Frontier: border that tells if a player is in voting islands or not
-    const thresholdsLayer = mapIsland.getObjectLayer('Thresholds')
+    const thresholdsLayer = this.mapIsland.getObjectLayer('Thresholds')
     const votingFrontier = thresholdsLayer.objects.find((tiledObject) => tiledObject.name === 'Voting Frontier')!
     if (votingFrontier) {
       gameState.votingFrontierY = votingFrontier.y;
     }
 
     // Cobra NPC
-    const playersLayer = mapIsland.getObjectLayer('Players')
+    const playersLayer = this.mapIsland.getObjectLayer('Players')
     const randomPlayerIndex = Phaser.Math.Between(0, playersLayer.objects.length - 1)
     const playerObj = playersLayer.objects[randomPlayerIndex]
     const cobra = new Cobra(this, playerObj?.x!, playerObj?.y!)
@@ -263,7 +271,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.overlap([this.currentPlayerThrowableWeapons, this.restOfPlayersThrowableWeapons], this.players, this.handleThrowableWeaponPlayerOverlap, undefined, this)
 
     // Camara limited to the map
-    this.cameras.main.setBounds(0, 0, mapIsland.widthInPixels, mapIsland.heightInPixels);
+    this.cameras.main.setBounds(0, 0, this.mapIsland.widthInPixels, this.mapIsland.heightInPixels);
 
     // Create cursor keys and initial movement input
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -751,6 +759,8 @@ export default class Game extends Phaser.Scene {
     player.setPosition(newPlayerState.x + errorOffset, newPlayerState.y + errorOffset)
     player.update(newPlayerState.movementInput)
 
+    this.handleFootprintTrail(player);
+
     if (gameState.getPlayer(player.id)?.isVoter) {
       gameVotingManager.setVote(player.id, newPlayerState.votingZone)
 
@@ -760,6 +770,45 @@ export default class Game extends Phaser.Scene {
     }
 
     this.handlePlayerVisibilityWhileVoting(player)
+  }
+
+  private handleFootprintTrail(player: Player): void {
+    if (player.id === this.currentPlayerId && this.steps.length > 0) {
+      const stepY = player.y + player.displayHeight * 0.45;
+      const stepTilePosition = this.mapIsland.worldToTileXY(player.x, stepY);
+      const sandTile = this.mapIsland.getTileAt(stepTilePosition.x, stepTilePosition.y, false, 'Island 1/Main Island') || this.mapIsland.getTileAt(stepTilePosition.x, stepTilePosition.y, false, 'Island 1/Voting Islands');
+      const vegetationTile = this.mapIsland.getTileAt(stepTilePosition.x, stepTilePosition.y, false, 'Island 1/Vegetation bottom');
+      const doStep: boolean = sandTile && sandTile.properties?.groundType === 'sand' && !vegetationTile;
+      if (
+        doStep && Math.hypot(this.steps[0].x - player.x, this.steps[0].y - stepY) > 50
+      ) {
+        // did the player move far enough to generate a new step
+        if (this.steps.length >= 8) {
+          this.steps.unshift(this.steps.pop()!.setAlpha(1));
+          let rotation: number;
+          switch (player.orientation) {
+            case 'up':
+              rotation = 360 - 90;
+              break;
+            case 'down':
+              rotation = 90;
+              break;
+            case 'left':
+              rotation = 180;
+              break;
+            case 'right':
+            default:
+              rotation = 0;
+          }
+
+          this.steps[0].setPosition(player.x, stepY).setAngle(rotation);
+        } else {
+          this.steps.unshift(
+            this.add.image(player.x, stepY, TextureKeys.Footprints, Phaser.Math.Between(0, 3))
+          );
+        }
+      }
+    }
   }
 
   handlePlayerVisibilityWhileVoting(player: Player): void {
@@ -818,6 +867,7 @@ export default class Game extends Phaser.Scene {
 
   update(t: number, dt: number) {
     this.handleMovementInput()
+    this.handleFootprintTrailVanish(dt)
     this.handleFightInput()
     this.handleFightCamera()
     this.handleFightEffects()
@@ -931,6 +981,10 @@ export default class Game extends Phaser.Scene {
     this.rainParticlesEmitter?.setPosition({ min: this.cameras.main.worldView.left - 150, max: this.cameras.main.worldView.right + 150 }, { min: this.cameras.main.worldView.top - 200, max: this.cameras.main.worldView.top })
   }
 
+  private handleFootprintTrailVanish(delta: number): void {
+    this.steps.forEach((step: Phaser.GameObjects.Image) => step.setAlpha(step.alpha - (delta / 4000)))
+  }
+    
   hardStopCurrentPlayerMovement() {
     this.updateLastMovementInput({
       left: false,
