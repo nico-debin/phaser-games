@@ -44,6 +44,7 @@ import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow'
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon'
 import TextureKeys from '../consts/TextureKeys'
 import TilemapKeys from '../consts/TilemapKeys'
+import DepthKeys from '../consts/DepthKeys'
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -187,14 +188,14 @@ export default class Game extends Phaser.Scene {
       this.mapIsland.createLayer('Island 1/Vegetation bottom', tilesetIslandBeach),
       this.mapIsland.createLayer('Island 2/Vegetation bottom', tilesetIslandBeach),
     ])
-    const vegetationTop1 = this.mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(10)
-    const vegetationTop2 = this.mapIsland.createLayer('Island 2/Vegetation top', tilesetIslandBeach).setDepth(10)
+    const vegetationTop1 = this.mapIsland.createLayer('Island 1/Vegetation top', tilesetIslandBeach).setDepth(DepthKeys.VEGETATION_TOP)
+    const vegetationTop2 = this.mapIsland.createLayer('Island 2/Vegetation top', tilesetIslandBeach).setDepth(DepthKeys.VEGETATION_TOP)
 
     // Animated Tiles (like sea water in the shore)
     // @ts-ignore
     this.sys.animatedTiles.init(this.mapIsland);
 
-    this.steps.push(this.add.image(0, 0, TextureKeys.Footprints, Phaser.Math.Between(0, 3)).setAlpha(1));
+    this.steps.push(this.add.image(0, 0, TextureKeys.Footprints, Phaser.Math.Between(0, 3)).setAlpha(1).setDepth(DepthKeys.FOOTPRINTS));
 
     // make a RenderTexture that is the size of the screen
     this.renderTexture = this.make.renderTexture({
@@ -227,8 +228,8 @@ export default class Game extends Phaser.Scene {
         const {x, y, height, width, properties } = tiledObject
         const votingValue = properties[0]['value'] as string
 
-        const rectangle = this.add.rectangle(x!, y!, width, height, 0x9966ff, 0.5).setStrokeStyle(4, 0xefc53f).setOrigin(0);
-        this.add.bitmapText(x! + width!/2 , y! + height!/2, FontKeys.DESYREL, votingValue, 64).setOrigin(0.5).setCenterAlign();
+        const rectangle = this.add.rectangle(x!, y!, width, height, 0x9966ff, 0.5).setStrokeStyle(4, 0xefc53f).setOrigin(0).setDepth(DepthKeys.VOTING_ZONE);
+        this.add.bitmapText(x! + width!/2 , y! + height!/2, FontKeys.DESYREL, votingValue, 64).setOrigin(0.5).setCenterAlign().setDepth(DepthKeys.VOTING_ZONE);
 
         this.votingZones.push({ value: votingValue, zone: rectangle});
     })
@@ -245,7 +246,7 @@ export default class Game extends Phaser.Scene {
     const randomPlayerIndex = Phaser.Math.Between(0, playersLayer.objects.length - 1)
     const playerObj = playersLayer.objects[randomPlayerIndex]
     const cobra = new Cobra(this, playerObj?.x!, playerObj?.y!)
-    cobra.setDepth(3)
+    cobra.setDepth(DepthKeys.COBRA)
     this.add.existing(cobra)
     this.physics.add.existing(cobra)
     cobra.body.onCollide = true
@@ -559,7 +560,7 @@ export default class Game extends Phaser.Scene {
   createVotingZoneEmitter(): void {
     if (!this.votingZoneParticlesEmitter) {
       // Emitter when the voting zone is active
-      this.votingZoneParticlesEmitter = this.add.particles(TextureKeys.Stars).createEmitter({
+      this.votingZoneParticlesEmitter = this.add.particles(TextureKeys.Stars).setDepth(DepthKeys.VOTING_ZONE + 1).createEmitter({
         frame: { frames: [ 0, 1, 2, 3 ], cycle: false },
         tint: 0xfaff74,
         // quantity: 48,
@@ -572,7 +573,7 @@ export default class Game extends Phaser.Scene {
 
     if (!this.votingZoneExplodeParticlesEmitter) {
       // Emitter when the voting zone turns to inactive
-      this.votingZoneExplodeParticlesEmitter = this.add.particles(TextureKeys.Stars).createEmitter({
+      this.votingZoneExplodeParticlesEmitter = this.add.particles(TextureKeys.Stars).setDepth(DepthKeys.VOTING_ZONE + 1).createEmitter({
         frame: { frames: [ 0, 1, 2, 3 ], cycle: false },
         tint: 0xfaff74,
         speed: 90,
@@ -648,7 +649,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private createRainParticles(): void {
-    this.rainParticlesEmitter = this.add.particles(TextureKeys.Rain).setDepth(100).createEmitter({
+    this.rainParticlesEmitter = this.add.particles(TextureKeys.Rain).setDepth(DepthKeys.RAIN).createEmitter({
       frame: 0,
       x: { min: this.cameras.main.worldView.left - 150, max: this.cameras.main.worldView.right + 150 },
       y: { min: this.cameras.main.worldView.top - 200, max: this.cameras.main.worldView.top },
@@ -804,7 +805,7 @@ export default class Game extends Phaser.Scene {
           this.steps[0].setPosition(player.x, stepY).setAngle(rotation);
         } else {
           this.steps.unshift(
-            this.add.image(player.x, stepY, TextureKeys.Footprints, Phaser.Math.Between(0, 3))
+            this.add.image(player.x, stepY, TextureKeys.Footprints, Phaser.Math.Between(0, 3)).setDepth(DepthKeys.FOOTPRINTS)
           );
         }
       }
@@ -1029,7 +1030,7 @@ export default class Game extends Phaser.Scene {
   addPlayer(playerInitialState: PlayerInitialState, isMainPlayer = true): void {
     const player = PlayerFactory.fromPlayerInitialState(this, playerInitialState)
 
-    player.setDepth(5)
+    player.setDepth(DepthKeys.PLAYER)
 
     // Show player's username
     player.setRenderUsername(gameState.showPlayersUsernames);

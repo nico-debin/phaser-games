@@ -117,6 +117,12 @@ export default class SpeechBubble {
     return this;
   }
 
+  setDepth(depth: number): this {
+    this.bubble.setDepth(depth);
+    this.content.setDepth(depth);
+    return this;
+  }
+
   destroy(): void {
     this.bubble.destroy();
     this.content.destroy();

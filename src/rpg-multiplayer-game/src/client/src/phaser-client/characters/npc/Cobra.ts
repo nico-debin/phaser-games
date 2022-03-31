@@ -107,4 +107,10 @@ export default class Cobra extends Phaser.Physics.Arcade.Sprite {
 
     this.speechBubble?.setPosition(this.x, this.y);
   }
+
+  setDepth(depth: number): this {
+    super.setDepth(depth);
+    this.speechBubble?.setDepth(depth);
+    return this;
+  }
 }
