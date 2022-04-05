@@ -58,6 +58,14 @@ export default class CheckboxInput {
     return this;
   }
 
+  get x(): number {
+    return this.checkboxOnImage.x;
+  }
+
+  get y(): number {
+    return this.checkboxOnImage.y;
+  }
+
   setScale(x: number, y?: number): CheckboxInput {
     this.checkboxOnImage.setScale(x, y || x);
     this.checkboxOffImage.setScale(x, y || x);
