@@ -395,11 +395,6 @@ export default class Game extends Phaser.Scene {
       }
     })
 
-    // Show/Hide HUD on fight mode
-    autorun(() => {
-      this.scene.setVisible(!gameState.gameFight.fightMode, SceneKeys.Hud);
-    })
-
     // Dark mode
     autorun(() => {
       if (gameState.darkMode) {

@@ -66,7 +66,7 @@ export default class Hud extends Phaser.Scene {
       }).onClose(() => {
         settingsButton.setVisible(true)
         settingsWheelIcon.setVisible(true)
-        this.votingStats.setVisible(true)
+        this.votingStats.setVisible(false)
         gameState.playerCanMove = true
       })
 
