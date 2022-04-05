@@ -417,6 +417,15 @@ export default class Game extends Phaser.Scene {
       })
     })
 
+    // Enable/Disable rain
+    autorun(() => {
+      if (gameState.rainFlagEnabled) {
+        this.rainParticlesEmitter && this.startRain();
+      } else {
+        this.rainParticlesEmitter && this.stopRain();
+      }
+    })
+
     // Another player has updated it's settings
     this.socket.on(NetworkEventKeys.PlayerSettingsUpdate, (playerSettings: PlayerSettings) => {
       if (playerSettings.id) {
@@ -666,6 +675,10 @@ export default class Game extends Phaser.Scene {
   }
 
   private startRain(): void {
+    if (!gameState.rainFlagEnabled) {
+      console.log('rain flag disabled');
+      return;
+    };
     if (this.isRaining) return;
     this.isRaining = true;
 

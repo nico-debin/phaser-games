@@ -9,6 +9,8 @@ export default class SettingsMenu extends AbstractMenu {
   voterCheckbox: CheckboxInput;
   hidePlayersWhileVotingCheckbox: CheckboxInput;
   showPlayersUsernamesCheckbox: CheckboxInput;
+  disableRainCheckbox: CheckboxInput;
+  disableBloodCheckbox: CheckboxInput;
 
   constructor(scene: Phaser.Scene) {
     super(scene);
@@ -90,6 +92,44 @@ export default class SettingsMenu extends AbstractMenu {
         gameState.showPlayersUsernames = false;
       });
 
+    this.disableRainCheckbox = new CheckboxInput(
+      scene,
+      menuBoardScaledPositionX + 60,
+      menuBoardScaledPositionY + 230,
+      "Disable rain",
+      !gameState.rainFlagEnabled
+    )
+      .setScale(0.2)
+      .setOrigin(0.5, 0.5)
+      .setVisible(false)
+      .onCheck(() => {
+        gameState.disableRainFlag()
+        console.log(`gameState.rainFlagEnabled: ${gameState.rainFlagEnabled}`)
+      })
+      .onUncheck(() => {
+        gameState.enableRainFlag()
+        console.log(`gameState.rainFlagEnabled: ${gameState.rainFlagEnabled}`)
+      });
+
+    this.disableBloodCheckbox = new CheckboxInput(
+      scene,
+      menuBoardScaledPositionX + 60,
+      menuBoardScaledPositionY + 270,
+      "Disable blood",
+      !gameState.bloodFlagEnabled
+    )
+      .setScale(0.2)
+      .setOrigin(0.5, 0.5)
+      .setVisible(false)
+      .onCheck(() => {
+        gameState.disableBloodFlag()
+        console.log(`gameState.bloodFlagEnabled: ${gameState.bloodFlagEnabled}`)
+      })
+      .onUncheck(() => {
+        gameState.enableBloodFlag()
+        console.log(`gameState.bloodFlagEnabled: ${gameState.bloodFlagEnabled}`)
+      });
+
     // wait until the current player state is built to set the according settings
     autorun((reaction) => {
       const { currentPlayer } = gameState;
@@ -109,6 +149,8 @@ export default class SettingsMenu extends AbstractMenu {
     this.voterCheckbox.setVisible(true);
     this.hidePlayersWhileVotingCheckbox.setVisible(true);
     this.showPlayersUsernamesCheckbox.setVisible(true);
+    this.disableRainCheckbox.setVisible(true);
+    this.disableBloodCheckbox.setVisible(true);
   }
 
   closeMenu() {
@@ -117,5 +159,7 @@ export default class SettingsMenu extends AbstractMenu {
     this.voterCheckbox.setVisible(false);
     this.hidePlayersWhileVotingCheckbox.setVisible(false);
     this.showPlayersUsernamesCheckbox.setVisible(false);
+    this.disableRainCheckbox.setVisible(false);
+    this.disableBloodCheckbox.setVisible(false);
   }
 }

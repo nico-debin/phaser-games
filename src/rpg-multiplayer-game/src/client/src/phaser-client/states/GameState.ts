@@ -32,6 +32,9 @@ class GameState {
 
   readonly gameFight: typeof gameFightState;
 
+  private enableRain = true;
+  private enableBlood = true;
+
   constructor() {
     this.gameFight = gameFightState
 
@@ -222,6 +225,30 @@ class GameState {
 
   get connectingToServer(): boolean {
     return this._connectingToServer;
+  }
+
+  enableRainFlag() {
+    this.enableRain = true;
+  }
+
+  disableRainFlag() {
+    this.enableRain = false;
+  }
+
+  get rainFlagEnabled() {
+    return this.enableRain;
+  }
+
+  enableBloodFlag() {
+    this.enableBlood = true;
+  }
+
+  disableBloodFlag() {
+    this.enableBlood = false;
+  }
+
+  get bloodFlagEnabled() {
+    return this.enableBlood;
   }
 
   /**
