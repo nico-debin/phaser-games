@@ -11,6 +11,7 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
   protected healthBar: HealthBar;
   protected usernameLabel?: Phaser.GameObjects.Text;
   protected displayUsernameLabel = false;
+  protected _enableBlood = true;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, playerId: string, frame?: string | number | undefined) {
     super(scene, x, y, texture)
@@ -26,6 +27,14 @@ export default abstract class Player extends Phaser.GameObjects.Sprite {
 
   get orientation (): Orientation {
     return this._orientation;
+  }
+
+  get enableBlood(): boolean {
+    return this._enableBlood;
+  }
+
+  set enableBlood (value: boolean) {
+    this._enableBlood = value;
   }
 
   destroy (fromScene?: boolean | undefined) {

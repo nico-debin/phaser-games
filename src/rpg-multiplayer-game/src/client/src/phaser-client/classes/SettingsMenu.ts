@@ -104,11 +104,9 @@ export default class SettingsMenu extends AbstractMenu {
       .setVisible(false)
       .onCheck(() => {
         gameState.disableRainFlag()
-        console.log(`gameState.rainFlagEnabled: ${gameState.rainFlagEnabled}`)
       })
       .onUncheck(() => {
         gameState.enableRainFlag()
-        console.log(`gameState.rainFlagEnabled: ${gameState.rainFlagEnabled}`)
       });
 
     this.disableBloodCheckbox = new CheckboxInput(
@@ -123,11 +121,9 @@ export default class SettingsMenu extends AbstractMenu {
       .setVisible(false)
       .onCheck(() => {
         gameState.disableBloodFlag()
-        console.log(`gameState.bloodFlagEnabled: ${gameState.bloodFlagEnabled}`)
       })
       .onUncheck(() => {
         gameState.enableBloodFlag()
-        console.log(`gameState.bloodFlagEnabled: ${gameState.bloodFlagEnabled}`)
       });
 
     // wait until the current player state is built to set the according settings

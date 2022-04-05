@@ -409,14 +409,6 @@ export default class Game extends Phaser.Scene {
       }
     })
 
-    // Show/Hide Username labeles
-    autorun(() => {
-      const newValue = gameState.showPlayersUsernames;
-      (this.players.getChildren() as Player[]).forEach((player) => {
-        player.setRenderUsername(newValue);
-      })
-    })
-
     // Enable/Disable rain
     autorun(() => {
       if (gameState.rainFlagEnabled) {
@@ -424,6 +416,18 @@ export default class Game extends Phaser.Scene {
       } else {
         this.rainParticlesEmitter && this.stopRain();
       }
+    })
+
+    // Enable/Disable blood
+    autorun(() => {
+      const enableBlood = gameState.bloodFlagEnabled;
+      (this.players.getChildren() as Player[]).forEach(player => player.enableBlood = enableBlood)
+    })
+
+    // Show/Hide Username labeles
+    autorun(() => {
+      const newValue = gameState.showPlayersUsernames;
+      (this.players.getChildren() as Player[]).forEach((player) => player.setRenderUsername(newValue))
     })
 
     // Another player has updated it's settings
@@ -676,7 +680,6 @@ export default class Game extends Phaser.Scene {
 
   private startRain(): void {
     if (!gameState.rainFlagEnabled) {
-      console.log('rain flag disabled');
       return;
     };
     if (this.isRaining) return;

@@ -197,12 +197,27 @@ export default class GenericLpc extends Player {
     }
     return false;
   }
+  
+  set enableBlood (value: boolean) {
+    super.enableBlood = value;
+
+    const scene = this.scene as Game;
+    scene.bloodSplatterRenderTexture.setVisible(this.enableBlood).setActive(this.enableBlood);
+  }
+
+  get enableBlood(): boolean {
+    return super.enableBlood;
+  }
 
   hurt(amount: number, orientation?: Orientation) {
     super.hurt(amount);
     if (this.isDead) return;
 
     this.healthBar.decrease(amount);
+    
+    // Bail if blood is disabled
+    if (!this.enableBlood) return;
+    
 
     switch (orientation) {
       case 'up': 
@@ -227,7 +242,7 @@ export default class GenericLpc extends Player {
     }
 
     this.bloodParticlesEmitter.onParticleDeath((particle: Phaser.GameObjects.Particles.Particle) => {
-      const scene = this.scene.scene.get(SceneKeys.Game) as Game;
+      const scene = this.scene as Game;
       const x = particle.x + Phaser.Math.Between(0, 20);
       const y = particle.y + Phaser.Math.Between(0, 20);
       scene.bloodSplatterRenderTexture.draw(TextureKeys.Blood, x, y);
