@@ -20,6 +20,7 @@ const HomePage = () => {
   const [avatarsLoaded, setAvatarsLoaded] = useState<boolean>(false)
   const [activeSlides, setActiveSlides] = useState<Slide[]>(defaultAvatarSlides)
   // const [savedSettings, setSavedSettings] = useState<SavedSettings | undefined>();
+  const showDebugger = false;
 
   useEffect(() => {
     const loadImage = (slide: Slide) => {
@@ -73,7 +74,7 @@ const HomePage = () => {
 
       </div>
 
-      <StoreDebugger />
+      {showDebugger && <StoreDebugger />}
     </div>
   );
 };
