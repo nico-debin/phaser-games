@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import ArrowButton from "../ArrowButton";
+import React, { useState, useEffect } from 'react';
+import ArrowButton from '../ArrowButton';
 
-
-import "./TextSlider.scss"
+import './TextSlider.scss';
 
 interface TextSliderProps {
   placeholder: string;
@@ -12,47 +11,53 @@ interface TextSliderProps {
   onSlide?: (text: string) => void;
 }
 
-const TextSlider = ({ placeholder, options, startKey, setStartKey, onSlide }: TextSliderProps) => {
+const TextSlider = ({
+  placeholder,
+  options,
+  startKey,
+  setStartKey,
+  onSlide,
+}: TextSliderProps) => {
   const [showPlaceholder, setShowPlaceholder] = useState(true);
 
   useEffect(() => {
-    setShowPlaceholder(startKey < 0)
-  }, [startKey])
+    setShowPlaceholder(startKey < 0);
+  }, [startKey]);
 
   const onNextClick = () => {
-    const newValue = startKey + 1 >= options.length ? 0 : startKey + 1
-    onSlide && onSlide(options[newValue])
+    const newValue = startKey + 1 >= options.length ? 0 : startKey + 1;
+    onSlide && onSlide(options[newValue]);
     setStartKey(newValue);
   };
 
   const onPrevClick = () => {
-    const newValue = startKey - 1 >= 0 ? startKey - 1 : options.length - 1
-    onSlide && onSlide(options[newValue])
+    const newValue = startKey - 1 >= 0 ? startKey - 1 : options.length - 1;
+    onSlide && onSlide(options[newValue]);
     setStartKey(newValue);
   };
 
   const onClickHandler = (orientation: 'left' | 'right') => () => {
-    setShowPlaceholder(false)
+    setShowPlaceholder(false);
     switch (orientation) {
       case 'left':
-        onPrevClick()
-        break
+        onPrevClick();
+        break;
 
       case 'right':
       default:
-        onNextClick()
-        break
+        onNextClick();
+        break;
     }
-  }
+  };
 
   const displayText = showPlaceholder ? placeholder : options[startKey];
   return (
     <div className="text-slider">
       <ArrowButton onClick={onClickHandler('left')} orientation="left" />
-      <span className='display'>{displayText}</span>
+      <span className="display">{displayText}</span>
       <ArrowButton onClick={onClickHandler('right')} orientation="right" />
     </div>
-  )
-}
+  );
+};
 
-export default TextSlider
+export default TextSlider;

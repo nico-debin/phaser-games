@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import Spritesheet from 'react-responsive-spritesheet';
 import { useStore } from '../../store/useStore';
 
-import { Slider, Slide } from "../ui";
+import { Slider, Slide } from '../ui';
 
 interface AvatarSelectorProps {
   title?: string;
@@ -12,23 +12,29 @@ interface AvatarSelectorProps {
 const AvatarSelector = ({ title, slides }: AvatarSelectorProps) => {
   const { avatar, setAvatar } = useStore();
   const [sliderStartKey, setSliderStartKey] = useState(0);
-  const [initialAvatarHasLoaded, setInitialAvatarHasLoaded] = useState<boolean>(false);
+  const [initialAvatarHasLoaded, setInitialAvatarHasLoaded] =
+    useState<boolean>(false);
 
   if (initialAvatarHasLoaded === false && avatar) {
     const avatarKey = slides.findIndex((s: Slide) => s.name === avatar);
     if (avatarKey >= 0) {
-      setSliderStartKey(avatarKey)
+      setSliderStartKey(avatarKey);
     }
-    setInitialAvatarHasLoaded(true); 
+    setInitialAvatarHasLoaded(true);
   }
-  
+
   const onSlideChangeHandler = (slide: Slide) => {
     setAvatar(slide.name);
-  }
+  };
   return (
     <div className="avatar-selector">
       <h2>{title ?? 'Select your avatar'}</h2>
-      <Slider slides={slides} startKey={sliderStartKey} setStartKey={setSliderStartKey} onSlideChange={onSlideChangeHandler}>
+      <Slider
+        slides={slides}
+        startKey={sliderStartKey}
+        setStartKey={setSliderStartKey}
+        onSlideChange={onSlideChangeHandler}
+      >
         {(slide: Slide) => (
           <div className="slide-container" key={slide.name}>
             <Spritesheet
@@ -47,9 +53,9 @@ const AvatarSelector = ({ title, slides }: AvatarSelectorProps) => {
         )}
       </Slider>
     </div>
-  )
-}
+  );
+};
 
-const getFrameNumber = (row, col) => (row - 1) * 13 + (col - 1)
+const getFrameNumber = (row, col) => (row - 1) * 13 + (col - 1);
 
 export default AvatarSelector;

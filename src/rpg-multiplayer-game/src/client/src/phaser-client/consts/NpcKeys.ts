@@ -1,5 +1,5 @@
 enum NpcKeys {
   COBRA = 'cobra',
-};
+}
 
-export default NpcKeys
+export default NpcKeys;

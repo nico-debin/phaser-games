@@ -1,57 +1,68 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from "../store/useStore";
+import { useStore } from '../store/useStore';
 
 import { SavedSettings } from '../types';
-import { Slide } from "../components/ui";
+import { Slide } from '../components/ui';
 
-import PlayButton from "../components/PlayButton/PlayButton";
-import UsernameSelector from "../components/UsernameSelector/UsernameSelector";
-import AvatarSelector from "../components/AvatarSelector/AvatarSelector";
-import OptionsSection from "../components/OptionsSection/OptionsSection";
+import PlayButton from '../components/PlayButton/PlayButton';
+import UsernameSelector from '../components/UsernameSelector/UsernameSelector';
+import AvatarSelector from '../components/AvatarSelector/AvatarSelector';
+import OptionsSection from '../components/OptionsSection/OptionsSection';
 
-import { avatarSlides, defaultAvatarSlides } from "../avatarSlides";
+import { avatarSlides, defaultAvatarSlides } from '../avatarSlides';
 
-import StoreDebugger from "../store/StoreDebugger";
+import StoreDebugger from '../store/StoreDebugger';
 
 import '../styles/HomePage.scss';
 
 const HomePage = () => {
   const { username, isReadyToPlay, setFromSavedSettings } = useStore();
-  const [avatarsLoaded, setAvatarsLoaded] = useState<boolean>(false)
-  const [activeSlides, setActiveSlides] = useState<Slide[]>(defaultAvatarSlides)
+  const [avatarsLoaded, setAvatarsLoaded] = useState<boolean>(false);
+  const [activeSlides, setActiveSlides] =
+    useState<Slide[]>(defaultAvatarSlides);
   // const [savedSettings, setSavedSettings] = useState<SavedSettings | undefined>();
   const showDebugger = false;
 
   useEffect(() => {
     const loadImage = (slide: Slide) => {
       return new Promise((resolve, reject) => {
-        const loadImg = new Image()
-        loadImg.src = slide.url
-        loadImg.onload = () => resolve(slide.url)
-        loadImg.onerror = err => reject(err)
-      })
-    }
+        const loadImg = new Image();
+        loadImg.src = slide.url;
+        loadImg.onload = () => resolve(slide.url);
+        loadImg.onerror = (err) => reject(err);
+      });
+    };
 
-    Promise.all([...avatarSlides, ...defaultAvatarSlides].map(slide => loadImage(slide)))
+    Promise.all(
+      [...avatarSlides, ...defaultAvatarSlides].map((slide) =>
+        loadImage(slide),
+      ),
+    )
       .then(() => setAvatarsLoaded(true))
-      .catch(err => console.log("Failed to load images", err))
+      .catch((err) => console.log('Failed to load images', err));
 
-    const parsedSavedSettings = JSON.parse(localStorage.getItem('grooming-wars') || '{}') as SavedSettings;
+    const parsedSavedSettings = JSON.parse(
+      localStorage.getItem('grooming-wars') || '{}',
+    ) as SavedSettings;
     if (parsedSavedSettings) {
       // setSavedSettings(parsedSavedSettings);
       setFromSavedSettings(parsedSavedSettings);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     // Set active avatar slides based on selected username
-    username && setActiveSlides([...avatarSlides.filter((slide: Slide) => {
-      if (username === 'cowabungapeppercorn') {
-        return slide.name === 'nick-taylor';
-      }
-      return slide.name === username;
-    }), ...defaultAvatarSlides])
-  }, [username])
+    username &&
+      setActiveSlides([
+        ...avatarSlides.filter((slide: Slide) => {
+          if (username === 'cowabungapeppercorn') {
+            return slide.name === 'nick-taylor';
+          }
+          return slide.name === username;
+        }),
+        ...defaultAvatarSlides,
+      ]);
+  }, [username]);
 
   const showPlayButton: boolean = isReadyToPlay();
 
@@ -60,18 +71,18 @@ const HomePage = () => {
       <div className="homepage-board">
         <h1>Grooming Wars</h1>
 
-        <UsernameSelector usernames={avatarSlides.map(slide => slide.name)} />
+        <UsernameSelector usernames={avatarSlides.map((slide) => slide.name)} />
 
-        { username && (
-          avatarsLoaded ? (
+        {username &&
+          (avatarsLoaded ? (
             <AvatarSelector slides={activeSlides} />
-          ) : (<h1>Loading...</h1>)
-        )}
+          ) : (
+            <h1>Loading...</h1>
+          ))}
 
         <OptionsSection />
 
         {showPlayButton && <PlayButton />}
-
       </div>
 
       {showDebugger && <StoreDebugger />}

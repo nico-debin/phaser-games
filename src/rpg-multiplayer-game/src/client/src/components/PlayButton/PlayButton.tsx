@@ -1,12 +1,10 @@
-import React from "react";
-import { useStore } from "../../store/useStore";
-import { SavedSettings } from "../../types";
+import React from 'react';
+import { useStore } from '../../store/useStore';
+import { SavedSettings } from '../../types';
 
-import "./PlayButton.scss";
+import './PlayButton.scss';
 
-interface PlayButtonProps {
-
-}
+interface PlayButtonProps {}
 
 const PlayButton = ({}: PlayButtonProps) => {
   const store = useStore();
@@ -18,20 +16,19 @@ const PlayButton = ({}: PlayButtonProps) => {
       isVoter: store.isVoter,
       isAdmin: store.isAdmin,
     };
-    localStorage.setItem('grooming-wars', JSON.stringify(savedSettings))
+    localStorage.setItem('grooming-wars', JSON.stringify(savedSettings));
     store.setGameStarted(true);
-  }
+  };
 
   return (
     <div className="play-button" onClick={onClickHandler}>
       <div className="green-wood">
         <span className="play-icon"></span>
       </div>
-      <div className="wood">
-      </div>
+      <div className="wood"></div>
       <label>Play!</label>
     </div>
-  )
+  );
 };
 
 export default PlayButton;

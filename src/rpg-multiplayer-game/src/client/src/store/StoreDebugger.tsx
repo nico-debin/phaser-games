@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { useStore } from './useStore';
 
 const StoreDebugger = () => {
@@ -13,7 +13,7 @@ const StoreDebugger = () => {
         <li>isAdmin: {isAdmin ? 'yes' : 'no'}</li>
       </ul>
     </div>
-  )
-}
+  );
+};
 
 export default StoreDebugger;

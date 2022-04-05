@@ -1,7 +1,7 @@
-import create from "zustand";
-import { SavedSettings } from "../types";
-import { avatarSlides } from "../avatarSlides";
-import { Slide } from "../components/ui";
+import create from 'zustand';
+import { SavedSettings } from '../types';
+import { avatarSlides } from '../avatarSlides';
+import { Slide } from '../components/ui';
 
 interface PlayerState {
   username: string;
@@ -19,10 +19,10 @@ interface PlayerState {
 }
 
 export const useStore = create<PlayerState>((set, get) => ({
-  username: "",
-  usernameFromSlider: "",
-  usernameFromInputText: "",
-  avatar: "",
+  username: '',
+  usernameFromSlider: '',
+  usernameFromInputText: '',
+  avatar: '',
   isVoter: true,
   isAdmin: false,
   gameStarted: false,
@@ -30,7 +30,7 @@ export const useStore = create<PlayerState>((set, get) => ({
   setUsername: (username: string) => {
     set((state) => {
       const predefinedPlayer = avatarSlides.find(
-        (slide: Slide) => slide.name === username
+        (slide: Slide) => slide.name === username,
       );
       if (predefinedPlayer && predefinedPlayer.isVoter !== undefined) {
         return {
@@ -69,13 +69,13 @@ export const useStore = create<PlayerState>((set, get) => ({
   },
 
   isReadyToPlay: () => {
-    return get().username !== "" && get().avatar !== "";
+    return get().username !== '' && get().avatar !== '';
   },
 
   setFromSavedSettings: (savedSettings: SavedSettings) => {
     set((state) => ({
       ...state,
       ...savedSettings,
-    }))
-  }
+    }));
+  },
 }));

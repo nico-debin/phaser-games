@@ -1,12 +1,12 @@
-import Phaser from 'phaser'
+import Phaser from 'phaser';
 import AvatarAnimationKeys from '../consts/AvatarAnimationKeys';
 import { AnimationHandler } from '../anims/AnimationHandler';
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon';
 import AvatarKeys from '../consts/AvatarKeys';
 import TextureKeys from '../consts/TextureKeys';
-import { MovementInput, Orientation, PlayerId } from '../types/playerTypes'
+import { MovementInput, Orientation, PlayerId } from '../types/playerTypes';
 
-import Player from './Player'
+import Player from './Player';
 import SceneKeys from '../consts/SceneKeys';
 import Game from '../scenes/Game';
 
@@ -30,20 +30,26 @@ export default class GenericLpc extends Player {
     errorOffset = 16,
   ) {
     // UNCAUGHT BUG: For some reason I couldn't find yet, the player
-    // rendering needs to be moved by 16 pixels in X and Y. 
+    // rendering needs to be moved by 16 pixels in X and Y.
     // Remove this when the bug is fixed
     // const errorOffset = 16;
-    super(scene, x + errorOffset, y + errorOffset, playerData.avatar, playerData.playerId)
+    super(
+      scene,
+      x + errorOffset,
+      y + errorOffset,
+      playerData.avatar,
+      playerData.playerId,
+    );
     this.errorOffset = errorOffset;
     this.playerData = playerData;
 
     if (playerData.username) {
       this.usernameLabel = scene.add
-        .text(0, 0, " " + playerData.username.substring(0, 25) + " ", {
-          fontSize: "10px",
-          color: "white",
-          backgroundColor: "black",
-          align: "center",
+        .text(0, 0, ' ' + playerData.username.substring(0, 25) + ' ', {
+          fontSize: '10px',
+          color: 'white',
+          backgroundColor: 'black',
+          align: 'center',
         })
         .setOrigin(0.5)
         .setAlpha(0.6)
@@ -53,7 +59,7 @@ export default class GenericLpc extends Player {
 
     AnimationHandler.add(scene, playerData.avatar);
 
-    this.anims.play(`${playerData.avatar}-${AvatarAnimationKeys.IDLE_DOWN}`)
+    this.anims.play(`${playerData.avatar}-${AvatarAnimationKeys.IDLE_DOWN}`);
 
     this.bloodParticles = scene.add.particles(TextureKeys.Blood);
     this.bloodParticlesEmitter = this.bloodParticles.createEmitter({
@@ -71,12 +77,15 @@ export default class GenericLpc extends Player {
 
   protected preUpdate(time: number, delta: number) {
     super.preUpdate(time, delta);
-    this.usernameLabel?.setPosition(this.x, this.y + this.displayHeight - 10 - this.errorOffset).setDepth(this.depth).setVisible(this.displayUsernameLabel && this.visible);
+    this.usernameLabel
+      ?.setPosition(this.x, this.y + this.displayHeight - 10 - this.errorOffset)
+      .setDepth(this.depth)
+      .setVisible(this.displayUsernameLabel && this.visible);
   }
 
   update(movementInput: MovementInput) {
-    super.update(movementInput)
-    
+    super.update(movementInput);
+
     if (this.isDead) return;
 
     const { avatar } = this.playerData;
@@ -86,24 +95,24 @@ export default class GenericLpc extends Player {
 
     if (movementInput.left) {
       // Moving Left
-      this.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true);
 
       // Flip sprite to the left
-      this.setFlipX(true)
+      this.setFlipX(true);
     } else if (movementInput.right) {
       // Moving Right
-      this.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_SIDE}`, true);
 
       // Flip sprite to the right
-      this.setFlipX(false)
+      this.setFlipX(false);
     } else if (movementInput.up) {
       // Moving Up
-      this.play(`${avatar}-${AvatarAnimationKeys.WALK_UP}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_UP}`, true);
     } else if (movementInput.down) {
       // Moving Down
-      this.play(`${avatar}-${AvatarAnimationKeys.WALK_DOWN}`, true)
+      this.play(`${avatar}-${AvatarAnimationKeys.WALK_DOWN}`, true);
     } else {
-      const parts = this.anims.currentAnim.key.split('-')
+      const parts = this.anims.currentAnim.key.split('-');
       const index = avatar.includes('-') ? 2 : 1;
       parts[index] = 'idle';
       this.play(parts.join('-'));
@@ -118,8 +127,8 @@ export default class GenericLpc extends Player {
 
   private throwArrow(): boolean {
     if (!this.throwableWeaponGroup) {
-      console.error('this.throwableWeaponGroup is undefined')
-      return false
+      console.error('this.throwableWeaponGroup is undefined');
+      return false;
     }
 
     // Player is already throwing an arrow
@@ -130,24 +139,29 @@ export default class GenericLpc extends Player {
     const arrow = this.throwableWeaponGroup.get(
       this.x,
       this.y,
-    ) as AbstractThrowableWeapon
+    ) as AbstractThrowableWeapon;
 
     if (!arrow) {
       // No more arrows: max reached
-      return false 
+      return false;
     }
 
-    arrow.fire(this.x, this.y, this.orientation, this.id)
+    arrow.fire(this.x, this.y, this.orientation, this.id);
 
     // kill arrow after 5 seconds
-    this.scene.time.delayedCall(2000, () => {
-      if (arrow && arrow.active) {
-        this.throwableWeaponGroup?.killAndHide(arrow);
-        arrow.disableBody()
-      } 
-    }, [], this)
+    this.scene.time.delayedCall(
+      2000,
+      () => {
+        if (arrow && arrow.active) {
+          this.throwableWeaponGroup?.killAndHide(arrow);
+          arrow.disableBody();
+        }
+      },
+      [],
+      this,
+    );
 
-    return true
+    return true;
   }
 
   // Indicates is the shooting animation is playing
@@ -185,7 +199,7 @@ export default class GenericLpc extends Player {
     if (animation) {
       this.play(animation);
       this.playAfterRepeat(currentAnimation);
-      this.setFlipX(flipX)
+      this.setFlipX(flipX);
     }
   }
 
@@ -197,12 +211,14 @@ export default class GenericLpc extends Player {
     }
     return false;
   }
-  
-  set enableBlood (value: boolean) {
+
+  set enableBlood(value: boolean) {
     super.enableBlood = value;
 
     const scene = this.scene as Game;
-    scene.bloodSplatterRenderTexture.setVisible(this.enableBlood).setActive(this.enableBlood);
+    scene.bloodSplatterRenderTexture
+      .setVisible(this.enableBlood)
+      .setActive(this.enableBlood);
   }
 
   get enableBlood(): boolean {
@@ -214,49 +230,64 @@ export default class GenericLpc extends Player {
     if (this.isDead) return;
 
     this.healthBar.decrease(amount);
-    
+
     // Bail if blood is disabled
     if (!this.enableBlood) return;
-    
 
     switch (orientation) {
-      case 'up': 
+      case 'up':
         this.bloodParticlesEmitter.setAngle(50);
-        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(0, 0)
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(0, 0);
         break;
 
-      case 'down': 
+      case 'down':
         this.bloodParticlesEmitter.setAngle(360 - 50);
-        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(0, 10)
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(
+          0,
+          10,
+        );
         break;
 
       case 'right':
         this.bloodParticlesEmitter.setAngle(360 - 180 + 20);
-        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(-5, 10)
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(
+          -5,
+          10,
+        );
         break;
 
       case 'left':
       default:
         this.bloodParticlesEmitter.setAngle(360 + 20);
-        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(5, 10)
+        this.bloodParticlesEmitter.followOffset = new Phaser.Math.Vector2(
+          5,
+          10,
+        );
     }
 
-    this.bloodParticlesEmitter.onParticleDeath((particle: Phaser.GameObjects.Particles.Particle) => {
-      const scene = this.scene as Game;
-      const x = particle.x + Phaser.Math.Between(0, 20);
-      const y = particle.y + Phaser.Math.Between(0, 20);
-      scene.bloodSplatterRenderTexture.draw(TextureKeys.Blood, x, y);
+    this.bloodParticlesEmitter.onParticleDeath(
+      (particle: Phaser.GameObjects.Particles.Particle) => {
+        const scene = this.scene as Game;
+        const x = particle.x + Phaser.Math.Between(0, 20);
+        const y = particle.y + Phaser.Math.Between(0, 20);
+        scene.bloodSplatterRenderTexture.draw(TextureKeys.Blood, x, y);
 
-      const disolveBlood = (alpha) => scene.bloodSplatterRenderTexture.erase(TextureKeys.Blood, x, y).draw(TextureKeys.Blood, x, y, alpha);
+        const disolveBlood = (alpha) =>
+          scene.bloodSplatterRenderTexture
+            .erase(TextureKeys.Blood, x, y)
+            .draw(TextureKeys.Blood, x, y, alpha);
 
-      // Disolve blood after 3 seconds
-      this.scene.time.delayedCall(3000, () => disolveBlood(Phaser.Math.Between(5, 10)/10))
-    })
+        // Disolve blood after 3 seconds
+        this.scene.time.delayedCall(3000, () =>
+          disolveBlood(Phaser.Math.Between(5, 10) / 10),
+        );
+      },
+    );
 
     this.bloodParticlesEmitter.start();
     this.scene.time.delayedCall(500, () => {
       this.bloodParticlesEmitter.stop();
-    })
+    });
   }
 
   winner(): void {

@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import FontKeys from "../consts/FontKeys";
-import TextureKeys from "../consts/TextureKeys";
+import Phaser from 'phaser';
+import FontKeys from '../consts/FontKeys';
+import TextureKeys from '../consts/TextureKeys';
 
 export default class Modal {
   protected scene: Phaser.Scene;
@@ -15,7 +15,14 @@ export default class Modal {
   protected onOpenCallback: () => void;
   protected onCloseCallback: () => void;
 
-  constructor(scene: Phaser.Scene, title = "Default Title", subtitle = '', bodyText = '', cancelLabel = 'CANCEL', confirmLabel = 'CONFIRM') {
+  constructor(
+    scene: Phaser.Scene,
+    title = 'Default Title',
+    subtitle = '',
+    bodyText = '',
+    cancelLabel = 'CANCEL',
+    confirmLabel = 'CONFIRM',
+  ) {
     const { width, height } = scene.scale;
 
     this.scene = scene;
@@ -27,10 +34,10 @@ export default class Modal {
     this.title = this.scene.add
       .bitmapText(
         this.backgroundImage.x,
-        this.backgroundImage.y - this.backgroundImage.displayHeight * 0.20,
+        this.backgroundImage.y - this.backgroundImage.displayHeight * 0.2,
         FontKeys.GEM,
         title,
-        25
+        25,
       )
       .setTint(0x000000)
       .setOrigin(0.5)
@@ -42,7 +49,7 @@ export default class Modal {
         this.title.y + 30,
         FontKeys.GEM,
         subtitle,
-        16
+        16,
       )
       .setTint(0x000000)
       .setOrigin(0.5)
@@ -54,16 +61,15 @@ export default class Modal {
         this.subtitle.y + 40,
         FontKeys.GEM,
         bodyText,
-        20
+        20,
       )
       .setTint(0x000000)
       .setOrigin(0.5)
       .setVisible(this.isOpen);
 
-
     this.onOpenCallback = () => null;
     this.onCloseCallback = () => null;
-    
+
     this.createButtons(cancelLabel, confirmLabel);
   }
 
@@ -87,7 +93,7 @@ export default class Modal {
         this.backgroundImage.x - this.backgroundImage.displayWidth / 5,
         this.backgroundImage.y + this.backgroundImage.displayHeight / 4,
         TextureKeys.UIMenu1,
-        "red-wood-button"
+        'red-wood-button',
       )
       .setOrigin(0.5)
       .setScale(0.3)
@@ -109,7 +115,7 @@ export default class Modal {
         FontKeys.GEM,
         cancelLabel,
         16,
-        Phaser.GameObjects.BitmapText.ALIGN_CENTER
+        Phaser.GameObjects.BitmapText.ALIGN_CENTER,
       )
       .setOrigin(0.5);
 
@@ -119,7 +125,7 @@ export default class Modal {
         this.backgroundImage.x + this.backgroundImage.displayWidth / 5,
         cancelButton.y,
         TextureKeys.UIMenu1,
-        "green-wood-button"
+        'green-wood-button',
       )
       .setOrigin(0.5)
       .setScale(0.3)
@@ -140,7 +146,7 @@ export default class Modal {
         confirmButton.y,
         FontKeys.GEM,
         confirmLabel,
-        16
+        16,
       )
       .setOrigin(0.5);
 
@@ -163,13 +169,13 @@ export default class Modal {
   }
 
   onOpen(fn: () => void): Modal {
-    this.onOpenCallback = fn
-    return this
+    this.onOpenCallback = fn;
+    return this;
   }
 
   onClose(fn: () => void): Modal {
-    this.onCloseCallback = fn
-    return this
+    this.onCloseCallback = fn;
+    return this;
   }
 
   open() {
@@ -181,9 +187,9 @@ export default class Modal {
     this.bodyText.setVisible(true);
     this.buttonsContainer.setVisible(true);
 
-    this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
+    this.scene.cameras.main.setBackgroundColor('rgba(51, 51, 51, 0.6)');
 
-    this.onOpenCallback()
+    this.onOpenCallback();
   }
 
   close() {
@@ -194,15 +200,15 @@ export default class Modal {
     this.subtitle.setVisible(false);
     this.bodyText.setVisible(false);
     this.buttonsContainer.setVisible(false);
-    
-    this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
 
-    this.onCloseCallback()
+    this.scene.cameras.main.setBackgroundColor('rgba(0, 0, 0, 0)');
+
+    this.onCloseCallback();
   }
 
   hideButtons(): Modal {
     this.buttonsContainer.setVisible(false);
-    return this
+    return this;
   }
 
   setBodyText(text: string): Modal {

@@ -1,1 +1,1 @@
-export * from './NpcAnims'
+export * from './NpcAnims';

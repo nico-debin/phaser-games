@@ -1,3 +1,3 @@
-import CheckboxInput from "./CheckboxInput";
+import CheckboxInput from './CheckboxInput';
 
 export { CheckboxInput };

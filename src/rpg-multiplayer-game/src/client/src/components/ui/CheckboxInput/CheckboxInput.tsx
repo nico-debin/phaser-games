@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import './CheckboxInput.scss'
+import './CheckboxInput.scss';
 
 interface CheckboxInputProps {
   label: string;
@@ -9,18 +9,25 @@ interface CheckboxInputProps {
   onChange?: (value: boolean) => void;
 }
 
-const CheckboxInput = ({ label, value, className='', onChange = () => null }: CheckboxInputProps) => {
-
+const CheckboxInput = ({
+  label,
+  value,
+  className = '',
+  onChange = () => null,
+}: CheckboxInputProps) => {
   const clickHandler = () => {
     onChange(!value);
-  }
+  };
 
   return (
-    <div className={`checkbox-input ${className}`} >
-      <div onClick={clickHandler} className={`custom-checkbox ${value === true ? 'checked' : 'unchecked'}`}></div>
-      <label onClick={clickHandler}>
-        {label}
-      </label>
+    <div className={`checkbox-input ${className}`}>
+      <div
+        onClick={clickHandler}
+        className={`custom-checkbox ${
+          value === true ? 'checked' : 'unchecked'
+        }`}
+      ></div>
+      <label onClick={clickHandler}>{label}</label>
     </div>
   );
 };

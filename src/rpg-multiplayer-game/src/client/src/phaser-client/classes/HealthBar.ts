@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 export default class HealthBar {
   private bar: Phaser.GameObjects.Graphics;
@@ -14,7 +14,7 @@ export default class HealthBar {
     y: number,
     width = 80,
     height = 16,
-    center = false
+    center = false,
   ) {
     this.bar = new Phaser.GameObjects.Graphics(scene);
 

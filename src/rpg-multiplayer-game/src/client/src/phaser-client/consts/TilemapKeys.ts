@@ -4,4 +4,4 @@ enum TilemapKeys {
   BeachShoreTiles = 'tiles-islands-shoreline',
 }
 
-export default TilemapKeys
+export default TilemapKeys;

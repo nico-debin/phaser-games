@@ -3,11 +3,10 @@ import { PlayerId } from '../types/playerTypes';
 import { gameState } from './GameState';
 
 class GameFightState {
-
-  private _playerWantsToFight = false
-  private _fightMode = false
-  private _onWaitingRoom = false
-  private fighters: PlayerId[] = []
+  private _playerWantsToFight = false;
+  private _fightMode = false;
+  private _onWaitingRoom = false;
+  private fighters: PlayerId[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -42,19 +41,16 @@ class GameFightState {
   }
 
   addFighters(ids: PlayerId[]): void {
-    this.fighters = [
-      ...this.fighters,
-      ...ids,
-    ];
+    this.fighters = [...this.fighters, ...ids];
   }
 
   removeFighter(playerId: PlayerId): boolean {
-    const filteredFighters = this.fighters.filter(id => id !== playerId);
+    const filteredFighters = this.fighters.filter((id) => id !== playerId);
     if (filteredFighters.length < this.fighters.length) {
-      this.fighters = filteredFighters
-      return true
+      this.fighters = filteredFighters;
+      return true;
     }
-    return false
+    return false;
   }
 
   getAllFighters(): PlayerId[] {

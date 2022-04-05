@@ -5,7 +5,7 @@ import GamePage from './pages/GamePage';
 import HomePage from './pages/HomePage';
 
 const App = () => {
-  const gameStarted = useStore(store => store.gameStarted);
+  const gameStarted = useStore((store) => store.gameStarted);
 
   return (
     <>

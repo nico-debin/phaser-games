@@ -1,3 +1,3 @@
-import TextSlider from "./TextSlider";
+import TextSlider from './TextSlider';
 
 export { TextSlider };

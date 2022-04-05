@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import FontKeys from "../consts/FontKeys";
-import SceneKeys from "../consts/SceneKeys";
+import Phaser from 'phaser';
+import FontKeys from '../consts/FontKeys';
+import SceneKeys from '../consts/SceneKeys';
 
 export default class Bootstrap extends Phaser.Scene {
   constructor() {
@@ -8,7 +8,11 @@ export default class Bootstrap extends Phaser.Scene {
   }
 
   preload() {
-    this.load.bitmapFont(FontKeys.GEM, 'fonts/bitmap/gem.png', 'fonts/bitmap/gem.xml')
+    this.load.bitmapFont(
+      FontKeys.GEM,
+      'fonts/bitmap/gem.png',
+      'fonts/bitmap/gem.xml',
+    );
   }
 
   create() {
@@ -17,8 +21,11 @@ export default class Bootstrap extends Phaser.Scene {
     const x = this.scale.width * 0.5;
     const y = this.scale.height * 0.5;
 
-    this.add.bitmapText(x, y, FontKeys.GEM, 'Connecting to server...', 34).setTint(0xffffff).setOrigin(0.5, 0.5);
+    this.add
+      .bitmapText(x, y, FontKeys.GEM, 'Connecting to server...', 34)
+      .setTint(0xffffff)
+      .setOrigin(0.5, 0.5);
 
-    this.scene.launch(SceneKeys.Preloader)
+    this.scene.launch(SceneKeys.Preloader);
   }
 }

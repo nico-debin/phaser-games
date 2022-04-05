@@ -1,34 +1,34 @@
-import { action, makeAutoObservable, observable } from 'mobx'
-import { PlayerId, PlayerSettings } from "../types/playerTypes";
+import { action, makeAutoObservable, observable } from 'mobx';
+import { PlayerId, PlayerSettings } from '../types/playerTypes';
 import { gameFightState } from './GameFightState';
 
 interface PlayerGameState extends PlayerSettings {
-  id: PlayerId
-  isCurrentPlayer: boolean
-  health: number
+  id: PlayerId;
+  isCurrentPlayer: boolean;
+  health: number;
 }
 
 class GameState {
-  private players: PlayerGameState[] = []
+  private players: PlayerGameState[] = [];
 
   // Y position threshold dividing main island vs voting islands
-  votingFrontierY?: number
+  votingFrontierY?: number;
 
   // Flag to enable/disable current player movment
-  _playerCanMove = false
+  _playerCanMove = false;
 
   // Flag to send back player to main island
   // _playerWantsToRespawn = false
-  _playerWantsToRespawn = false
+  _playerWantsToRespawn = false;
 
   // Flag to restart game
-  _restartGame = false
+  _restartGame = false;
 
   private _showPlayersUsernames = false;
 
-  private _darkMode = false
+  private _darkMode = false;
 
-  private _connectingToServer = true
+  private _connectingToServer = true;
 
   readonly gameFight: typeof gameFightState;
 
@@ -36,7 +36,7 @@ class GameState {
   private enableBlood = true;
 
   constructor() {
-    this.gameFight = gameFightState
+    this.gameFight = gameFightState;
 
     makeAutoObservable(this, {
       _playerWantsToRespawn: observable,
@@ -46,7 +46,7 @@ class GameState {
       _restartGame: observable,
       enableRestartGameFlag: action,
       disableRestartGameFlag: action,
-    })
+    });
   }
 
   set darkMode(newValue: boolean) {
@@ -59,58 +59,66 @@ class GameState {
 
   /**
    * Adds a new player
-   * @param id 
-   * @param settings 
+   * @param id
+   * @param settings
    */
-  addPlayer(id: PlayerId, settings: PlayerSettings, isCurrentPlayer = false, health = 100): void {
+  addPlayer(
+    id: PlayerId,
+    settings: PlayerSettings,
+    isCurrentPlayer = false,
+    health = 100,
+  ): void {
     this.players.push({
       ...settings,
       id,
       isCurrentPlayer,
       health,
-    })
+    });
   }
 
   /**
    * Removes a player.
-   * @param id 
+   * @param id
    * @returns boolean false if the player doesn't exists
    */
   removePlayer(id: PlayerId): boolean {
     this.gameFight.removeFighter(id);
-    const filteredPlayers = this.players.filter((player: PlayerGameState) => player.id !== id)
+    const filteredPlayers = this.players.filter(
+      (player: PlayerGameState) => player.id !== id,
+    );
     if (filteredPlayers.length < this.players.length) {
-      this.players = filteredPlayers
-      return true
+      this.players = filteredPlayers;
+      return true;
     }
-    return false
+    return false;
   }
 
   /**
    * Updates a player's settings
-   * @param id 
-   * @param settings 
+   * @param id
+   * @param settings
    */
   updatePlayerSettings(id: PlayerId, settings: PlayerSettings): void {
-    const idx = this.players.findIndex((player: PlayerGameState) => player.id === id)
+    const idx = this.players.findIndex(
+      (player: PlayerGameState) => player.id === id,
+    );
     if (idx >= 0) {
       this.players[idx] = {
         ...this.players[idx],
         ...settings,
-      }
+      };
     } else {
-      console.error("Couldn't update player settings with playerId " + id)
+      console.error("Couldn't update player settings with playerId " + id);
     }
   }
 
-
   /**
    * Get player by id
-   * @param id 
+   * @param id
    * @returns PlayerSetting if found, undefined if not found
    */
   getPlayer(id: PlayerId): PlayerGameState | undefined {
-    return this.players.find((player: PlayerGameState) => player.id === id)
+    return this.players.find((player: PlayerGameState) => player.id === id);
   }
 
   updatePlayerHealth(id: PlayerId, health: number): void {
@@ -131,27 +139,29 @@ class GameState {
    * Restores health to all players
    */
   restorePlayersHealth(): void {
-    this.players.forEach(player => player.health = 100);
+    this.players.forEach((player) => (player.health = 100));
   }
 
   /**
    * Get current player
-   * @param id 
+   * @param id
    * @returns PlayerSetting if found, undefined if not found
    */
   get currentPlayer(): PlayerGameState | undefined {
-    return this.players.find((player: PlayerGameState) => player.isCurrentPlayer === true)
+    return this.players.find(
+      (player: PlayerGameState) => player.isCurrentPlayer === true,
+    );
   }
 
   get currentPlayerIsVoter(): boolean | undefined {
-    return this.currentPlayer?.isVoter
+    return this.currentPlayer?.isVoter;
   }
 
   get hidePlayersWhileVoting(): boolean {
     if (this.currentPlayer) {
-      return this.currentPlayer.hidePlayersWhileVoting
+      return this.currentPlayer.hidePlayersWhileVoting;
     }
-    return true
+    return true;
   }
 
   set showPlayersUsernames(newValue: boolean) {
@@ -167,7 +177,7 @@ class GameState {
    * @returns number amount of players in game
    */
   get playersCount(): number {
-    return this.players.length
+    return this.players.length;
   }
 
   /**
@@ -175,7 +185,8 @@ class GameState {
    * @returns number amount of players in game
    */
   get votingPlayersCount(): number {
-    return this.players.filter((player: PlayerGameState) => player.isVoter).length
+    return this.players.filter((player: PlayerGameState) => player.isVoter)
+      .length;
   }
 
   set playerCanMove(newValue: boolean) {
@@ -195,7 +206,7 @@ class GameState {
   }
 
   get respawnFlagEnabled() {
-    return this._playerWantsToRespawn
+    return this._playerWantsToRespawn;
   }
 
   // set playerWantsToRespawn(newValue: boolean) {
@@ -256,8 +267,8 @@ class GameState {
    */
   clear() {
     // Remove all players
-    this.players = []
+    this.players = [];
   }
 }
 
-export const gameState = new GameState()
+export const gameState = new GameState();

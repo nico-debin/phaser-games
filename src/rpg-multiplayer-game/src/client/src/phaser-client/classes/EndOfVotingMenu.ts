@@ -1,14 +1,14 @@
-import Phaser from "phaser";
-import { objectMap } from "../../utils";
-import { gameState } from "../states/GameState";
-import { gameVotingManager } from "./GameVotingManager";
-import AbstractMenu from "./AbstractMenu";
-import FontKeys from "../consts/FontKeys";
-import { VotingZoneValue } from "../types/gameObjectsTypes";
-import { PlayerVotingState } from "../states/PlayerVotingState";
-import { PlayerSettings } from "../types/playerTypes";
-import GenericLpc from "../characters/GenericLpc";
-import TextureKeys from "../consts/TextureKeys";
+import Phaser from 'phaser';
+import { objectMap } from '../../utils';
+import { gameState } from '../states/GameState';
+import { gameVotingManager } from './GameVotingManager';
+import AbstractMenu from './AbstractMenu';
+import FontKeys from '../consts/FontKeys';
+import { VotingZoneValue } from '../types/gameObjectsTypes';
+import { PlayerVotingState } from '../states/PlayerVotingState';
+import { PlayerSettings } from '../types/playerTypes';
+import GenericLpc from '../characters/GenericLpc';
+import TextureKeys from '../consts/TextureKeys';
 
 type VotingResultRow = {
   vote: VotingZoneValue;
@@ -30,10 +30,10 @@ export default class EndOfVotingMenu extends AbstractMenu {
     this.menuTitle.setY(
       this.menuBoard.y -
         this.menuBoard.displayHeight * this.menuBoard.originY +
-        40
+        40,
     );
 
-    this.menuTitle.setText("ESTIMATION RESULTS").setFontSize(20);
+    this.menuTitle.setText('ESTIMATION RESULTS').setFontSize(20);
 
     const menuBoardScaledPositionX =
       this.menuBoard.x - this.menuBoard.displayWidth * this.menuBoard.originX;
@@ -43,7 +43,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
     this.votingResultsRows = new VotingResultRowContainer(
       this.scene,
       menuBoardScaledPositionX + 60,
-      menuBoardScaledPositionY + 60
+      menuBoardScaledPositionY + 60,
     );
 
     scene.add.existing(this.votingResultsRows);
@@ -63,7 +63,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
         this.menuBoard.x - this.menuBoard.displayWidth / 5 - fightButtonOffset,
         this.menuBoard.y + this.menuBoard.displayHeight / 2 - 50,
         TextureKeys.UIMenu1,
-        "red-wood-button"
+        'red-wood-button',
       )
       .setOrigin(0.5)
       .setScale(0.3)
@@ -76,7 +76,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
       })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
         gameState.enableRespawnFlag();
-        this.closeMenu()
+        this.closeMenu();
       });
 
     const changeMyVoteLabel = this.scene.add
@@ -84,9 +84,9 @@ export default class EndOfVotingMenu extends AbstractMenu {
         changeMyVoteButton.x,
         changeMyVoteButton.y,
         FontKeys.GEM,
-        "CHANGE MY\nVOTE",
+        'CHANGE MY\nVOTE',
         16,
-        Phaser.GameObjects.BitmapText.ALIGN_CENTER
+        Phaser.GameObjects.BitmapText.ALIGN_CENTER,
       )
       .setOrigin(0.5);
 
@@ -96,7 +96,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
         this.menuBoard.x + this.menuBoard.displayWidth / 5 + fightButtonOffset,
         changeMyVoteButton.y,
         TextureKeys.UIMenu1,
-        "green-wood-button"
+        'green-wood-button',
       )
       .setOrigin(0.5)
       .setScale(0.3)
@@ -109,11 +109,11 @@ export default class EndOfVotingMenu extends AbstractMenu {
       })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
         gameState.enableRestartGameFlag();
-        this.closeMenu()
+        this.closeMenu();
       });
 
     const restartButtonLabel = this.scene.add
-      .bitmapText(restartButton.x, restartButton.y, FontKeys.GEM, "RESTART", 16)
+      .bitmapText(restartButton.x, restartButton.y, FontKeys.GEM, 'RESTART', 16)
       .setOrigin(0.5);
 
     this.uiButtonsContainer.add([
@@ -130,7 +130,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
           this.menuBoard.x,
           changeMyVoteButton.y + changeMyVoteButton.displayHeight * 0.5 + 5,
           TextureKeys.UIMenu1,
-          "yellow-wood-button"
+          'yellow-wood-button',
         )
         .setOrigin(0.5)
         .setScale(0.6, 0.4)
@@ -149,8 +149,8 @@ export default class EndOfVotingMenu extends AbstractMenu {
           fightButton.x,
           fightButton.y,
           FontKeys.GEM,
-          "FIGHT FOR YOUR VOTE",
-          16
+          'FIGHT FOR YOUR VOTE',
+          16,
         )
         .setOrigin(0.5);
 
@@ -166,13 +166,15 @@ export default class EndOfVotingMenu extends AbstractMenu {
         (voteByPlayer: PlayerVotingState): VotingResultRow => ({
           vote: voteByPlayer.vote,
           player: gameState.getPlayer(voteByPlayer.playerId),
-        })
-      )
+        }),
+      ),
     );
     return votingResults;
   }
 
-  private sortVotingResultsRows(votingResults: VotingResultRow[]): VotingResultRow[] {
+  private sortVotingResultsRows(
+    votingResults: VotingResultRow[],
+  ): VotingResultRow[] {
     return votingResults.sort((a: VotingResultRow, b: VotingResultRow) => {
       const vote1 = a.vote ? parseInt(a.vote) : NaN;
       const vote2 = b.vote ? parseInt(b.vote) : NaN;
@@ -183,7 +185,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
       } else if (isNaN(vote1) && !isNaN(vote2)) {
         return 1;
       } else if (!isNaN(vote1) && isNaN(vote2)) {
-        return -1
+        return -1;
       }
 
       // Sort by number
@@ -202,9 +204,9 @@ export default class EndOfVotingMenu extends AbstractMenu {
           return 1;
         }
       }
-      
+
       return 0;
-    })
+    });
   }
 
   private showVotingResults() {
@@ -255,7 +257,7 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
 
     const playerData = {
       avatar: votingResult.player.avatarName,
-      playerId: "VOTING-RESULT-SPRITE",
+      playerId: 'VOTING-RESULT-SPRITE',
     };
 
     const avatar = new GenericLpc(
@@ -263,7 +265,7 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
       0,
       this.currentY,
       playerData,
-      0
+      0,
     ).setOrigin(0.5);
 
     const nameLabel = this.scene.add
@@ -272,7 +274,7 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
         this.currentY,
         FontKeys.GEM,
         votingResult.player.username,
-        16
+        16,
       )
       .setTint(0x222222)
       .setOrigin(0, 0.5);
@@ -283,7 +285,7 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
         this.currentY,
         FontKeys.GEM,
         votingResult.vote,
-        16
+        16,
       )
       .setTint(0x000000)
       .setOrigin(0, 0.5);
@@ -301,7 +303,7 @@ class VotingResultRowContainer extends Phaser.GameObjects.Container {
 
   addRows(votingResults: VotingResultRow[]): void {
     votingResults.forEach((votingResult: VotingResultRow) =>
-      this.addRow(votingResult)
+      this.addRow(votingResult),
     );
   }
 

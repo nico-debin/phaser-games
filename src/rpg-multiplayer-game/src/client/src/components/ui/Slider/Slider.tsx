@@ -1,8 +1,8 @@
-import React, { ReactChild, useEffect, useState } from "react";
+import React, { ReactChild, useEffect, useState } from 'react';
 
-import ArrowButton from "../ArrowButton";
+import ArrowButton from '../ArrowButton';
 
-import "./Slider.scss";
+import './Slider.scss';
 
 export type Slide = {
   name: string;
@@ -19,8 +19,13 @@ type Props = {
   children?: ReactChild;
 };
 
-const Slider = ({ slides, startKey, setStartKey, children, onSlideChange = () => null }: Props) => {
-
+const Slider = ({
+  slides,
+  startKey,
+  setStartKey,
+  children,
+  onSlideChange = () => null,
+}: Props) => {
   const [preventSlideReset, setPreventSlideReset] = useState<boolean>(true);
 
   const setStartWrapper = (index: number) => {

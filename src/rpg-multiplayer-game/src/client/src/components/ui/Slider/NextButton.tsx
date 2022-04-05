@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-type Props = JSX.IntrinsicElements["svg"];
+type Props = JSX.IntrinsicElements['svg'];
 
-const NextButton = React.memo<Props>(props => {
+const NextButton = React.memo<Props>((props) => {
   return (
     <svg {...props} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path

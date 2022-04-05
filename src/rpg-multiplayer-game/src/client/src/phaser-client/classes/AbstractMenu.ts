@@ -1,11 +1,11 @@
-import Phaser from "phaser";
-import FontKeys from "../consts/FontKeys";
+import Phaser from 'phaser';
+import FontKeys from '../consts/FontKeys';
 
-import TextureKeys from "../consts/TextureKeys";
+import TextureKeys from '../consts/TextureKeys';
 
 type MenuOptions = {
-  disableCloseButton?: boolean,
-}
+  disableCloseButton?: boolean;
+};
 export default abstract class AbstractMenu {
   protected scene: Phaser.Scene;
   protected menuIsOpen: boolean = false;
@@ -33,7 +33,7 @@ export default abstract class AbstractMenu {
           width * 0.5 + this.menuBoard.displayWidth * 0.5 - 30,
           height * 0.5 - this.menuBoard.displayHeight * 0.5 + 88,
           TextureKeys.UIMenu1,
-          "close-button"
+          'close-button',
         )
         .setOrigin(0.5, 0.5)
         .setScale(0.2)
@@ -57,11 +57,10 @@ export default abstract class AbstractMenu {
         this.menuBoard.x,
         this.menuBoard.y -
           this.menuBoard.displayHeight * this.menuBoard.originY +
-          30
-        ,
+          30,
         FontKeys.GOTHIC,
-        "ABSTRACT MENU",
-        28
+        'ABSTRACT MENU',
+        28,
       )
       .setTint(0xffffff)
       .setOrigin(0.5, 0.5)
@@ -82,8 +81,8 @@ export default abstract class AbstractMenu {
     this.closeButton?.setVisible(true);
     this.menuTitle.setVisible(true);
 
-    this.scene.cameras.main.setBackgroundColor("rgba(51, 51, 51, 0.6)");
-    this.onOpenCallback()
+    this.scene.cameras.main.setBackgroundColor('rgba(51, 51, 51, 0.6)');
+    this.onOpenCallback();
   }
 
   closeMenu(): void {
@@ -93,17 +92,17 @@ export default abstract class AbstractMenu {
     this.closeButton?.setVisible(false);
     this.menuTitle.setVisible(false);
 
-    this.scene.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0)");
-    this.onCloseCallback()
+    this.scene.cameras.main.setBackgroundColor('rgba(0, 0, 0, 0)');
+    this.onCloseCallback();
   }
 
   onOpen(fn: () => void): AbstractMenu {
-    this.onOpenCallback = fn
-    return this
+    this.onOpenCallback = fn;
+    return this;
   }
 
   onClose(fn: () => void): AbstractMenu {
-    this.onCloseCallback = fn
-    return this
+    this.onCloseCallback = fn;
+    return this;
   }
 }

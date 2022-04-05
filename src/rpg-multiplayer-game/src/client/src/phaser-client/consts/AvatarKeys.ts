@@ -31,6 +31,6 @@ enum AvatarKeys {
   GIRL_05 = 'girl-05',
   GIRL_06 = 'girl-06',
   GIRL_07 = 'girl-07',
-};
+}
 
-export default AvatarKeys
+export default AvatarKeys;

@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import FontKeys from "../consts/FontKeys";
-import TextureKeys from "../consts/TextureKeys";
+import Phaser from 'phaser';
+import FontKeys from '../consts/FontKeys';
+import TextureKeys from '../consts/TextureKeys';
 
 export default class CheckboxInput {
   private isChecked: boolean = false;
@@ -17,19 +17,19 @@ export default class CheckboxInput {
     scene: Phaser.Scene,
     x: number = 0,
     y: number = 0,
-    label: string = "",
-    initialValue: boolean = false
+    label: string = '',
+    initialValue: boolean = false,
   ) {
     this.setInitialValue(initialValue);
 
     const doToggle = () => this.toggle();
 
     this.checkboxOnImage = scene.add
-      .image(x, y, TextureKeys.UIMenu1, "checkbox-on")
+      .image(x, y, TextureKeys.UIMenu1, 'checkbox-on')
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
     this.checkboxOffImage = scene.add
-      .image(x, y, TextureKeys.UIMenu1, "checkbox-off")
+      .image(x, y, TextureKeys.UIMenu1, 'checkbox-off')
       .setInteractive({ useHandCursor: true })
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, doToggle);
 
@@ -53,7 +53,7 @@ export default class CheckboxInput {
       .setOrigin(0, y || x)
       .setPosition(
         this.checkboxOnImage.x + this.checkboxOnImage.displayWidth * x + 7,
-        this.checkboxOnImage.y
+        this.checkboxOnImage.y,
       );
     return this;
   }

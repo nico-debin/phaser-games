@@ -1,4 +1,4 @@
-import AvatarKeys from "../consts/AvatarKeys";
+import AvatarKeys from '../consts/AvatarKeys';
 
 export type Orientation = 'left' | 'right' | 'up' | 'down';
 
@@ -7,55 +7,56 @@ export type MovementInput = {
   right: boolean;
   up: boolean;
   down: boolean;
-}
+};
 
 export type PlayerId = string;
 
 export interface AvatarSetting {
-  name: string
+  name: string;
   body: {
-    sizeFactor: number
+    sizeFactor: number;
     size: {
-      width: number
-      height: number
-      center?: boolean | undefined
-    }
+      width: number;
+      height: number;
+      center?: boolean | undefined;
+    };
     offset: {
-      x: number
-      y: number
-    }
-  }
+      x: number;
+      y: number;
+    };
+  };
 }
 
 export interface PlayerInitialState {
-  playerId: PlayerId
-  x: number
-  y: number
-  avatar: AvatarSetting
-  votingZone: string | undefined
-  playerSettings: PlayerSettings
-  health: number
-  orientation: Orientation
+  playerId: PlayerId;
+  x: number;
+  y: number;
+  avatar: AvatarSetting;
+  votingZone: string | undefined;
+  playerSettings: PlayerSettings;
+  health: number;
+  orientation: Orientation;
 }
 
-export interface PlayerState extends Omit<PlayerInitialState, "avatar" | "playerSettings"> {
-  movementInput: MovementInput
+export interface PlayerState
+  extends Omit<PlayerInitialState, 'avatar' | 'playerSettings'> {
+  movementInput: MovementInput;
 }
 
 export interface PlayersStates {
-  [playerId: PlayerId]: PlayerState
+  [playerId: PlayerId]: PlayerState;
 }
 
 export interface PlayersInitialStates {
-  [playerId: PlayerId]: PlayerInitialState
+  [playerId: PlayerId]: PlayerInitialState;
 }
 
 export interface PlayerSettings {
-  id?: PlayerId
-  username: string
-  avatarName: AvatarKeys
-  isVoter: boolean
-  hidePlayersWhileVoting: boolean
+  id?: PlayerId;
+  username: string;
+  avatarName: AvatarKeys;
+  isVoter: boolean;
+  hidePlayersWhileVoting: boolean;
 }
 
 export interface PlayerFightAction {

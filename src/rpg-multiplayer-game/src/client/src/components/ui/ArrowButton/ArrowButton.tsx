@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react';
 
-import './ArrowButton.scss'
+import './ArrowButton.scss';
 
 interface ArrowButtonProps {
   onClick: () => void;
@@ -11,9 +11,15 @@ interface ArrowButtonProps {
 const ArrowButton = ({ onClick, orientation, className }: ArrowButtonProps) => {
   return (
     <div className="arrow-button">
-      <button type="button" className={`${orientation} ${className || ''}`} onClick={onClick}>ARROW</button>
+      <button
+        type="button"
+        className={`${orientation} ${className || ''}`}
+        onClick={onClick}
+      >
+        ARROW
+      </button>
     </div>
-  )
-}
+  );
+};
 
-export default ArrowButton
+export default ArrowButton;

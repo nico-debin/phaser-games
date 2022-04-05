@@ -1,16 +1,61 @@
-import { Slide } from "./components/ui"
+import { Slide } from './components/ui';
 
 export const avatarSlides: Slide[] = [
-  { url: 'characters/adrian-tomkins.png', name: 'adrian-tomkins', isVoter: false, isAdmin: false },
-  { url: 'characters/calvin-koepke.png', name: 'calvin-koepke', isVoter: true, isAdmin: false },
-  { url: 'characters/joel-bowen.png', name: 'joel-bowen', isVoter: true, isAdmin: false },
-  { url: 'characters/john-geiger.png', name: 'john-geiger', isVoter: false, isAdmin: false },
-  { url: 'characters/lakshmi-vegesna.png', name: 'lakshmi-vegesna', isVoter: false, isAdmin: false },
-  { url: 'characters/michael-kantor.png', name: 'michael-kantor', isVoter: true, isAdmin: false },
-  { url: 'characters/nick-taylor.png', name: 'nick-taylor', isVoter: true, isAdmin: false },
-  { url: 'characters/nicolas-debin.png', name: 'nicolas-debin', isVoter: true, isAdmin: false },
-  { url: 'characters/ryan-mckay.png', name: 'ryan-mckay', isVoter: true, isAdmin: false },
-]
+  {
+    url: 'characters/adrian-tomkins.png',
+    name: 'adrian-tomkins',
+    isVoter: false,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/calvin-koepke.png',
+    name: 'calvin-koepke',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/joel-bowen.png',
+    name: 'joel-bowen',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/john-geiger.png',
+    name: 'john-geiger',
+    isVoter: false,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/lakshmi-vegesna.png',
+    name: 'lakshmi-vegesna',
+    isVoter: false,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/michael-kantor.png',
+    name: 'michael-kantor',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/nick-taylor.png',
+    name: 'nick-taylor',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/nicolas-debin.png',
+    name: 'nicolas-debin',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/ryan-mckay.png',
+    name: 'ryan-mckay',
+    isVoter: true,
+    isAdmin: false,
+  },
+];
 
 export const defaultAvatarSlides: Slide[] = [
   { url: 'characters/man-01.png', name: 'man-01' },
@@ -33,4 +78,4 @@ export const defaultAvatarSlides: Slide[] = [
   { url: 'characters/girl-05.png', name: 'girl-05' },
   { url: 'characters/girl-06.png', name: 'girl-06' },
   { url: 'characters/girl-07.png', name: 'girl-07' },
-]
+];

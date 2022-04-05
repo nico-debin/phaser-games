@@ -4,4 +4,4 @@ enum FontKeys {
   GOTHIC = 'gothic',
 }
 
-export default FontKeys
+export default FontKeys;

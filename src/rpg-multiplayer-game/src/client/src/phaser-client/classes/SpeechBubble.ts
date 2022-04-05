@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 export default class SpeechBubble {
   private bubble!: Phaser.GameObjects.Graphics;
@@ -17,16 +17,16 @@ export default class SpeechBubble {
     width: number,
     height: number,
     quote: string,
-    textStyle: Phaser.Types.GameObjects.Text.TextStyle = {}
+    textStyle: Phaser.Types.GameObjects.Text.TextStyle = {},
   ) {
     this.bubbleWidth = width;
     this.bubbleHeight = height;
 
     const defaultTextStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontFamily: "Arial",
+      fontFamily: 'Arial',
       fontSize: '20px',
-      color: "#000000",
-      align: "center",
+      color: '#000000',
+      align: 'center',
     };
     this.textStyle = {
       ...defaultTextStyle,
@@ -41,7 +41,7 @@ export default class SpeechBubble {
     y: number,
     width: number,
     height: number,
-    quote: string
+    quote: string,
   ) {
     const bubbleWidth = width;
     const bubbleHeight = height;
@@ -86,7 +86,7 @@ export default class SpeechBubble {
       point2X,
       point2Y,
       point3X,
-      point3Y
+      point3Y,
     );
     this.bubble.lineStyle(2, 0x565656, 1);
     this.bubble.lineBetween(point2X, point2Y, point3X, point3Y);
@@ -106,7 +106,7 @@ export default class SpeechBubble {
     const b = this.content.getBounds();
     this.content.setPosition(
       this.bubble.x + this.bubbleWidth / 2 - b.width / 2,
-      this.bubble.y + this.bubbleHeight / 2 - b.height / 2
+      this.bubble.y + this.bubbleHeight / 2 - b.height / 2,
     );
     return this;
   }

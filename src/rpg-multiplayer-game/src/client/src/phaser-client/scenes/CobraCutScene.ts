@@ -10,21 +10,24 @@ interface Follower {
 export default class CobraCutScene extends Phaser.Scene {
   private lightFollower!: Follower;
   private path!: Phaser.Curves.Path;
-  private spotlight!: Phaser.GameObjects.Light
+  private spotlight!: Phaser.GameObjects.Light;
 
   constructor() {
-    super({ key: SceneKeys.CobraCutScene })
+    super({ key: SceneKeys.CobraCutScene });
   }
 
   preload() {
-    this.load.image(TextureKeys.CobraLogo, ['effects/cobra-logo-372x500.png', 'effects/cobra-logo-372x500_n.png'])
+    this.load.image(TextureKeys.CobraLogo, [
+      'effects/cobra-logo-372x500.png',
+      'effects/cobra-logo-372x500_n.png',
+    ]);
   }
 
   create() {
     if (this.renderer.type !== Phaser.WEBGL) {
       this.startNextScene();
       return;
-    };
+    }
 
     const x = this.scale.width * 0.5;
     const y = this.scale.height * 0.5;
@@ -33,7 +36,10 @@ export default class CobraCutScene extends Phaser.Scene {
     this.cameras.main.fadeIn(3000);
 
     // Cobra logo
-    this.add.sprite(x, y, TextureKeys.CobraLogo).setOrigin(0.5).setPipeline('Light2D');
+    this.add
+      .sprite(x, y, TextureKeys.CobraLogo)
+      .setOrigin(0.5)
+      .setPipeline('Light2D');
 
     // Enable light plugin
     this.lights.enable();
@@ -43,12 +49,18 @@ export default class CobraCutScene extends Phaser.Scene {
     this.spotlight = this.lights.addLight(0, 0, 280).setIntensity(3);
 
     // Eyes light
-    const leftEyeLight = this.lights.addLight(322, 252, 32, 0xff0000).setIntensity(0);
-    const rightEyeLight = this.lights.addLight(392, 252, 32, 0xff0000).setIntensity(0);
+    const leftEyeLight = this.lights
+      .addLight(322, 252, 32, 0xff0000)
+      .setIntensity(0);
+    const rightEyeLight = this.lights
+      .addLight(392, 252, 32, 0xff0000)
+      .setIntensity(0);
 
     // Red light
-    const cobraRedLight = this.lights.addLight(350, 580, 280, 0xff0000).setIntensity(0);
-    
+    const cobraRedLight = this.lights
+      .addLight(350, 580, 280, 0xff0000)
+      .setIntensity(0);
+
     // Create path to be followed by the light
     this.createLightPath();
 
@@ -63,7 +75,7 @@ export default class CobraCutScene extends Phaser.Scene {
         redLightsFadeInTween.play();
       },
     });
-    
+
     // Fade in red lights tween
     const redLightsFadeInTween = this.tweens.addCounter({
       from: 0,
@@ -74,7 +86,7 @@ export default class CobraCutScene extends Phaser.Scene {
         const value = Math.floor(tween.getValue());
         leftEyeLight.setIntensity(value);
         rightEyeLight.setIntensity(value);
-        cobraRedLight.setIntensity(value/10);
+        cobraRedLight.setIntensity(value / 10);
       },
       onComplete: () => {
         this.time.delayedCall(2000, this.startNextScene, undefined, this);
@@ -90,7 +102,7 @@ export default class CobraCutScene extends Phaser.Scene {
       ease: Phaser.Math.Easing.Expo.Out,
       onUpdate: (tween) => {
         const value = Math.floor(tween.getValue());
-        this.spotlight.setIntensity(3 * (value/100));
+        this.spotlight.setIntensity(3 * (value / 100));
       },
       paused: true,
     });
@@ -104,13 +116,16 @@ export default class CobraCutScene extends Phaser.Scene {
     this.lightFollower = { t: 0, vector: new Phaser.Math.Vector2() };
 
     this.path = new Phaser.Curves.Path();
-    this.path.add(new Phaser.Curves.Ellipse(400, 300, 250, 300, 45, 360+45));
+    this.path.add(new Phaser.Curves.Ellipse(400, 300, 250, 300, 45, 360 + 45));
     this.path.add(new Phaser.Curves.Ellipse(400, 300, 250, 300, 45, 180));
   }
 
   private updateLightPosition(): void {
     this.path.getPoint(this.lightFollower.t, this.lightFollower.vector);
-    this.spotlight.setPosition(this.lightFollower.vector.x, this.lightFollower.vector.y);
+    this.spotlight.setPosition(
+      this.lightFollower.vector.x,
+      this.lightFollower.vector.y,
+    );
   }
 
   private startNextScene(): void {

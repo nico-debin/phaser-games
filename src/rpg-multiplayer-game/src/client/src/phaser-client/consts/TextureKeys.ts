@@ -10,4 +10,4 @@ enum TextureKeys {
   Footprints = 'footprints',
 }
 
-export default TextureKeys
+export default TextureKeys;

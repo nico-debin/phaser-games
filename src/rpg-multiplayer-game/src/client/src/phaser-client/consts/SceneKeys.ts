@@ -7,4 +7,4 @@ enum SceneKeys {
   WarGame = 'war-game',
 }
 
-export default SceneKeys
+export default SceneKeys;

@@ -1,3 +1,3 @@
-import ArrowButton from "./ArrowButton";
+import ArrowButton from './ArrowButton';
 
 export default ArrowButton;

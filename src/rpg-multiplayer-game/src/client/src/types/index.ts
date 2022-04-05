@@ -3,4 +3,4 @@ export type SavedSettings = {
   avatar: string;
   isVoter: boolean;
   isAdmin: boolean;
-}
+};

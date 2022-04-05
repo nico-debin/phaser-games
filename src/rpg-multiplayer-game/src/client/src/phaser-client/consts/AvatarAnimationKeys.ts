@@ -10,6 +10,6 @@ enum AvatarAnimationKeys {
   SHOOT_SIDE = 'shoot-side',
   WINNER = 'spellcast-down',
   DIE = 'die-down',
-};
+}
 
-export default AvatarAnimationKeys
+export default AvatarAnimationKeys;
