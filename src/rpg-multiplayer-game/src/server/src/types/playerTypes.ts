@@ -1,5 +1,5 @@
-import { AvatarSetting } from "../characters/AvatarSetting";
-import Queue from "../classes/queue";
+import { AvatarSetting } from '../characters/AvatarSetting';
+import Queue from '../classes/queue';
 
 export type Position = {
   x: number;
@@ -28,7 +28,8 @@ export interface PlayerInitialState {
   orientation: Orientation;
 }
 
-export interface PlayerState extends Omit<PlayerInitialState, "avatar" | "playerSettings"> {
+export interface PlayerState
+  extends Omit<PlayerInitialState, 'avatar' | 'playerSettings'> {
   movementInput: MovementInput;
 }
 

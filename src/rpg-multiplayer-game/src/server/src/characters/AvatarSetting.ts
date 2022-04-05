@@ -1,17 +1,17 @@
 export interface AvatarSetting {
-  name: string
+  name: string;
   body: {
-    sizeFactor: number
+    sizeFactor: number;
     size: {
-      width: number
-      height: number
-      center?: boolean | undefined
-    }
+      width: number;
+      height: number;
+      center?: boolean | undefined;
+    };
     offset: {
-      x: number
-      y: number
-    }
-  }
+      x: number;
+      y: number;
+    };
+  };
 }
 
 // const factorize = (avatarSetting: AvatarSetting, n: number) => avatarSetting.body.sizeFactor * n
@@ -23,16 +23,16 @@ export const avatarSettings: AvatarSetting[] = [
       sizeFactor: 1,
       size: {
         width: 64 * 0.25,
-        height: 64 * 0.50,
+        height: 64 * 0.5,
         center: true,
       },
       offset: {
         x: 24,
         y: 29,
-      }
-    }
+      },
+    },
   },
-]
+];
 
 export const noOpAvatar: AvatarSetting = {
   name: '',
@@ -46,6 +46,6 @@ export const noOpAvatar: AvatarSetting = {
     offset: {
       x: 0,
       y: 0,
-    }
-  }
-}
+    },
+  },
+};

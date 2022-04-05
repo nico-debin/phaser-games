@@ -6,4 +6,4 @@ enum SocketIOEventKeys {
   Disconnect = 'disconnect',
 }
 
-export default SocketIOEventKeys
+export default SocketIOEventKeys;

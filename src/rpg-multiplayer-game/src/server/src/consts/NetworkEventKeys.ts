@@ -4,7 +4,7 @@ enum NetworkEventKeys {
 
   // Players positions update
   PlayersStatusUpdate = 'players-status-update',
-  
+
   // Player settings update
   PlayerSettingsUpdate = 'player-settings-update',
 
@@ -49,4 +49,4 @@ enum NetworkEventKeys {
   EndFight = 'end-fight',
 }
 
-export default NetworkEventKeys
+export default NetworkEventKeys;

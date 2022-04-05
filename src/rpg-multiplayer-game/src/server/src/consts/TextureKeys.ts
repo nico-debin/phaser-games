@@ -1,4 +1,3 @@
-enum TextureKeys {
-}
+enum TextureKeys {}
 
-export default TextureKeys
+export default TextureKeys;

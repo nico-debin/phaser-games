@@ -4,4 +4,4 @@ enum SceneKeys {
   GameDebug = 'game-debug',
 }
 
-export default SceneKeys
+export default SceneKeys;

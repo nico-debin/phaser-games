@@ -1,7 +1,7 @@
-import { PlayerId } from "../types/playerTypes";
+import { PlayerId } from '../types/playerTypes';
 
 class GameFightState {
-  private _fightMode = false
+  private _fightMode = false;
   private fighters = new Set<PlayerId>();
 
   set fightMode(newValue: boolean) {
