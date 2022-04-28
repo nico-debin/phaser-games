@@ -62,6 +62,14 @@ export class GameVotingManager {
     return gameState.votingPlayersCount - this.totalVotes;
   }
 
+  get pendingVoters(): PlayerId[] {
+    const pendingVoters: PlayerId[] = [];
+    for (const playerId in this.votesByPlayer) {
+      !this.votesByPlayer[playerId].vote && pendingVoters.push(playerId);
+    }
+    return pendingVoters;
+  }
+
   get votingIsClosed(): boolean {
     return this.totalVotes >= 1 && this.pendingVotes === 0;
   }

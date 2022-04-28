@@ -11,12 +11,12 @@ import SceneKeys from '../consts/SceneKeys';
 import Modal from '../classes/Modal';
 
 export default class Hud extends Phaser.Scene {
-  // private votingLabel!: Phaser.GameObjects.Text
   private votingStats!: Phaser.GameObjects.Group;
   private votingStatsLabel!: Phaser.GameObjects.BitmapText;
   private settingsMenu!: SettingsMenu;
   private endOfVotingMenu!: EndOfVotingMenu;
   private newFightModal!: Modal;
+  private pendingVotersLabel!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: SceneKeys.Hud });
@@ -24,7 +24,7 @@ export default class Hud extends Phaser.Scene {
 
   create() {
     this.cameras.main.setRoundPixels(true);
-    const { width } = this.scale;
+    const { height, width } = this.scale;
 
     const votingLabelBackground = this.add
       .image(10, 10, TextureKeys.UIMenu1, 'wood-small')
@@ -39,16 +39,15 @@ export default class Hud extends Phaser.Scene {
     this.votingStats.add(votingLabelBackground);
     this.votingStats.add(this.votingStatsLabel);
 
-    // this.votingStats = this.add.group().addMultiple([
-    //   this.votingStatsLabel,
-    //   this.add.image(10, 50, TextureKeys.UIMenu1, 'wood-small').setOrigin(0, 0).setScale(0.4).setVisible(true),
-    // ], false);
-
-    // this.votingLabel = this.add.text(10, 100, '', {
-    //   fontSize: '16px',
-    //   color: '#ffffff',
-    //   backgroundColor: '#333333'
-    // })
+    this.pendingVotersLabel = this.add
+      .text(10, height - 50, '', {
+        fontSize: '16px',
+        color: '#ffffff',
+        backgroundColor: '#333333',
+        padding: { left: 5, right: 5, top: 5, bottom: 5 },
+        wordWrap: { width, useAdvancedWrap: true },
+      })
+      .setAlpha(0.8);
 
     this.newFightModal = new Modal(
       this,
@@ -117,7 +116,7 @@ export default class Hud extends Phaser.Scene {
 
     // Update labels
     autorun(() => {
-      // this.setVotingLabel()
+      this.setPendingVotersLabel();
       this.setVotingStatsLabel();
     });
 
@@ -170,24 +169,24 @@ export default class Hud extends Phaser.Scene {
     });
   }
 
-  // setVotingLabel() {
-  //   const labels: string[] = [];
-  //   for (const playerId in gameVotingManager.votesByPlayer) {
-  //     const vote = gameVotingManager.votesByPlayer[playerId].vote
-  //     if (!vote) continue;
+  setPendingVotersLabel() {
+    const labels: string[] = [];
+    if (gameVotingManager.totalVotes === 0 || gameVotingManager.pendingVotes === 0) {
+      this.pendingVotersLabel.setText('').setVisible(false);
+      return;
+    }
 
-  //     const player = gameState.getPlayer(playerId)
-  //     if (!player) continue;
+    for (const playerId of gameVotingManager.pendingVoters) {
+      const player = gameState.getPlayer(playerId);
+      if (!player) continue;
 
-  //     if (player.isCurrentPlayer) {
-  //       labels.unshift(`You estimated ${vote}`)
-  //     } else {
-  //       labels.push(`${player.username} estimated: ${vote}`)
-  //     }
-  //   }
-
-  //   this.votingLabel.setText(labels.join('\n'))
-  // }
+      labels.push(`${player.username}`);
+    }
+    
+    this.pendingVotersLabel
+      .setText('Waiting votes from: ' + labels.join(', '))
+      .setVisible(true);
+  }
 
   setVotingStatsLabel() {
     const votingStats = gameVotingManager.getStats();
