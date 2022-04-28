@@ -8,12 +8,6 @@ export const avatarSlides: Slide[] = [
     isAdmin: false,
   },
   {
-    url: 'characters/calvin-koepke.png',
-    name: 'calvin-koepke',
-    isVoter: true,
-    isAdmin: false,
-  },
-  {
     url: 'characters/catherine-choi.png',
     name: 'catherine-choi',
     isVoter: true,
@@ -28,12 +22,6 @@ export const avatarSlides: Slide[] = [
   {
     url: 'characters/john-geiger.png',
     name: 'john-geiger',
-    isVoter: false,
-    isAdmin: false,
-  },
-  {
-    url: 'characters/lakshmi-vegesna.png',
-    name: 'lakshmi-vegesna',
     isVoter: false,
     isAdmin: false,
   },
@@ -66,6 +54,7 @@ export const avatarSlides: Slide[] = [
 export const defaultAvatarSlides: Slide[] = [
   { url: 'characters/man-01.png', name: 'man-01' },
   { url: 'characters/man-02.png', name: 'man-02' },
+  { url: 'characters/calvin-koepke.png', name: 'man-under-the-hoodie' },
   { url: 'characters/warrior-01.png', name: 'warrior-01' },
   { url: 'characters/boy-01.png', name: 'boy-01' },
   { url: 'characters/jedi.png', name: 'jedi' },
@@ -84,4 +73,5 @@ export const defaultAvatarSlides: Slide[] = [
   { url: 'characters/girl-05.png', name: 'girl-05' },
   { url: 'characters/girl-06.png', name: 'girl-06' },
   { url: 'characters/girl-07.png', name: 'girl-07' },
+  { url: 'characters/lakshmi.png', name: 'lakshmi' },
 ];

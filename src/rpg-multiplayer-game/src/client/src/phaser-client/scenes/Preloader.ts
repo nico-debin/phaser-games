@@ -38,11 +38,6 @@ export default class Preloader extends Phaser.Scene {
       { frameWidth: 64, frameHeight: 64 },
     );
     this.load.spritesheet(
-      AvatarKeys.CALVIN_KOEPKE,
-      'characters/calvin-koepke.png',
-      { frameWidth: 64, frameHeight: 64 },
-    );
-    this.load.spritesheet(
       AvatarKeys.CATHERINE_CHOI,
       'characters/catherine-choi.png',
       { frameWidth: 64, frameHeight: 64 },
@@ -54,11 +49,6 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet(
       AvatarKeys.JOHN_GEIGER,
       'characters/john-geiger.png',
-      { frameWidth: 64, frameHeight: 64 },
-    );
-    this.load.spritesheet(
-      AvatarKeys.LAKSHMI_VEGESNA,
-      'characters/lakshmi-vegesna.png',
       { frameWidth: 64, frameHeight: 64 },
     );
     this.load.spritesheet(
@@ -133,6 +123,11 @@ export default class Preloader extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 64,
     });
+    this.load.spritesheet(
+      AvatarKeys.MAN_UNDER_THE_HOODIE,
+      'characters/calvin-koepke.png',
+      { frameWidth: 64, frameHeight: 64 },
+    );
     this.load.spritesheet(AvatarKeys.WARRIOR_01, 'characters/warrior-01.png', {
       frameWidth: 64,
       frameHeight: 64,
@@ -162,6 +157,10 @@ export default class Preloader extends Phaser.Scene {
       frameHeight: 64,
     });
     this.load.spritesheet(AvatarKeys.GIRL_07, 'characters/girl-07.png', {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+    this.load.spritesheet(AvatarKeys.LAKSHMI, 'characters/lakshmi.png', {
       frameWidth: 64,
       frameHeight: 64,
     });
