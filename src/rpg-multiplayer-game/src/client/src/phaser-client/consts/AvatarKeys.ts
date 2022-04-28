@@ -2,6 +2,7 @@ enum AvatarKeys {
   // Main Characters
   ADRIAN_TOMKINS = 'adrian-tomkins',
   CALVIN_KOEPKE = 'calvin-koepke',
+  CATHERINE_CHOI = 'catherine-choi',
   JOEL_BOWEN = 'joel-bowen',
   JOHN_GEIGER = 'john-geiger',
   LAKSHMI_VEGESNA = 'lakshmi-vegesna',

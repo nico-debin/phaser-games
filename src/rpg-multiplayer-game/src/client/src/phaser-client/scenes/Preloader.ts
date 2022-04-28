@@ -42,6 +42,11 @@ export default class Preloader extends Phaser.Scene {
       'characters/calvin-koepke.png',
       { frameWidth: 64, frameHeight: 64 },
     );
+    this.load.spritesheet(
+      AvatarKeys.CATHERINE_CHOI,
+      'characters/catherine-choi.png',
+      { frameWidth: 64, frameHeight: 64 },
+    );
     this.load.spritesheet(AvatarKeys.JOEL_BOWEN, 'characters/joel-bowen.png', {
       frameWidth: 64,
       frameHeight: 64,
