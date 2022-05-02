@@ -437,6 +437,16 @@ export default class Game extends Phaser.Scene {
       this.players.setTint(0xff0000);
     });
 
+    // Sync players between Server and Client
+    this.socket.on(NetworkEventKeys.PlayersSync, (playersIds: PlayerId[]) => {
+      // remove players that aren't in the client
+      playersIds.forEach((playerId) => {
+        if (!this.getPlayerById(playerId)) {
+          this.removePlayer(playerId);
+        }
+      })
+    });
+
     // Send an event when the current player changes it's voting setting (or any other setting)
     // Update voting manager accordingly
     autorun(() => {

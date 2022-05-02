@@ -29,6 +29,9 @@ enum NetworkEventKeys {
   // A player has been killed
   PlayerDead = 'player-dead',
 
+  // Sync server's players with client
+  PlayersSync = 'players-sync',
+
   // Restart game
   RestartGame = 'restart-game',
 

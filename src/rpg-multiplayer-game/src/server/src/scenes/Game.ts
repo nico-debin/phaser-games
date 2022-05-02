@@ -202,6 +202,17 @@ export default class Game extends Phaser.Scene {
     io.on(SocketIOEventKeys.Connection, (socket: Socket) =>
       handleSocketConnect(socket, gameScene),
     );
+
+    // Update clients every 30 seconds with the players that are connected to the server
+    this.time.addEvent({
+      delay: 30 * 1000,
+      callback: () => {
+        const data: PlayerId[] = (this.players.getChildren() as Player[]).map((player) => player.id);
+        io.emit(NetworkEventKeys.PlayersSync, data);
+      },
+      callbackScope: this,
+      loop: true,
+    })
   }
 
   handleThrowableWeaponPlayerOverlap(
