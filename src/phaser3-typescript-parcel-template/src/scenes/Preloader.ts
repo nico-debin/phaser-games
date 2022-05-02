@@ -7,11 +7,9 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL("https://labs.phaser.io");
-
-    this.load.image(TextureKeys.SKY, "assets/skies/space3.png");
-    this.load.image(TextureKeys.LOGO, "assets/sprites/phaser3-logo.png");
-    this.load.image(TextureKeys.RED, "assets/particles/red.png");
+    this.load.image(TextureKeys.LOGO, "./phaser3-logo.png");
+    this.load.image(TextureKeys.SKY, "https://labs.phaser.io/assets/skies/space3.png");
+    this.load.image(TextureKeys.RED, "https://labs.phaser.io/assets/particles/red.png");
   }
 
   create() {
