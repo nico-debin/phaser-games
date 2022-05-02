@@ -3,6 +3,7 @@ enum AvatarKeys {
   ADRIAN_TOMKINS = 'adrian-tomkins',
   CATHERINE_CHOI = 'catherine-choi',
   JOEL_BOWEN = 'joel-bowen',
+  JOE_WALLER = 'joe-waller',
   JOHN_GEIGER = 'john-geiger',
   MICHAEL_KANTOR = 'michael-kantor',
   NICK_TAYLOR = 'nick-taylor',
