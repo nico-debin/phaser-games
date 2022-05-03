@@ -6,12 +6,18 @@ import { SceneKeys, TilemapKeys } from "../consts/";
 // Characters
 import Player from '../characters/Player';
 
+// Player Input
+import { InputController } from "../controllers";
+
 export default class GameScene extends Phaser.Scene {
   // Game tilemap
   private tilemap!: Phaser.Tilemaps.Tilemap;
   
-  // Player
+  // Main Player
   private player!: Player;
+
+  // Cursor keys input listener
+  private inputController!: InputController;
 
   constructor() {
     super({ key: SceneKeys.Game });
@@ -19,6 +25,10 @@ export default class GameScene extends Phaser.Scene {
 
   create(): void {
     this.createTilemap();
+
+    // Cursor keys input listener
+    this.inputController = new InputController(this, "wasd");
+
     this.createPlayer();
   }
 
@@ -33,5 +43,9 @@ export default class GameScene extends Phaser.Scene {
 
   private createPlayer(): void {
     this.player = new Player(this, 400, 300);
+  }
+
+  update(): void {
+    this.player.update(this.inputController);
   }
 }
