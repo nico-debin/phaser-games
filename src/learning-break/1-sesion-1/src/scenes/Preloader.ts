@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { SceneKeys, TextureKeys, TilemapKeys } from "../consts";
+import { SceneKeys, TextureKeys, TilemapKeys, AvatarKeys } from "../consts";
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -9,6 +9,7 @@ export default class Preloader extends Phaser.Scene {
   preload(): void {
     // this.preloadHelloWorld();
     this.preloadTilemap();
+    this.preloadCharacters();
   }
   
   private preloadHelloWorld(): void {
@@ -21,6 +22,13 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(TilemapKeys.WallTiles, "./tilesets/TX Tileset Wall.png");
     this.load.image(TilemapKeys.GrassTiles, "./tilesets/TX Tileset Grass.png");
     this.load.tilemapTiledJSON(TilemapKeys.DungeonTilemap, "./tilemaps/dungeon-v1.json");
+  }
+
+  private preloadCharacters(): void {
+    this.load.spritesheet(AvatarKeys.WARRIOR, "./characters/warrior-01.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
   }
 
   create(): void {

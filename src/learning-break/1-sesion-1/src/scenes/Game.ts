@@ -1,9 +1,17 @@
 import Phaser from "phaser";
+
+// Keys
 import { SceneKeys, TilemapKeys } from "../consts/";
+
+// Characters
+import Player from '../characters/Player';
 
 export default class GameScene extends Phaser.Scene {
   // Game tilemap
   private tilemap!: Phaser.Tilemaps.Tilemap;
+  
+  // Player
+  private player!: Player;
 
   constructor() {
     super({ key: SceneKeys.Game });
@@ -11,6 +19,7 @@ export default class GameScene extends Phaser.Scene {
 
   create(): void {
     this.createTilemap();
+    this.createPlayer();
   }
 
   private createTilemap(): void {
@@ -20,5 +29,9 @@ export default class GameScene extends Phaser.Scene {
 
     this.tilemap.createLayer('Ground', tilesetGrass);
     this.tilemap.createLayer('Walls', tilesetWalls);
+  }
+
+  private createPlayer(): void {
+    this.player = new Player(this, 400, 300);
   }
 }
