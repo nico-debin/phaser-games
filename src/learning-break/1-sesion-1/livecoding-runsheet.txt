@@ -1,0 +1,10 @@
+01. Start with Phaser template
+02. Tilemap
+03. Go through game config object
+04. Go through Preloader
+05. Create Game Scene
+06. Preloader: Load Map
+07. Game: Load map
+08. Preloader: Load Player
+09. Game: Load Player
+10. 
