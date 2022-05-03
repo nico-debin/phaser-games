@@ -8,12 +8,12 @@
 08. Preloader: Load Player
 09. Game: Load Player
 10. Keyboard input: move player
-11. Camera: Follow player
-12. Bounderies: Collide player with walls
+11. Player movement animations
+12. Camera: Follow player
+13. Bounderies: Collide player with walls
 
 
 
 Assets:
 - Tilesheet: https://cainos.itch.io/pixel-art-top-down-basic
 - Avatars: Generated with https://sanderfrenken.github.io/Universal-LPC-Spritesheet-Character-Generator/
- 
