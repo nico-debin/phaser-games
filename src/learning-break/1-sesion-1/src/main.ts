@@ -6,7 +6,7 @@ const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scale: { zoom: 0.5 },
+  scale: { zoom: 1 },
   physics: {
     default: 'arcade',
     arcade: {
@@ -14,6 +14,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
+  roundPixels: true,
   scene: [ Preloader, Game ],
 };
 
