@@ -24,12 +24,17 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Create the map
     this.createTilemap();
 
-    // Cursor keys input listener
+    // Input listener
     this.inputController = new InputController(this, "wasd");
 
+    // Create the main player
     this.createPlayer();
+
+    // Follow the player with the camera
+    this.cameras.main.startFollow(this.player);
   }
 
   private createTilemap(): void {
