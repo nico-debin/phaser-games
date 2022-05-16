@@ -7,9 +7,9 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload(): void {
-    // this.preloadHelloWorld();
-    this.preloadTilemap();
-    this.preloadCharacters();
+    this.preloadHelloWorld();
+    // this.preloadTilemap();
+    // this.preloadCharacters();
   }
   
   private preloadHelloWorld(): void {
@@ -18,20 +18,21 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(TextureKeys.RED, "https://labs.phaser.io/assets/particles/red.png");
   }
 
-  private preloadTilemap(): void {
-    this.load.image(TilemapKeys.WallTiles, "./tilesets/TX Tileset Wall.png");
-    this.load.image(TilemapKeys.GrassTiles, "./tilesets/TX Tileset Grass.png");
-    this.load.tilemapTiledJSON(TilemapKeys.DungeonTilemap, "./tilemaps/dungeon-v1.json");
-  }
+  // private preloadTilemap(): void {
+  //   this.load.image(TilemapKeys.WallTiles, "./tilesets/TX Tileset Wall.png");
+  //   this.load.image(TilemapKeys.GrassTiles, "./tilesets/TX Tileset Grass.png");
+  //   this.load.tilemapTiledJSON(TilemapKeys.DungeonTilemap, "./tilemaps/dungeon-v1.json");
+  // }
 
-  private preloadCharacters(): void {
-    this.load.spritesheet(AvatarKeys.WARRIOR, "./characters/warrior-01.png", {
-      frameWidth: 64,
-      frameHeight: 64,
-    });
-  }
+  // private preloadCharacters(): void {
+  //   this.load.spritesheet(AvatarKeys.WARRIOR, "./characters/warrior-01.png", {
+  //     frameWidth: 64,
+  //     frameHeight: 64,
+  //   });
+  // }
 
   create(): void {
-    this.scene.start(SceneKeys.Game);
+    this.scene.start(SceneKeys.HelloWorld);
+    // this.scene.start(SceneKeys.Game);
   }
 }

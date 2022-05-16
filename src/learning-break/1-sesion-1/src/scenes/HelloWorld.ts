@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { SceneKeys, TextureKeys } from "../consts/";
 
-export default class HelloWorldScene extends Phaser.Scene {
+export default class HelloWorld extends Phaser.Scene {
   constructor() {
     super({ key: SceneKeys.HelloWorld });
   }
