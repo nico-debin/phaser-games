@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-import { HelloWorld, Preloader, Game } from './scenes';
+import { Preloader, Game } from './scenes';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -15,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
   },
   roundPixels: true,
-  scene: [ Preloader, Game, HelloWorld ],
+  scene: [ Preloader, Game ],
 };
 
 export default new Phaser.Game(config);

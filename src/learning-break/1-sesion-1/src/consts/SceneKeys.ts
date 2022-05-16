@@ -1,6 +1,5 @@
 enum SceneKeys {
   Preloader = "preloader",
-  HelloWorld = "hello-world",
   Game = "game",
 }
 
