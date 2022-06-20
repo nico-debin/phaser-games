@@ -439,10 +439,18 @@ export default class Game extends Phaser.Scene {
 
     // Sync players between Server and Client
     this.socket.on(NetworkEventKeys.PlayersSync, (playersIds: PlayerId[]) => {
-      // remove players that aren't in the client
+      // remove server players that aren't in the client
       playersIds.forEach((playerId) => {
         if (!this.getPlayerById(playerId)) {
+          // TODO: re-add player by asking the server to send a PlayersInitialStatusInfo event for this playerId
           this.removePlayer(playerId);
+        }
+      });
+
+      // remove clients that aren't in the server
+      (this.players.getChildren() as Player[]).forEach((clientPlayer: Player) => {
+        if (!playersIds.includes(clientPlayer.id)) {
+          this.removePlayer(clientPlayer.id);
         }
       })
     });
