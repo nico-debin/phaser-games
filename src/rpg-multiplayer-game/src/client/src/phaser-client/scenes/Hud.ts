@@ -9,6 +9,8 @@ import FontKeys from '../consts/FontKeys';
 import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 import SceneKeys from '../consts/SceneKeys';
 import Modal from '../classes/Modal';
+import UIButton from '../classes/UIButton';
+import UIAdminButton from '../classes/UIAdminButton';
 
 export default class Hud extends Phaser.Scene {
   private votingStats!: Phaser.GameObjects.Group;
@@ -64,53 +66,48 @@ export default class Hud extends Phaser.Scene {
       .onCancel(() => this.newFightModal.hideButtons())
       .onOpen(() => {
         settingsButton.setVisible(false);
-        settingsWheelIcon.setVisible(false);
+        adminSettingsButton.setVisible(false);
         this.votingStats.setVisible(false);
         gameState.playerCanMove = false;
       })
       .onClose(() => {
         settingsButton.setVisible(true);
-        settingsWheelIcon.setVisible(true);
+        adminSettingsButton.setVisible(true);
         this.votingStats.setVisible(false);
         gameState.playerCanMove = true;
       });
 
-    const settingsButton = this.add
-      .image(width - 10, 10, TextureKeys.UIMenu1, 'yellow-button')
-      .setScale(0.2)
-      .setOrigin(1, 0);
-    const settingsWheelIcon = this.add
-      .image(width - 17, 17, TextureKeys.UIMenu1, 'wheel-icon')
-      .setScale(0.2)
-      .setOrigin(1, 0);
+    const settingsButton = new UIButton(
+      this,
+      width - 55,
+      10,
+      TextureKeys.UIMenu1,
+      'wheel-icon',
+      () => this.settingsMenu.toggleMenu(),
+    );
+    this.add.existing(settingsButton);
 
-    settingsButton
-      .setInteractive({ useHandCursor: true })
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => {
-        settingsButton.setTint(0xdedede);
-      })
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => {
-        settingsButton.setTint(0xffffff);
-      })
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        settingsButton.setTint(0xf4bf19);
-      })
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
-        settingsButton.setTint(0xffffff);
-        this.settingsMenu.toggleMenu();
-      });
+    const adminSettingsButton = new UIAdminButton(
+      this,
+      width - 110,
+      10,
+      TextureKeys.UIMenu1,
+      'people-icon',
+      () => console.log('click'),
+    );
+    this.add.existing(adminSettingsButton);
 
     this.settingsMenu = new SettingsMenu(this);
     this.endOfVotingMenu = new EndOfVotingMenu(this);
     this.endOfVotingMenu
       .onOpen(() => {
         settingsButton.setVisible(false);
-        settingsWheelIcon.setVisible(false);
+        adminSettingsButton.setVisible(false);
         gameState.playerCanMove = false;
       })
       .onClose(() => {
         settingsButton.setVisible(true);
-        settingsWheelIcon.setVisible(true);
+        adminSettingsButton.setVisible(true);
         gameState.playerCanMove = true;
       });
 
@@ -171,7 +168,10 @@ export default class Hud extends Phaser.Scene {
 
   setPendingVotersLabel() {
     const labels: string[] = [];
-    if (gameVotingManager.totalVotes === 0 || gameVotingManager.pendingVotes === 0) {
+    if (
+      gameVotingManager.totalVotes === 0 ||
+      gameVotingManager.pendingVotes === 0
+    ) {
       this.pendingVotersLabel.setText('').setVisible(false);
       return;
     }
@@ -182,7 +182,7 @@ export default class Hud extends Phaser.Scene {
 
       labels.push(`${player.username}`);
     }
-    
+
     this.pendingVotersLabel
       .setText('Waiting votes from: ' + labels.join(', '))
       .setVisible(true);

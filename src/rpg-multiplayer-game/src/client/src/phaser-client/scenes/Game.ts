@@ -63,7 +63,7 @@ export default class Game extends Phaser.Scene {
   private restOfPlayersThrowableWeapons!: Phaser.Physics.Arcade.Group;
 
   // Settings selected in the login page
-  playerSettings: PlayerSettings;
+  private playerSettings: PlayerSettings;
 
   // SocketIO client
   private socket!: Socket;
@@ -116,11 +116,12 @@ export default class Game extends Phaser.Scene {
 
     // Login page settings
     const { getState } = useStore;
-    const { username, avatar: avatarName, isVoter } = getState();
+    const { username, avatar: avatarName, isVoter, isAdmin } = getState();
     this.playerSettings = {
       username,
       avatarName: avatarName as AvatarKeys,
       isVoter,
+      isAdmin,
       hidePlayersWhileVoting: true,
     };
   }
@@ -468,6 +469,7 @@ export default class Game extends Phaser.Scene {
             username: gameState.currentPlayer.username,
             avatarName: gameState.currentPlayer.avatarName,
             isVoter: gameState.currentPlayer.isVoter,
+            isAdmin: gameState.currentPlayer.isAdmin,
             hidePlayersWhileVoting:
               gameState.currentPlayer.hidePlayersWhileVoting,
           };
