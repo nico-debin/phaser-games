@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 import CobraCutScene from './scenes/CobraCutScene';
 import Bootstrap from './scenes/Bootstrap';
@@ -22,6 +23,13 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
+  plugins: {
+    scene: [{
+      key: 'rexUI',
+      plugin: RexUIPlugin,
+      mapping: 'rexUI',
+    }]
+  }
 };
 
 export default gameConfig;
