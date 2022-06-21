@@ -124,6 +124,8 @@ export default class Game extends Phaser.Scene {
       isAdmin,
       hidePlayersWhileVoting: true,
     };
+
+    isAdmin ? gameState.enableAdminMode() : gameState.disableAdminMode();
   }
 
   get currentPlayerId() {

@@ -34,6 +34,7 @@ class GameState {
 
   private enableRain = true;
   private enableBlood = true;
+  private adminMode = false;
 
   constructor() {
     this.gameFight = gameFightState;
@@ -238,11 +239,11 @@ class GameState {
     return this._connectingToServer;
   }
 
-  enableRainFlag() {
+  enableRainFlag(): void {
     this.enableRain = true;
   }
 
-  disableRainFlag() {
+  disableRainFlag(): void {
     this.enableRain = false;
   }
 
@@ -250,12 +251,24 @@ class GameState {
     return this.enableRain;
   }
 
-  enableBloodFlag() {
+  enableBloodFlag(): void {
     this.enableBlood = true;
   }
 
-  disableBloodFlag() {
+  disableBloodFlag(): void {
     this.enableBlood = false;
+  }
+
+  enableAdminMode(): void {
+    this.adminMode = true;
+  }
+  
+  disableAdminMode(): void {
+    this.adminMode = false;
+  }
+
+  isAdminMode(): boolean {
+    return this.adminMode;
   }
 
   get bloodFlagEnabled() {
