@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
+import BaseScene from '../scenes/BaseScene';
+
 import { autorun } from 'mobx';
+import { gameState } from '../states/GameState';
 
 import AbstractMenu from './AbstractMenu';
-import { gameState } from '../states/GameState';
 import CheckboxInput from './CheckboxInput';
 import FontKeys from '../consts/FontKeys';
 
@@ -15,7 +17,7 @@ export default class SettingsMenu extends AbstractMenu {
   sectionHeader1: Phaser.GameObjects.BitmapText;
   sectionHeader2: Phaser.GameObjects.BitmapText;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: BaseScene) {
     super(scene);
 
     this.menuTitle.setText('SETTINGS');
@@ -169,7 +171,7 @@ export default class SettingsMenu extends AbstractMenu {
     });
   }
 
-  openMenu() {
+  openMenu(): void {
     if (this.menuIsOpen) return;
     super.openMenu();
     this.sectionHeader1.setVisible(true);
@@ -181,7 +183,7 @@ export default class SettingsMenu extends AbstractMenu {
     this.disableBloodCheckbox.setVisible(true);
   }
 
-  closeMenu() {
+  closeMenu(): void {
     if (!this.menuIsOpen) return;
     super.closeMenu();
     this.sectionHeader1.setVisible(false);

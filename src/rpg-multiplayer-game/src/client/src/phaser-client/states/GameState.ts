@@ -58,6 +58,10 @@ class GameState {
     return this._darkMode;
   }
 
+  getAllPlayers(): PlayerGameState[] {
+    return this.players;
+  }
+
   /**
    * Adds a new player
    * @param id

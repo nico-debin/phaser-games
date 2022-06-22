@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import BaseScene from './BaseScene';
 
 import { autorun } from 'mobx';
 import { gameVotingManager } from '../classes/GameVotingManager';
@@ -11,11 +12,14 @@ import SceneKeys from '../consts/SceneKeys';
 import Modal from '../classes/Modal';
 import UIButton from '../classes/UIButton';
 import UIAdminButton from '../classes/UIAdminButton';
+import AdminDashboardMenu from '../classes/AdminDashboardMenu';
 
-export default class Hud extends Phaser.Scene {
+
+export default class Hud extends BaseScene {
   private votingStats!: Phaser.GameObjects.Group;
   private votingStatsLabel!: Phaser.GameObjects.BitmapText;
   private settingsMenu!: SettingsMenu;
+  private adminDashboardMenu?: AdminDashboardMenu;
   private endOfVotingMenu!: EndOfVotingMenu;
   private newFightModal!: Modal;
   private pendingVotersLabel!: Phaser.GameObjects.Text;
@@ -93,11 +97,14 @@ export default class Hud extends Phaser.Scene {
       10,
       TextureKeys.UIMenu1,
       'people-icon',
-      () => console.log('click'),
+      () => this.adminDashboardMenu?.toggleMenu(),
     );
     this.add.existing(adminSettingsButton);
 
     this.settingsMenu = new SettingsMenu(this);
+    if (gameState.isAdminMode()) {
+      this.adminDashboardMenu = new AdminDashboardMenu(this);
+    }
     this.endOfVotingMenu = new EndOfVotingMenu(this);
     this.endOfVotingMenu
       .onOpen(() => {

@@ -1,13 +1,14 @@
 import Phaser from 'phaser';
-import FontKeys from '../consts/FontKeys';
+import BaseScene from '../scenes/BaseScene';
 
+import FontKeys from '../consts/FontKeys';
 import TextureKeys from '../consts/TextureKeys';
 
 type MenuOptions = {
   disableCloseButton?: boolean;
 };
 export default abstract class AbstractMenu {
-  protected scene: Phaser.Scene;
+  protected scene: BaseScene;
   protected menuIsOpen: boolean = false;
   protected menuBoard: Phaser.GameObjects.Image;
   protected closeButton?: Phaser.GameObjects.Image;
@@ -16,7 +17,7 @@ export default abstract class AbstractMenu {
   protected onOpenCallback: () => void;
   protected onCloseCallback: () => void;
 
-  constructor(scene: Phaser.Scene, options: MenuOptions = {}) {
+  constructor(scene: BaseScene, options: MenuOptions = {}) {
     const { width, height } = scene.scale;
 
     this.scene = scene;

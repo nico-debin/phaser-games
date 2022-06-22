@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import BaseScene from '../scenes/BaseScene';
+
 import { objectMap } from '../../utils';
 import { gameState } from '../states/GameState';
 import { gameVotingManager } from './GameVotingManager';
@@ -20,7 +22,7 @@ export default class EndOfVotingMenu extends AbstractMenu {
   private uiButtonsContainer: Phaser.GameObjects.Container;
   private showFightButton = true;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: BaseScene) {
     super(scene, {
       disableCloseButton: true,
     });
