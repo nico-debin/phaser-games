@@ -5,9 +5,13 @@ import { autorun } from 'mobx';
 import { gameState } from '../states/GameState';
 import { PlayerSettings } from '../types/playerTypes';
 
-import AbstractMenu from './AbstractMenu';
-import GridTable from 'phaser3-rex-plugins/templates/ui/gridtable/GridTable';
+import {
+  GridTable,
+  Slider,
+} from 'phaser3-rex-plugins/templates/ui/ui-components';
 import GridTableCore from 'phaser3-rex-plugins/plugins/gridtable';
+
+import AbstractMenu from './AbstractMenu';
 import GenericLpc from '../characters/GenericLpc';
 import TextureKeys from '../consts/TextureKeys';
 
@@ -27,7 +31,6 @@ export default class AdminDashboardMenu extends AbstractMenu {
   }
 
   private buildGridTable(): void {
-    // @ts-ignore
     this.gridTable = this.scene.rexUI.add
       .gridTable({
         x: 400,
@@ -38,6 +41,19 @@ export default class AdminDashboardMenu extends AbstractMenu {
           cellWidth: 250,
           cellHeight: 70,
           columns: 1,
+        },
+        slider: {
+          track: this.scene.rexUI.add.roundRectangle(
+            0,
+            0,
+            20,
+            10,
+            10,
+            0x260e04,
+          ),
+          thumb: this.scene.add
+            .image(0, 0, TextureKeys.UIMenu1, 'green-wood-square')
+            .setScale(0.2),
         },
         items: gameState.getAllPlayers(),
         createCellContainerCallback: (
@@ -125,12 +141,14 @@ export default class AdminDashboardMenu extends AbstractMenu {
         },
       })
       .layout();
+
+    const slider = this.gridTable.getElement('slider') as Slider;
+    this.gridTable.setChildVisible(slider, false);
   }
 
   openMenu(): void {
     if (this.menuIsOpen) return;
     super.openMenu();
-    // this.updateGridTableItems();
     this.gridTable.setVisible(true);
   }
 
@@ -141,6 +159,13 @@ export default class AdminDashboardMenu extends AbstractMenu {
   }
 
   private updateGridTableItems(): void {
-    this.gridTable.setItems(gameState.getAllPlayers());
+    const items = gameState.getAllPlayers();
+    this.gridTable.setItems(items);
+
+    // Show/hide slider
+    this.gridTable.setChildVisible(
+      this.gridTable.getElement('slider') as Slider,
+      items.length > 4,
+    );
   }
 }
