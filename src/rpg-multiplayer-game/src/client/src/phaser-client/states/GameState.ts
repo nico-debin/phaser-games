@@ -35,6 +35,7 @@ class GameState {
   private enableRain = true;
   private enableBlood = true;
   private adminMode = false;
+  private playerKickedOut = false;
 
   constructor() {
     this.gameFight = gameFightState;
@@ -96,6 +97,17 @@ class GameState {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Set current player as kicked-out from the game by the server
+   */
+  kickoutCurrentPlayer(): void {
+    this.playerKickedOut = true;
+  }
+
+  get playerHasBeenKickedOut(): boolean {
+    return this.playerKickedOut;
   }
 
   /**

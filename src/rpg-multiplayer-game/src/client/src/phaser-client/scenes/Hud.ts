@@ -14,7 +14,6 @@ import UIButton from '../classes/UIButton';
 import UIAdminButton from '../classes/UIAdminButton';
 import AdminDashboardMenu from '../classes/AdminDashboardMenu';
 
-
 export default class Hud extends BaseScene {
   private votingStats!: Phaser.GameObjects.Group;
   private votingStatsLabel!: Phaser.GameObjects.BitmapText;
@@ -169,6 +168,62 @@ export default class Hud extends BaseScene {
     autorun(() => {
       if (gameState.gameFight.playerWantsToFight) {
         this.newFightModal.hideButtons();
+      }
+    });
+
+    // Show message when player has been kicked-out from the game by the server
+    autorun(() => {
+      if (gameState.playerHasBeenKickedOut) {
+        // Overlay
+        this.cameras.main.setBackgroundColor('rgba(51, 51, 51, 0.6)');
+
+        // Hide buttons
+        settingsButton.setVisible(false);
+        adminSettingsButton.setVisible(false);
+        this.votingStats.setVisible(false);
+
+        // Show message
+        this.rexUI.add
+          .sizer({
+            x: this.scale.width / 2,
+            y: this.scale.height / 2,
+            width: 500,
+            height: 50,
+          })
+          .add(
+            this.rexUI.add.label({
+              background: this.add.image(
+                0,
+                0,
+                TextureKeys.UIMenu1,
+                'wood-medium',
+              ),
+              text: this.add
+                .bitmapText(
+                  0,
+                  0,
+                  FontKeys.GEM,
+                  'You have been kicked-out from the game by the server.',
+                  24,
+                )
+                .setTint(0xa30000),
+              align: 'center',
+              space: {
+                left: 60,
+                right: 60,
+                top: 70,
+                bottom: 70,
+                icon: 0,
+              },
+            }),
+            {
+              proportion: 1,
+              align: 'center',
+            },
+          )
+          .layout();
+
+        this.scene.pause();
       }
     });
   }

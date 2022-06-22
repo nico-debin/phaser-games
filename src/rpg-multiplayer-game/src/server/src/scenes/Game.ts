@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Server, Socket } from 'socket.io';
+import { Server, Socket, Namespace } from 'socket.io';
 
 import { objectMap, omit } from '../utils';
 import settings from '../settings';
@@ -361,7 +361,7 @@ export default class Game extends Phaser.Scene {
     delete this.playersStates[playerId];
     delete this.movementInputQueue[playerId];
 
-    // A fighter as left the fight
+    // A fighter has left the fight
     this.handleWinCondition();
   }
 
@@ -630,6 +630,21 @@ const handleSocketConnect = (socket: Socket, gameScene: Game) => {
       orientation: player.orientation,
     };
     socket.broadcast.emit(NetworkEventKeys.PlayerFightAction, action);
+  });
+
+  // An admin is kicking-out a player
+  socket.on(NetworkEventKeys.PlayerKickout, (playerId: PlayerId) => {
+    // @ts-ignore
+    const playerSocket = (io.sockets as Namespace).sockets.get(playerId);
+
+    // Sent notice to player
+    playerSocket?.emit(NetworkEventKeys.PlayerKickout);
+
+    // Remove player
+    gameScene.removePlayer(playerId);
+
+    // Disconnect player
+    playerSocket?.disconnect();
   });
 };
 

@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { autorun } from 'mobx';
 import { useStore } from '../../store/useStore';
+import { adminEvents } from '../events/EventCenter'
 
 import Phaser from 'phaser';
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles';
@@ -29,6 +30,7 @@ import AvatarKeys from '../consts/AvatarKeys';
 import FontKeys from '../consts/FontKeys';
 import NetworkEventKeys from '../consts/NetworkEventKeys';
 import SceneKeys from '../consts/SceneKeys';
+import AdminEventKeys from '../consts/AdminEventKeys';
 
 // Animations
 import { createNpcAnims } from '../anims';
@@ -709,6 +711,18 @@ export default class Game extends Phaser.Scene {
         gameState.playerCanMove = false;
       }
     });
+
+    // Send kickout event to the server
+    adminEvents.on(AdminEventKeys.KICKOUT_PLAYER, (playerId: PlayerId) => {
+      this.socket.emit(NetworkEventKeys.PlayerKickout, playerId);
+    });
+
+    // The server is kicking out current player
+    this.socket.on(NetworkEventKeys.PlayerKickout, () => {
+      console.warn('Kicked out by the server.');
+      gameState.kickoutCurrentPlayer();
+      this.scene.pause();
+    })
   }
 
   createVotingZoneEmitter(): void {

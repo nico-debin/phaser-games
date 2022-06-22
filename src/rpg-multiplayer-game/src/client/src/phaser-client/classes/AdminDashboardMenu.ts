@@ -4,6 +4,7 @@ import BaseScene from '../scenes/BaseScene';
 import { autorun } from 'mobx';
 import { gameState } from '../states/GameState';
 import { PlayerSettings } from '../types/playerTypes';
+import { adminEvents } from '../events/EventCenter';
 
 import {
   GridTable,
@@ -14,13 +15,13 @@ import GridTableCore from 'phaser3-rex-plugins/plugins/gridtable';
 import AbstractMenu from './AbstractMenu';
 import GenericLpc from '../characters/GenericLpc';
 import TextureKeys from '../consts/TextureKeys';
+import AdminEventKeys from '../consts/AdminEventKeys';
 
 export default class AdminDashboardMenu extends AbstractMenu {
   private gridTable!: GridTable;
 
   constructor(scene: BaseScene) {
     super(scene);
-    console.log('creating AdminDashboardMenu');
     this.menuTitle.setText('Admin Dashboard').setFontSize(20);
     this.buildGridTable();
     this.gridTable.setVisible(false);
@@ -105,9 +106,10 @@ export default class AdminDashboardMenu extends AbstractMenu {
               .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
                 kickOutIcon.setTint(0xd9534f);
 
-                // TODO: send kickout event
-                console.log(
-                  `Kicking-out player with id ${playerSettings.id} (${playerSettings.username})`,
+                // Send event to be catched by game scene and notify the server
+                adminEvents.emit(
+                  AdminEventKeys.KICKOUT_PLAYER,
+                  playerSettings.id,
                 );
               });
 

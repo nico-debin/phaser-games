@@ -17,6 +17,9 @@ enum NetworkEventKeys {
   // A player left
   PlayersLeft = 'players-left',
 
+  // Admin removed a player
+  PlayerKickout = 'player-kickout',
+
   // A player has pressed a key
   PlayersInput = 'players-input',
 
