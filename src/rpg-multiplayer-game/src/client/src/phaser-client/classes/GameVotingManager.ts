@@ -1,4 +1,5 @@
-import { makeObservable, observable, action, computed } from 'mobx';
+import { makeObservable, observable, action, computed, autorun } from 'mobx';
+import { objectMap } from '../../utils';
 import { gameState } from '../states/GameState';
 import { PlayerVotingState } from '../states/PlayerVotingState';
 import { VotingZoneValue } from '../types/gameObjectsTypes';
@@ -13,8 +14,14 @@ interface GameVotingStats {
   pendingVotes: number;
 }
 
+export interface PlayerVote {
+  playerId: PlayerId;
+  vote: string;
+}
+
 export class GameVotingManager {
   readonly votesByPlayer: VotesByPlayers = {};
+  readonly lastVotingResult: PlayerVote[] = [];
 
   constructor() {
     makeObservable(this, {
@@ -73,6 +80,28 @@ export class GameVotingManager {
   get votingIsClosed(): boolean {
     return this.totalVotes >= 1 && this.pendingVotes === 0;
   }
+
+  saveLastVotingResult(): void {
+    if (!this.votingIsClosed) return;
+
+    // @ts-ignore
+    this.lastVotingResult = Object.values(
+      objectMap(
+        gameVotingManager.votesByPlayer,
+        (voteByPlayer: PlayerVotingState): PlayerVote => ({
+          vote: voteByPlayer.vote as string,
+          playerId: voteByPlayer.playerId,
+        }),
+      ),
+    );
+  }
 }
 
 export const gameVotingManager = new GameVotingManager();
+
+// Save last voting result each time the voting has closed
+autorun(() => {
+  if (gameVotingManager.votingIsClosed) {
+    gameVotingManager.saveLastVotingResult();
+  }
+});

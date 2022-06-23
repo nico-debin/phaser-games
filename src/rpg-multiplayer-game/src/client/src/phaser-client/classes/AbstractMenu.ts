@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
 import BaseScene from '../scenes/BaseScene';
 
+import { uiEvents } from '../events/EventCenter';
 import FontKeys from '../consts/FontKeys';
 import TextureKeys from '../consts/TextureKeys';
+import UIEventKeys from '../consts/UIEventKeys';
 
 type MenuOptions = {
   disableCloseButton?: boolean;
@@ -77,6 +79,9 @@ export default abstract class AbstractMenu {
 
   openMenu(): void {
     if (this.menuIsOpen) return;
+
+    uiEvents.emit(UIEventKeys.MENU_OPEN, this);
+
     this.menuIsOpen = true;
     this.menuBoard.setVisible(true);
     this.closeButton?.setVisible(true);
@@ -88,6 +93,9 @@ export default abstract class AbstractMenu {
 
   closeMenu(): void {
     if (!this.menuIsOpen) return;
+
+    uiEvents.emit(UIEventKeys.MENU_CLOSE, this);
+
     this.menuIsOpen = false;
     this.menuBoard.setVisible(false);
     this.closeButton?.setVisible(false);

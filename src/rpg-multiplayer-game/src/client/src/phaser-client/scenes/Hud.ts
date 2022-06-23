@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BaseScene from './BaseScene';
 
 import { autorun } from 'mobx';
-import { gameVotingManager } from '../classes/GameVotingManager';
+import { gameVotingManager, PlayerVote } from '../classes/GameVotingManager';
 import { gameState } from '../states/GameState';
 import TextureKeys from '../consts/TextureKeys';
 import SettingsMenu from '../classes/SettingsMenu';
@@ -10,6 +10,8 @@ import FontKeys from '../consts/FontKeys';
 import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 import SceneKeys from '../consts/SceneKeys';
 import Modal from '../classes/Modal';
+import { uiEvents } from '../events/EventCenter';
+import UIEventKeys from '../consts/UIEventKeys';
 import UIButton from '../classes/UIButton';
 import UIAdminButton from '../classes/UIAdminButton';
 import AdminDashboardMenu from '../classes/AdminDashboardMenu';
@@ -325,18 +327,46 @@ export default class Hud extends BaseScene {
           align: 'center',
         }),
         text: this.add.text(0, 0, ''),
-        content:
-          'pepito: 1\njuanito: 2\npepito: 1\njuanito: 2\npepito: 1\njuanito: 2\npepito: 1\njuanito: 2',
+        content: '',
         space: {
           header: 0,
           text: { left: 5, right: 5 },
         },
       })
-      .layout();
+      .layout()
+      .setVisible(false);
 
-    textArea.setChildVisible(
-      textArea.getElement('slider') as Phaser.GameObjects.GameObject,
-      textArea.isOverflow,
-    );
+    autorun(() => {
+      // Update textarea only during voting 
+      if (gameVotingManager.votingIsClosed) return;
+
+      // Generate new content string with results
+      const content = gameVotingManager.lastVotingResult
+        .map((playerVote: PlayerVote) => {
+          const username = gameState.getPlayer(playerVote.playerId)?.username;
+          return `${username}: ${playerVote.vote}`;
+        })
+        .join('\n');
+
+      // Update text
+      textArea.setText(content).setVisible(content !== '');
+
+      // Hide slider if not needed
+      textArea.setChildVisible(
+        textArea.getElement('slider') as Phaser.GameObjects.GameObject,
+        // @ts-ignore
+        textArea.isOverflow,
+      );
+    });
+
+    // Hide if a UI menu is open
+    uiEvents.on(UIEventKeys.MENU_OPEN, () => {
+      textArea.setVisible(false);
+    });
+
+    // Show if a UI menus has been closed and there's text to show
+    uiEvents.on(UIEventKeys.MENU_CLOSE, () => {
+      textArea.setVisible(textArea.text !== '');
+    });
   }
 }
