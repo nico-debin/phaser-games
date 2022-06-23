@@ -117,6 +117,9 @@ export default class Hud extends BaseScene {
         gameState.playerCanMove = true;
       });
 
+    // Last Voting Results
+    this.renderLastVotingResultsPanel();
+
     // Update labels
     autorun(() => {
       this.setPendingVotersLabel();
@@ -262,5 +265,78 @@ export default class Hud extends BaseScene {
   closeMenus() {
     this.settingsMenu.closeMenu();
     this.endOfVotingMenu.closeMenu();
+  }
+
+  private renderLastVotingResultsPanel(): void {
+    const COLOR_PRIMARY = 0x8a5142;
+    const COLOR_LIGHT = 0xd48d5d;
+    const COLOR_DARK = 0x4e2623;
+    const alpha = 0.7;
+
+    const textArea = this.rexUI.add
+      .textArea({
+        width: 300,
+        height: 150,
+        x: this.scale.width - 150 - 5,
+        y: this.scale.height - 75 - 5,
+        draggable: false,
+        background: this.rexUI.add.roundRectangle(
+          0,
+          0,
+          2,
+          2,
+          2,
+          COLOR_PRIMARY,
+          0.5,
+        ),
+        slider: {
+          track: this.rexUI.add.roundRectangle(
+            0,
+            0,
+            20,
+            10,
+            10,
+            COLOR_DARK,
+            alpha,
+          ),
+          thumb: this.rexUI.add.roundRectangle(
+            0,
+            0,
+            0,
+            0,
+            13,
+            COLOR_LIGHT,
+            alpha,
+          ),
+        },
+        header: this.rexUI.add.label({
+          height: 30,
+          orientation: 'horizontal',
+          background: this.rexUI.add.roundRectangle(
+            0,
+            0,
+            20,
+            20,
+            0,
+            COLOR_DARK,
+            alpha,
+          ),
+          text: this.add.text(0, 0, 'Last voting results'),
+          align: 'center',
+        }),
+        text: this.add.text(0, 0, ''),
+        content:
+          'pepito: 1\njuanito: 2\npepito: 1\njuanito: 2\npepito: 1\njuanito: 2\npepito: 1\njuanito: 2',
+        space: {
+          header: 0,
+          text: { left: 5, right: 5 },
+        },
+      })
+      .layout();
+
+    textArea.setChildVisible(
+      textArea.getElement('slider') as Phaser.GameObjects.GameObject,
+      textArea.isOverflow,
+    );
   }
 }
