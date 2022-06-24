@@ -25,6 +25,7 @@ class GameState {
   _restartGame = false;
 
   private _showPlayersUsernames = false;
+  private _hideLastVotingResults = false;
 
   private _darkMode = false;
 
@@ -187,6 +188,14 @@ class GameState {
 
   get showPlayersUsernames(): boolean {
     return this._showPlayersUsernames;
+  }
+
+  set hideLastVotingResults(newValue: boolean) {
+    this._hideLastVotingResults = newValue;
+  }
+
+  get hideLastVotingResults(): boolean {
+    return this._hideLastVotingResults;
   }
 
   /**

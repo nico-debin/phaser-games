@@ -5,12 +5,13 @@ import { autorun } from 'mobx';
 import { gameVotingManager, PlayerVote } from '../classes/GameVotingManager';
 import { gameState } from '../states/GameState';
 import TextureKeys from '../consts/TextureKeys';
-import SettingsMenu from '../classes/SettingsMenu';
 import FontKeys from '../consts/FontKeys';
-import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 import SceneKeys from '../consts/SceneKeys';
+import SettingsMenu from '../classes/SettingsMenu';
+import EndOfVotingMenu from '../classes/EndOfVotingMenu';
 import Modal from '../classes/Modal';
-import { uiEvents } from '../events/EventCenter';
+import { settingsEvents, uiEvents } from '../events/EventCenter';
+import SettingsEventKeys from '../consts/SettingsEventKeys';
 import UIEventKeys from '../consts/UIEventKeys';
 import UIButton from '../classes/UIButton';
 import UIAdminButton from '../classes/UIAdminButton';
@@ -336,6 +337,8 @@ export default class Hud extends BaseScene {
       .layout()
       .setVisible(false);
 
+    const shouldTextAreaBeVisible = () => textArea.text !== '' && !gameState.hideLastVotingResults;
+
     autorun(() => {
       // Update textarea only during voting 
       if (gameVotingManager.votingIsClosed) return;
@@ -349,7 +352,7 @@ export default class Hud extends BaseScene {
         .join('\n');
 
       // Update text
-      textArea.setText(content).setVisible(content !== '');
+      textArea.setText(content).setVisible(shouldTextAreaBeVisible());
 
       // Hide slider if not needed
       textArea.setChildVisible(
@@ -359,14 +362,18 @@ export default class Hud extends BaseScene {
       );
     });
 
+    settingsEvents.on(SettingsEventKeys.VALUE_UPDATE, () => {
+      textArea.setVisible(shouldTextAreaBeVisible() && this.settingsMenu.isClose);
+    });
+
     // Hide if a UI menu is open
     uiEvents.on(UIEventKeys.MENU_OPEN, () => {
       textArea.setVisible(false);
     });
-
+    
     // Show if a UI menus has been closed and there's text to show
     uiEvents.on(UIEventKeys.MENU_CLOSE, () => {
-      textArea.setVisible(textArea.text !== '');
+      textArea.setVisible(shouldTextAreaBeVisible());
     });
   }
 }

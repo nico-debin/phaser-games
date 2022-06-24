@@ -5,15 +5,16 @@ import { autorun } from 'mobx';
 import { gameState } from '../states/GameState';
 
 import AbstractMenu from './AbstractMenu';
-import CheckboxInput from './CheckboxInput';
 import FontKeys from '../consts/FontKeys';
+import SettingsCheckboxInput from './SettingsCheckboxInput';
 
 export default class SettingsMenu extends AbstractMenu {
-  voterCheckbox: CheckboxInput;
-  hidePlayersWhileVotingCheckbox: CheckboxInput;
-  showPlayersUsernamesCheckbox: CheckboxInput;
-  disableRainCheckbox: CheckboxInput;
-  disableBloodCheckbox: CheckboxInput;
+  voterCheckbox: SettingsCheckboxInput;
+  hidePlayersWhileVotingCheckbox: SettingsCheckboxInput;
+  showPlayersUsernamesCheckbox: SettingsCheckboxInput;
+  hideLastVotingResultsCheckbox: SettingsCheckboxInput;
+  disableRainCheckbox: SettingsCheckboxInput;
+  disableBloodCheckbox: SettingsCheckboxInput;
   sectionHeader1: Phaser.GameObjects.BitmapText;
   sectionHeader2: Phaser.GameObjects.BitmapText;
 
@@ -42,7 +43,7 @@ export default class SettingsMenu extends AbstractMenu {
       .setOrigin(0)
       .setVisible(false);
 
-    this.voterCheckbox = new CheckboxInput(
+    this.voterCheckbox = new SettingsCheckboxInput(
       scene,
       menuBoardScaledPositionX + 70,
       this.sectionHeader1.y + sectionHeight,
@@ -68,7 +69,7 @@ export default class SettingsMenu extends AbstractMenu {
           });
       });
 
-    this.hidePlayersWhileVotingCheckbox = new CheckboxInput(
+    this.hidePlayersWhileVotingCheckbox = new SettingsCheckboxInput(
       scene,
       this.voterCheckbox.x,
       this.voterCheckbox.y + lineHeight,
@@ -95,7 +96,7 @@ export default class SettingsMenu extends AbstractMenu {
           });
       });
 
-    this.showPlayersUsernamesCheckbox = new CheckboxInput(
+    this.showPlayersUsernamesCheckbox = new SettingsCheckboxInput(
       scene,
       this.hidePlayersWhileVotingCheckbox.x,
       this.hidePlayersWhileVotingCheckbox.y + lineHeight,
@@ -112,10 +113,27 @@ export default class SettingsMenu extends AbstractMenu {
         gameState.showPlayersUsernames = false;
       });
 
+    this.hideLastVotingResultsCheckbox = new SettingsCheckboxInput(
+      scene,
+      this.showPlayersUsernamesCheckbox.x,
+      this.showPlayersUsernamesCheckbox.y + lineHeight,
+      "Hide last voting results",
+      gameState.hideLastVotingResults,
+    )
+      .setScale(0.2)
+      .setOrigin(0.5, 0.5)
+      .setVisible(false)
+      .onCheck(() => {
+        gameState.hideLastVotingResults = true;
+      })
+      .onUncheck(() => {
+        gameState.hideLastVotingResults = false;
+      });
+
     this.sectionHeader2 = scene.add
       .bitmapText(
         this.sectionHeader1.x,
-        this.showPlayersUsernamesCheckbox.y + lineHeight,
+        this.hideLastVotingResultsCheckbox.y + lineHeight,
         FontKeys.GOTHIC,
         'VFX Settings',
         20,
@@ -124,7 +142,7 @@ export default class SettingsMenu extends AbstractMenu {
       .setOrigin(0)
       .setVisible(false);
 
-    this.disableRainCheckbox = new CheckboxInput(
+    this.disableRainCheckbox = new SettingsCheckboxInput(
       scene,
       this.showPlayersUsernamesCheckbox.x,
       this.sectionHeader2.y + sectionHeight,
@@ -141,7 +159,7 @@ export default class SettingsMenu extends AbstractMenu {
         gameState.enableRainFlag();
       });
 
-    this.disableBloodCheckbox = new CheckboxInput(
+    this.disableBloodCheckbox = new SettingsCheckboxInput(
       scene,
       this.disableRainCheckbox.x,
       this.disableRainCheckbox.y + lineHeight,
@@ -178,6 +196,7 @@ export default class SettingsMenu extends AbstractMenu {
     this.voterCheckbox.setVisible(true);
     this.hidePlayersWhileVotingCheckbox.setVisible(true);
     this.showPlayersUsernamesCheckbox.setVisible(true);
+    this.hideLastVotingResultsCheckbox.setVisible(true);
     this.sectionHeader2.setVisible(true);
     this.disableRainCheckbox.setVisible(true);
     this.disableBloodCheckbox.setVisible(true);
@@ -190,6 +209,7 @@ export default class SettingsMenu extends AbstractMenu {
     this.voterCheckbox.setVisible(false);
     this.hidePlayersWhileVotingCheckbox.setVisible(false);
     this.showPlayersUsernamesCheckbox.setVisible(false);
+    this.hideLastVotingResultsCheckbox.setVisible(false);
     this.sectionHeader2.setVisible(false);
     this.disableRainCheckbox.setVisible(false);
     this.disableBloodCheckbox.setVisible(false);

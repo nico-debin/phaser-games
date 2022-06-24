@@ -114,4 +114,12 @@ export default abstract class AbstractMenu {
     this.onCloseCallback = fn;
     return this;
   }
+
+  get isOpen(): boolean {
+    return this.menuIsOpen;
+  }
+
+  get isClose(): boolean {
+    return !this.isOpen;
+  }
 }

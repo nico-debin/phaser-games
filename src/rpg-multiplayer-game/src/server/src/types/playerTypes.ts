@@ -50,6 +50,7 @@ export interface PlayerSettings {
   username: string;
   avatarName: string;
   isVoter: boolean;
+  isAdmin: boolean;
   hidePlayersWhileVoting: boolean;
 }
 
