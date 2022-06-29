@@ -13,18 +13,21 @@ import {
 import GridTableCore from 'phaser3-rex-plugins/plugins/gridtable';
 
 import AbstractMenu from './AbstractMenu';
+import UIMenuButton from './UIMenuButton';
 import GenericLpc from '../characters/GenericLpc';
 import TextureKeys from '../consts/TextureKeys';
 import AdminEventKeys from '../consts/AdminEventKeys';
 
 export default class AdminDashboardMenu extends AbstractMenu {
   private gridTable!: GridTable;
+  private restartButton!: UIMenuButton;
 
   constructor(scene: BaseScene) {
     super(scene);
     this.menuTitle.setText('Admin Dashboard').setFontSize(20);
     this.buildGridTable();
     this.gridTable.setVisible(false);
+    this.createButtons();
 
     autorun(() => {
       this.updateGridTableItems();
@@ -152,12 +155,14 @@ export default class AdminDashboardMenu extends AbstractMenu {
     if (this.menuIsOpen) return;
     super.openMenu();
     this.gridTable.setVisible(true);
+    this.restartButton.setVisible(true);
   }
 
   closeMenu(): void {
     if (!this.menuIsOpen) return;
     super.closeMenu();
     this.gridTable.setVisible(false);
+    this.restartButton.setVisible(false);
   }
 
   private updateGridTableItems(): void {
@@ -169,5 +174,19 @@ export default class AdminDashboardMenu extends AbstractMenu {
       this.gridTable.getElement('slider') as Slider,
       items.length > 4,
     );
+  }
+
+  private createButtons(): void {
+    this.restartButton = new UIMenuButton(
+      this.scene,
+      this.menuBoard.x,
+      this.menuBoard.y + this.menuBoard.height / 2 - 100,
+      'RESTART GAME',
+      () => {
+        gameState.enableRestartGameFlag();
+        this.closeMenu();
+      },
+    ).setVisible(false);
+    this.scene.add.existing(this.restartButton);
   }
 }
