@@ -11,7 +11,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "lint:prettier": "prettier --check '**/*.{ts,js,tsx,json,md,yml}' --no-error-on-unmatched-pattern",
-    "lint:fix": "yarn lint:prettier --write && yarn --cwd ./src/client lint:prettier --write && yarn --cwd ./src/server lint:prettier --write"
+    "lint:fix": "yarn lint:prettier --write && yarn --cwd ./src/client lint:prettier --write && yarn --cwd ./src/server lint:prettier --write",
+    "deploy": "yarn deploy:heroku",
+    "deploy:heroku": "make -C ../../ grooming-wars-deploy"
   },
   "author": "nicodebin",
   "license": "MIT",
