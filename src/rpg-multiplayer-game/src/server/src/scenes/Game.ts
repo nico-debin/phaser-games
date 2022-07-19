@@ -56,7 +56,7 @@ export default class Game extends Phaser.Scene {
   movementInputQueue: PlayersInputQueue = {};
 
   // Tilemap
-  mapIsland!: Phaser.Tilemaps.Tilemap;
+  currentMap!: Phaser.Tilemaps.Tilemap;
 
   // Timed event for fight waiting room
   fightWaitingRoomTimerEvent: Phaser.Time.TimerEvent | undefined;
@@ -101,12 +101,12 @@ export default class Game extends Phaser.Scene {
   }
 
   private createTilesets() {
-    this.mapIsland = this.make.tilemap({
+    this.currentMap = this.make.tilemap({
       key: 'islands',
     });
 
     // Tilset are created in the server to handle collisions
-    const tilesetIslandBeach = this.mapIsland.addTilesetImage(
+    const tilesetIslandBeach = this.currentMap.addTilesetImage(
       'tf_beach_tileB',
       'tiles-islands-beach',
       32,
@@ -114,7 +114,7 @@ export default class Game extends Phaser.Scene {
       0,
       0,
     );
-    const tilesetIslandShoreline = this.mapIsland.addTilesetImage(
+    const tilesetIslandShoreline = this.currentMap.addTilesetImage(
       'tf_beach_tileA1',
       'tiles-islands-shoreline',
       32,
@@ -123,29 +123,29 @@ export default class Game extends Phaser.Scene {
       0,
     );
     const islandsLayerGroup = this.add.layer([
-      this.mapIsland.createLayer('Island 1/Main Island', [
+      this.currentMap.createLayer('Island 1/Main Island', [
         tilesetIslandBeach,
         tilesetIslandShoreline,
       ]),
-      this.mapIsland.createLayer('Island 1/Voting Islands', [
+      this.currentMap.createLayer('Island 1/Voting Islands', [
         tilesetIslandBeach,
         tilesetIslandShoreline,
       ]),
-      this.mapIsland.createLayer('Island 2/Island', [
+      this.currentMap.createLayer('Island 2/Island', [
         tilesetIslandBeach,
         tilesetIslandShoreline,
       ]),
     ]);
-    const pathsLayer = this.mapIsland.createLayer('Island 1/Paths', [
+    const pathsLayer = this.currentMap.createLayer('Island 1/Paths', [
       tilesetIslandBeach,
     ]);
-    const vegetationBottomLayer = this.mapIsland.createLayer(
+    const vegetationBottomLayer = this.currentMap.createLayer(
       'Island 1/Vegetation bottom',
       tilesetIslandBeach,
     );
 
     // Voting Zones
-    const votingZonesLayer = this.mapIsland.getObjectLayer('Voting Zones');
+    const votingZonesLayer = this.currentMap.getObjectLayer('Voting Zones');
     votingZonesLayer.objects.forEach((tiledObject) => {
       const { x, y, height, width, properties } = tiledObject;
       const votingValue = properties[0]['value'] as string;
@@ -444,12 +444,12 @@ export default class Game extends Phaser.Scene {
   }
 
   getPlayerRandomInitialPosition(): Position {
-    const playersLayer = this.mapIsland.getObjectLayer('Players');
+    const playersLayer = this.currentMap.getObjectLayer('Players');
     return this.getPositionFromObjectLayer(playersLayer);
   }
 
   getFighterRandomInitialPosition(): Position {
-    const playersLayer = this.mapIsland.getObjectLayer('Island 2/Players');
+    const playersLayer = this.currentMap.getObjectLayer('Island 2/Players');
     return this.getPositionFromObjectLayer(playersLayer);
   }
 

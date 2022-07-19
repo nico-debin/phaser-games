@@ -5,8 +5,8 @@ import FontKeys from '../consts/FontKeys';
 import NpcKeys from '../consts/NpcKeys';
 import SceneKeys from '../consts/SceneKeys';
 import TextureKeys from '../consts/TextureKeys';
-import TilemapKeys from '../consts/TilemapKeys';
 import { gameState } from '../states/GameState';
+import { MapConfig, mapsConfig, TilesetConfig } from '../mapsConfig';
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -15,12 +15,15 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     // Tilemaps
-    this.load.image(TilemapKeys.BeachTiles, 'tiles/tf_beach_tileB.png');
-    this.load.image(TilemapKeys.BeachShoreTiles, 'tiles/tf_beach_tileA1.png');
-    this.load.tilemapTiledJSON(
-      TilemapKeys.IslandsTilemap,
-      'tilemaps/islands-01.json',
-    );
+    mapsConfig.forEach((mapConfig: MapConfig) => {
+      mapConfig.tilesets.forEach((tilesetConfig: TilesetConfig) => {
+        this.load.image(tilesetConfig.key, tilesetConfig.file);
+      })
+      this.load.tilemapTiledJSON(
+        mapConfig.name,
+        mapConfig.tilemapFile,
+      );
+    });
 
     // UI
     this.load.atlas(

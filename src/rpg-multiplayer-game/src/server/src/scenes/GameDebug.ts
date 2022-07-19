@@ -67,23 +67,23 @@ export default class GameDebug extends Phaser.Scene {
     this.gameScene.cameras.main.setBounds(
       0,
       0,
-      this.gameScene.mapIsland.widthInPixels,
-      this.gameScene.mapIsland.heightInPixels,
+      this.gameScene.currentMap.widthInPixels,
+      this.gameScene.currentMap.heightInPixels,
     );
 
     // Set first player as selected player
     this.selectPlayerByIndex(0);
 
     const tilesetIslandBeach =
-      this.gameScene.mapIsland.getTileset('tf_beach_tileB');
+      this.gameScene.currentMap.getTileset('tf_beach_tileB');
     const tilesetIslandShoreline =
-      this.gameScene.mapIsland.getTileset('tf_beach_tileA1');
+      this.gameScene.currentMap.getTileset('tf_beach_tileA1');
 
     // Load Ocean and Vegetation Top layers
-    this.gameScene.mapIsland
+    this.gameScene.currentMap
       .createLayer('Ocean', tilesetIslandShoreline)
       .setDepth(-10);
-    this.gameScene.mapIsland
+    this.gameScene.currentMap
       .createLayer('Island 1/Vegetation top', tilesetIslandBeach)
       .setDepth(10);
 

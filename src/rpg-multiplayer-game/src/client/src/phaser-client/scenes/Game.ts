@@ -25,12 +25,19 @@ import { VotingZone, VotingZoneValue } from '../types/gameObjectsTypes';
 import { gameVotingManager } from '../classes/GameVotingManager';
 import { gameState } from '../states/GameState';
 
+// Maps config
+import { MapConfig, mapsConfig, TilemapLayerConfig, TilesetConfig } from '../mapsConfig';
+
 // Keys
+import AdminEventKeys from '../consts/AdminEventKeys';
 import AvatarKeys from '../consts/AvatarKeys';
+import DepthKeys from '../consts/DepthKeys';
 import FontKeys from '../consts/FontKeys';
 import NetworkEventKeys from '../consts/NetworkEventKeys';
 import SceneKeys from '../consts/SceneKeys';
-import AdminEventKeys from '../consts/AdminEventKeys';
+import TextureKeys from '../consts/TextureKeys';
+import TilemapKeys from '../consts/TilemapKeys';
+import TilesetKeys from '../consts/TilesetKeys';
 
 // Animations
 import { createNpcAnims } from '../anims';
@@ -44,9 +51,6 @@ import Cobra from '../characters/npc/Cobra';
 import Hud from './Hud';
 import { ThrowableWeaponArrow } from '../classes/ThrowableWeaponArrow';
 import AbstractThrowableWeapon from '../classes/AbstractThrowableWeapon';
-import TextureKeys from '../consts/TextureKeys';
-import TilemapKeys from '../consts/TilemapKeys';
-import DepthKeys from '../consts/DepthKeys';
 
 export default class Game extends Phaser.Scene {
   // All players in the game
@@ -56,7 +60,7 @@ export default class Game extends Phaser.Scene {
   currentPlayer!: Player;
 
   // Game tilemap
-  private mapIsland!: Phaser.Tilemaps.Tilemap;
+  private currentMap!: Phaser.Tilemaps.Tilemap;
 
   // Available arrows for current player
   private currentPlayerThrowableWeapons!: Phaser.Physics.Arcade.Group;
@@ -179,61 +183,46 @@ export default class Game extends Phaser.Scene {
     });
 
     // Create tilemap and layers
-    this.mapIsland = this.add.tilemap('islands');
+    const currentMapConfig = mapsConfig.find((mapConfig: MapConfig) => mapConfig.name === TilemapKeys.IslandsTilemap);
+    if (!currentMapConfig) {
+      console.error(`Couldn't load map ${TilemapKeys.IslandsTilemap}`);
+      return;
+    }
 
-    const tilesetIslandBeach = this.mapIsland.addTilesetImage(
-      'tf_beach_tileB',
-      TilemapKeys.BeachTiles,
-      32,
-      32,
-      0,
-      0,
-    );
-    const tilesetIslandShoreline = this.mapIsland.addTilesetImage(
-      'tf_beach_tileA1',
-      TilemapKeys.BeachShoreTiles,
-      32,
-      32,
-      0,
-      0,
-    );
+    // Create Tilemap
+    this.currentMap = this.add.tilemap(TilemapKeys.IslandsTilemap);
 
-    const ocean = this.mapIsland.createLayer('Ocean', [tilesetIslandShoreline]);
-    // Group all tilset layers
-    const islandsTilesLayerGroup = this.add.layer([
-      this.mapIsland.createLayer('Island 1/Main Island', [
-        tilesetIslandBeach,
-        tilesetIslandShoreline,
-      ]),
-      this.mapIsland.createLayer('Island 1/Voting Islands', [
-        tilesetIslandBeach,
-        tilesetIslandShoreline,
-      ]),
-      this.mapIsland.createLayer('Island 2/Island', [
-        tilesetIslandBeach,
-        tilesetIslandShoreline,
-      ]),
-      this.mapIsland.createLayer('Island 2/Paths', [tilesetIslandBeach]),
-      this.mapIsland.createLayer('Island 1/Paths', [tilesetIslandBeach]),
-      this.mapIsland.createLayer(
-        'Island 1/Vegetation bottom',
-        tilesetIslandBeach,
-      ),
-      this.mapIsland.createLayer(
-        'Island 2/Vegetation bottom',
-        tilesetIslandBeach,
-      ),
-    ]);
-    const vegetationTop1 = this.mapIsland
-      .createLayer('Island 1/Vegetation top', tilesetIslandBeach)
-      .setDepth(DepthKeys.VEGETATION_TOP);
-    const vegetationTop2 = this.mapIsland
-      .createLayer('Island 2/Vegetation top', tilesetIslandBeach)
-      .setDepth(DepthKeys.VEGETATION_TOP);
+    // Add Tileset images
+    currentMapConfig.tilesets.forEach((tilesetConfig: TilesetConfig) => {
+      this.currentMap.addTilesetImage(
+        tilesetConfig.name,
+        tilesetConfig.key,
+        tilesetConfig.tileWidth,
+        tilesetConfig.tileHeight,
+        tilesetConfig.tileMargin,
+        tilesetConfig.tileSpacing,
+      );
+    })
+    
+    // Add Tilemap Layers
+    const createLayerFromConfig = (tilemapLayerConfig: TilemapLayerConfig) => {
+      if (tilemapLayerConfig.tilesetNames) {
+        this.currentMap.createLayer(
+          tilemapLayerConfig.id,
+          tilemapLayerConfig.tilesetNames
+        ).setDepth(tilemapLayerConfig.depth || 0);
+
+      } else if (tilemapLayerConfig.group) {
+        tilemapLayerConfig.group.forEach((tilemapLayerConfigGroupChild: TilemapLayerConfig) => createLayerFromConfig(tilemapLayerConfigGroupChild));
+      }
+    };
+    currentMapConfig.tilemapLayers.forEach(createLayerFromConfig);
 
     // Animated Tiles (like sea water in the shore)
-    // @ts-ignore
-    this.sys.animatedTiles.init(this.mapIsland);
+    if (currentMapConfig.isAnimated) {
+      // @ts-ignore
+      this.sys.animatedTiles.init(this.currentMap);
+    }
 
     this.steps.push(
       this.add
@@ -245,18 +234,13 @@ export default class Game extends Phaser.Scene {
     // make a RenderTexture that is the size of the screen
     this.renderTexture = this.make.renderTexture(
       {
-        width: this.mapIsland.widthInPixels,
-        height: this.mapIsland.heightInPixels,
+        width: this.currentMap.widthInPixels,
+        height: this.currentMap.heightInPixels,
       },
       true,
     );
     this.renderTexture
-      .draw([
-        ocean,
-        ...islandsTilesLayerGroup.getAll(),
-        vegetationTop1,
-        vegetationTop2,
-      ])
+      .draw(this.currentMap.layers)
       .setAlpha(0);
     this.visionMaskContainer = this.make.container({}, false);
 
@@ -264,12 +248,12 @@ export default class Game extends Phaser.Scene {
     this.bloodSplatterRenderTexture = this.add.renderTexture(
       0,
       0,
-      this.mapIsland.widthInPixels,
-      this.mapIsland.heightInPixels,
+      this.currentMap.widthInPixels,
+      this.currentMap.heightInPixels,
     );
 
     // Illuminate palmtrees and campfires
-    const lightsLayer = this.mapIsland.getObjectLayer('Lights');
+    const lightsLayer = this.currentMap.getObjectLayer('Lights');
     lightsLayer.objects.forEach((tiledObject) => {
       const { x, y } = tiledObject;
       const campfireVision = this.make.image({
@@ -283,7 +267,7 @@ export default class Game extends Phaser.Scene {
     });
 
     // Voting Zones
-    const votingZonesLayer = this.mapIsland.getObjectLayer('Voting Zones');
+    const votingZonesLayer = this.currentMap.getObjectLayer('Voting Zones');
     votingZonesLayer.objects.forEach((tiledObject) => {
       const { x, y, height, width, properties } = tiledObject;
       const votingValue = properties[0]['value'] as string;
@@ -309,7 +293,7 @@ export default class Game extends Phaser.Scene {
     });
 
     // Voting Frontier: border that tells if a player is in voting islands or not
-    const thresholdsLayer = this.mapIsland.getObjectLayer('Thresholds');
+    const thresholdsLayer = this.currentMap.getObjectLayer('Thresholds');
     const votingFrontier = thresholdsLayer.objects.find(
       (tiledObject) => tiledObject.name === 'Voting Frontier',
     )!;
@@ -318,7 +302,7 @@ export default class Game extends Phaser.Scene {
     }
 
     // Cobra NPC
-    const playersLayer = this.mapIsland.getObjectLayer('Players');
+    const playersLayer = this.currentMap.getObjectLayer('Players');
     const randomPlayerIndex = Phaser.Math.Between(
       0,
       playersLayer.objects.length - 1,
@@ -349,13 +333,12 @@ export default class Game extends Phaser.Scene {
     );
 
     // Enable collision by property on all layers
-    islandsTilesLayerGroup.getChildren().forEach((islandTileLayer) => {
-      const tilemapLayer = islandTileLayer as Phaser.Tilemaps.TilemapLayer;
-      tilemapLayer.setCollisionByProperty({ collides: true });
-    });
+    this.currentMap.layers.forEach((layerData: Phaser.Tilemaps.LayerData) => 
+      layerData.tilemapLayer.setCollisionByProperty({ collides: true })
+    );
 
     // Enable collission between Cobra and map tiles
-    this.physics.add.collider(cobra, [...islandsTilesLayerGroup.getChildren()]);
+    this.physics.add.collider(cobra, [...this.currentMap.layers.map((layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer)]);
 
     // Enable collider between arrows and players
     this.physics.add.overlap(
@@ -370,8 +353,8 @@ export default class Game extends Phaser.Scene {
     this.cameras.main.setBounds(
       0,
       0,
-      this.mapIsland.widthInPixels,
-      this.mapIsland.heightInPixels,
+      this.currentMap.widthInPixels,
+      this.currentMap.heightInPixels,
     );
 
     // Create cursor keys and initial movement input
@@ -984,21 +967,21 @@ export default class Game extends Phaser.Scene {
   private handleFootprintTrail(player: Player): void {
     if (player.id === this.currentPlayerId && this.steps.length > 0) {
       const stepY = player.y + player.displayHeight * 0.45;
-      const stepTilePosition = this.mapIsland.worldToTileXY(player.x, stepY);
+      const stepTilePosition = this.currentMap.worldToTileXY(player.x, stepY);
       const sandTile =
-        this.mapIsland.getTileAt(
+        this.currentMap.getTileAt(
           stepTilePosition.x,
           stepTilePosition.y,
           false,
           'Island 1/Main Island',
         ) ||
-        this.mapIsland.getTileAt(
+        this.currentMap.getTileAt(
           stepTilePosition.x,
           stepTilePosition.y,
           false,
           'Island 1/Voting Islands',
         );
-      const vegetationTile = this.mapIsland.getTileAt(
+      const vegetationTile = this.currentMap.getTileAt(
         stepTilePosition.x,
         stepTilePosition.y,
         false,
