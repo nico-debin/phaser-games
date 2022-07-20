@@ -16,13 +16,13 @@ export default class Preloader extends Phaser.Scene {
   preload() {
     // Tilemaps
     mapsConfig.forEach((mapConfig: MapConfig) => {
+      // Load tileset images
       mapConfig.tilesets.forEach((tilesetConfig: TilesetConfig) => {
         this.load.image(tilesetConfig.key, tilesetConfig.file);
-      })
-      this.load.tilemapTiledJSON(
-        mapConfig.name,
-        mapConfig.tilemapFile,
-      );
+      });
+
+      // Load tilemap json file
+      this.load.tilemapTiledJSON(mapConfig.name, mapConfig.tilemapFile);
     });
 
     // UI

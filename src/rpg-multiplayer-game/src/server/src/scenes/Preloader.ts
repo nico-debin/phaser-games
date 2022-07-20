@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 import SceneKeys from '../consts/SceneKeys';
-import TextureKeys from '../consts/TextureKeys';
+import { MapConfig, mapsConfig, TilesetConfig } from '../mapsConfig';
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -9,9 +9,16 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('tiles-islands-beach', 'tiles/tf_beach_tileB.png');
-    this.load.image('tiles-islands-shoreline', 'tiles/tf_beach_tileA1.png');
-    this.load.tilemapTiledJSON('islands', 'tilemaps/islands-01.json');
+    // Tilemaps
+    mapsConfig.forEach((mapConfig: MapConfig) => {
+      // Load tileset images
+      mapConfig.tilesets.forEach((tilesetConfig: TilesetConfig) => {
+        this.load.image(tilesetConfig.key, tilesetConfig.file);
+      });
+
+      // Load tilemap json file
+      this.load.tilemapTiledJSON(mapConfig.name, mapConfig.tilemapFile);
+    });
   }
 
   create() {

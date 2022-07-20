@@ -36,6 +36,8 @@ import {
   Position,
   StartFight,
 } from '../types/playerTypes';
+import { MapConfig, mapsConfig, TilemapLayerConfig, TilesetConfig } from '~/mapsConfig';
+import TilemapKeys from '~/consts/TilemapKeys';
 
 declare global {
   interface Window {
@@ -101,48 +103,42 @@ export default class Game extends Phaser.Scene {
   }
 
   private createTilesets() {
+    const currentMapConfig = mapsConfig.find((mapConfig: MapConfig) => mapConfig.name === TilemapKeys.IslandsTilemap);
+    if (!currentMapConfig) {
+      console.error(`Couldn't load map ${TilemapKeys.IslandsTilemap}`);
+      return;
+    }
+
     this.currentMap = this.make.tilemap({
-      key: 'islands',
+      key: TilemapKeys.IslandsTilemap,
     });
 
+    // Add Tileset images
     // Tilset are created in the server to handle collisions
-    const tilesetIslandBeach = this.currentMap.addTilesetImage(
-      'tf_beach_tileB',
-      'tiles-islands-beach',
-      32,
-      32,
-      0,
-      0,
-    );
-    const tilesetIslandShoreline = this.currentMap.addTilesetImage(
-      'tf_beach_tileA1',
-      'tiles-islands-shoreline',
-      32,
-      32,
-      0,
-      0,
-    );
-    const islandsLayerGroup = this.add.layer([
-      this.currentMap.createLayer('Island 1/Main Island', [
-        tilesetIslandBeach,
-        tilesetIslandShoreline,
-      ]),
-      this.currentMap.createLayer('Island 1/Voting Islands', [
-        tilesetIslandBeach,
-        tilesetIslandShoreline,
-      ]),
-      this.currentMap.createLayer('Island 2/Island', [
-        tilesetIslandBeach,
-        tilesetIslandShoreline,
-      ]),
-    ]);
-    const pathsLayer = this.currentMap.createLayer('Island 1/Paths', [
-      tilesetIslandBeach,
-    ]);
-    const vegetationBottomLayer = this.currentMap.createLayer(
-      'Island 1/Vegetation bottom',
-      tilesetIslandBeach,
-    );
+    currentMapConfig.tilesets.forEach((tilesetConfig: TilesetConfig) => {
+      this.currentMap.addTilesetImage(
+        tilesetConfig.name,
+        tilesetConfig.key,
+        tilesetConfig.tileWidth,
+        tilesetConfig.tileHeight,
+        tilesetConfig.tileMargin,
+        tilesetConfig.tileSpacing,
+      );
+    });
+
+    // Add Tilemap Layers
+    const createLayerFromConfig = (tilemapLayerConfig: TilemapLayerConfig) => {
+      if (tilemapLayerConfig.tilesetNames) {
+        this.currentMap.createLayer(
+          tilemapLayerConfig.id,
+          tilemapLayerConfig.tilesetNames
+        );
+
+      } else if (tilemapLayerConfig.group) {
+        tilemapLayerConfig.group.forEach((tilemapLayerConfigGroupChild: TilemapLayerConfig) => createLayerFromConfig(tilemapLayerConfigGroupChild));
+      }
+    };
+    currentMapConfig.tilemapLayers.forEach(createLayerFromConfig);
 
     // Voting Zones
     const votingZonesLayer = this.currentMap.getObjectLayer('Voting Zones');
@@ -168,19 +164,14 @@ export default class Game extends Phaser.Scene {
     });
 
     // Tileset colliders
-    islandsLayerGroup.getChildren().map((islandLayer) => {
-      const tilemapLayer = islandLayer as Phaser.Tilemaps.TilemapLayer;
-      tilemapLayer.setCollisionByProperty({ collides: true });
-    });
-    pathsLayer.setCollisionByProperty({ collides: true });
-    vegetationBottomLayer.setCollisionByProperty({ collides: true });
+    // Enable collision by property on all layers
+    this.currentMap.layers.forEach((layerData: Phaser.Tilemaps.LayerData) => 
+      layerData.tilemapLayer.setCollisionByProperty({ collides: true })
+    );
 
     // Collide players with tiles
-    this.physics.add.collider(this.players, [
-      ...islandsLayerGroup.getChildren(),
-      pathsLayer,
-      vegetationBottomLayer,
-    ]);
+    // Enable collission between Cobra and map tiles
+    this.physics.add.collider(this.players, [...this.currentMap.layers.map((layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer)]);
   }
 
   private createWeapons() {
