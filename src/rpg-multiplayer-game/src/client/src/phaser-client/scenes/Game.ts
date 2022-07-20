@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { autorun } from 'mobx';
 import { useStore } from '../../store/useStore';
-import { adminEvents } from '../events/EventCenter'
+import { adminEvents } from '../events/EventCenter';
 
 import Phaser from 'phaser';
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles';
@@ -26,7 +26,12 @@ import { gameVotingManager } from '../classes/GameVotingManager';
 import { gameState } from '../states/GameState';
 
 // Maps config
-import { MapConfig, mapsConfig, TilemapLayerConfig, TilesetConfig } from '../mapsConfig';
+import {
+  MapConfig,
+  mapsConfig,
+  TilemapLayerConfig,
+  TilesetConfig,
+} from '../mapsConfig';
 
 // Keys
 import AdminEventKeys from '../consts/AdminEventKeys';
@@ -183,7 +188,9 @@ export default class Game extends Phaser.Scene {
     });
 
     // Create tilemap and layers
-    const currentMapConfig = mapsConfig.find((mapConfig: MapConfig) => mapConfig.name === TilemapKeys.IslandsTilemap);
+    const currentMapConfig = mapsConfig.find(
+      (mapConfig: MapConfig) => mapConfig.name === TilemapKeys.IslandsTilemap,
+    );
     if (!currentMapConfig) {
       console.error(`Couldn't load map ${TilemapKeys.IslandsTilemap}`);
       return;
@@ -202,18 +209,19 @@ export default class Game extends Phaser.Scene {
         tilesetConfig.tileMargin,
         tilesetConfig.tileSpacing,
       );
-    })
-    
+    });
+
     // Add Tilemap Layers
     const createLayerFromConfig = (tilemapLayerConfig: TilemapLayerConfig) => {
       if (tilemapLayerConfig.tilesetNames) {
-        this.currentMap.createLayer(
-          tilemapLayerConfig.id,
-          tilemapLayerConfig.tilesetNames
-        ).setDepth(tilemapLayerConfig.depth || 0);
-
+        this.currentMap
+          .createLayer(tilemapLayerConfig.id, tilemapLayerConfig.tilesetNames)
+          .setDepth(tilemapLayerConfig.depth || 0);
       } else if (tilemapLayerConfig.group) {
-        tilemapLayerConfig.group.forEach((tilemapLayerConfigGroupChild: TilemapLayerConfig) => createLayerFromConfig(tilemapLayerConfigGroupChild));
+        tilemapLayerConfig.group.forEach(
+          (tilemapLayerConfigGroupChild: TilemapLayerConfig) =>
+            createLayerFromConfig(tilemapLayerConfigGroupChild),
+        );
       }
     };
     currentMapConfig.tilemapLayers.forEach(createLayerFromConfig);
@@ -240,7 +248,11 @@ export default class Game extends Phaser.Scene {
       true,
     );
     this.renderTexture
-      .draw(this.currentMap.layers)
+      .draw([
+        ...this.currentMap.layers.map(
+          (layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer,
+        ),
+      ])
       .setAlpha(0);
     this.visionMaskContainer = this.make.container({}, false);
 
@@ -333,12 +345,16 @@ export default class Game extends Phaser.Scene {
     );
 
     // Enable collision by property on all layers
-    this.currentMap.layers.forEach((layerData: Phaser.Tilemaps.LayerData) => 
-      layerData.tilemapLayer.setCollisionByProperty({ collides: true })
+    this.currentMap.layers.forEach((layerData: Phaser.Tilemaps.LayerData) =>
+      layerData.tilemapLayer.setCollisionByProperty({ collides: true }),
     );
 
     // Enable collission between Cobra and map tiles
-    this.physics.add.collider(cobra, [...this.currentMap.layers.map((layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer)]);
+    this.physics.add.collider(cobra, [
+      ...this.currentMap.layers.map(
+        (layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer,
+      ),
+    ]);
 
     // Enable collider between arrows and players
     this.physics.add.overlap(
@@ -436,11 +452,13 @@ export default class Game extends Phaser.Scene {
       });
 
       // remove clients that aren't in the server
-      (this.players.getChildren() as Player[]).forEach((clientPlayer: Player) => {
-        if (!playersIds.includes(clientPlayer.id)) {
-          this.removePlayer(clientPlayer.id);
-        }
-      })
+      (this.players.getChildren() as Player[]).forEach(
+        (clientPlayer: Player) => {
+          if (!playersIds.includes(clientPlayer.id)) {
+            this.removePlayer(clientPlayer.id);
+          }
+        },
+      );
     });
 
     // Send an event when the current player changes it's voting setting (or any other setting)
@@ -705,7 +723,7 @@ export default class Game extends Phaser.Scene {
       console.warn('Kicked out by the server.');
       gameState.kickoutCurrentPlayer();
       this.scene.pause();
-    })
+    });
   }
 
   createVotingZoneEmitter(): void {
