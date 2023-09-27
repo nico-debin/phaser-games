@@ -4,11 +4,9 @@ enum AvatarKeys {
   CATHERINE_CHOI = 'catherine-choi',
   JOEL_BOWEN = 'joel-bowen',
   JOE_WALLER = 'joe-waller',
-  JOHN_GEIGER = 'john-geiger',
   MICHAEL_KANTOR = 'michael-kantor',
-  NICK_TAYLOR = 'nick-taylor',
   NICOLAS_DEBIN = 'nicolas-debin',
-  RYAN_MCKAY = 'ryan-mckay',
+  SAMUELE_ARCOLACE = 'samuele-arcolace',
 
   // Default Characters
   BOY_01 = 'boy-01',
@@ -33,6 +31,9 @@ enum AvatarKeys {
   GIRL_06 = 'girl-06',
   GIRL_07 = 'girl-07',
   LAKSHMI = 'lakshmi',
+  NICK_TAYLOR = 'nick',
+  JOHN_GEIGER = 'john',
+  RYAN_MCKAY = 'ryan',
 }
 
 export default AvatarKeys;
