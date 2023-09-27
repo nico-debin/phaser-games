@@ -56,9 +56,7 @@ export const mapsConfig: MapConfig[] = [
     tilemapLayers: [
       {
         id: 'Ocean',
-        tilesetNames: [
-          TilesetNames.BeachShoreTiles,
-        ]
+        tilesetNames: [TilesetNames.BeachShoreTiles],
       },
       {
         id: 'Group 1',
@@ -68,62 +66,50 @@ export const mapsConfig: MapConfig[] = [
             tilesetNames: [
               TilesetNames.BeachTiles,
               TilesetNames.BeachShoreTiles,
-            ]
+            ],
           },
           {
             id: 'Island 1/Voting Islands',
             tilesetNames: [
               TilesetNames.BeachTiles,
               TilesetNames.BeachShoreTiles,
-            ]
+            ],
           },
           {
             id: 'Island 2/Island',
             tilesetNames: [
               TilesetNames.BeachTiles,
               TilesetNames.BeachShoreTiles,
-            ]
+            ],
           },
           {
             id: 'Island 2/Paths',
-            tilesetNames: [
-              TilesetNames.BeachTiles,
-            ]
+            tilesetNames: [TilesetNames.BeachTiles],
           },
           {
             id: 'Island 1/Paths',
-            tilesetNames: [
-              TilesetNames.BeachTiles,
-            ]
+            tilesetNames: [TilesetNames.BeachTiles],
           },
           {
             id: 'Island 1/Vegetation bottom',
-            tilesetNames: [
-              TilesetNames.BeachTiles,
-            ]
+            tilesetNames: [TilesetNames.BeachTiles],
           },
           {
             id: 'Island 2/Vegetation bottom',
-            tilesetNames: [
-              TilesetNames.BeachTiles,
-            ]
-          }
-        ]
+            tilesetNames: [TilesetNames.BeachTiles],
+          },
+        ],
       },
       {
         id: 'Island 1/Vegetation top',
-        tilesetNames: [
-          TilesetNames.BeachTiles,
-        ],
+        tilesetNames: [TilesetNames.BeachTiles],
         depth: DepthKeys.VEGETATION_TOP,
       },
       {
         id: 'Island 2/Vegetation top',
-        tilesetNames: [
-          TilesetNames.BeachTiles,
-        ],
+        tilesetNames: [TilesetNames.BeachTiles],
         depth: DepthKeys.VEGETATION_TOP,
-      }
+      },
     ],
   },
 ];

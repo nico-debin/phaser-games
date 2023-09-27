@@ -98,8 +98,14 @@ export default class SettingsMenu extends AbstractMenu {
 
     this.showPlayersUsernamesCheckbox = new SettingsCheckboxInput(
       scene,
-      (gameState.isAdminMode() ? this.hidePlayersWhileVotingCheckbox : this.voterCheckbox).x,
-      (gameState.isAdminMode() ? this.hidePlayersWhileVotingCheckbox : this.voterCheckbox).y + lineHeight,
+      (gameState.isAdminMode()
+        ? this.hidePlayersWhileVotingCheckbox
+        : this.voterCheckbox
+      ).x,
+      (gameState.isAdminMode()
+        ? this.hidePlayersWhileVotingCheckbox
+        : this.voterCheckbox
+      ).y + lineHeight,
       "Show players' usernames",
       gameState.showPlayersUsernames,
     )
@@ -117,7 +123,7 @@ export default class SettingsMenu extends AbstractMenu {
       scene,
       this.showPlayersUsernamesCheckbox.x,
       this.showPlayersUsernamesCheckbox.y + lineHeight,
-      "Hide last voting results",
+      'Hide last voting results',
       gameState.hideLastVotingResults,
     )
       .setScale(0.2)

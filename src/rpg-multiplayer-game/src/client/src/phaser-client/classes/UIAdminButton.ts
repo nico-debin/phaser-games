@@ -41,8 +41,8 @@ export default class UIAdminButton extends UIButton {
 
   /**
    * Enables visibility only if game is running in admin mode (force hide if not in admin mode)
-   * @param visible 
-   * @returns 
+   * @param visible
+   * @returns
    */
   public setVisible(visible: boolean): this {
     if (gameState.isAdminMode()) {

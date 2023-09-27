@@ -23,8 +23,7 @@ export default class UIMenuButton extends Phaser.GameObjects.Container {
     this.setInteraction();
   }
 
-  protected createButton(
-  ): void {
+  protected createButton(): void {
     // Create button
     this.button = this.scene.make
       .image({

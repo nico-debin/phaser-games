@@ -337,10 +337,11 @@ export default class Hud extends BaseScene {
       .layout()
       .setVisible(false);
 
-    const shouldTextAreaBeVisible = () => textArea.text !== '' && !gameState.hideLastVotingResults;
+    const shouldTextAreaBeVisible = () =>
+      textArea.text !== '' && !gameState.hideLastVotingResults;
 
     autorun(() => {
-      // Update textarea only during voting 
+      // Update textarea only during voting
       if (gameVotingManager.votingIsClosed) return;
 
       // Generate new content string with results
@@ -363,14 +364,16 @@ export default class Hud extends BaseScene {
     });
 
     settingsEvents.on(SettingsEventKeys.VALUE_UPDATE, () => {
-      textArea.setVisible(shouldTextAreaBeVisible() && this.settingsMenu.isClose);
+      textArea.setVisible(
+        shouldTextAreaBeVisible() && this.settingsMenu.isClose,
+      );
     });
 
     // Hide if a UI menu is open
     uiEvents.on(UIEventKeys.MENU_OPEN, () => {
       textArea.setVisible(false);
     });
-    
+
     // Show if a UI menus has been closed and there's text to show
     uiEvents.on(UIEventKeys.MENU_CLOSE, () => {
       textArea.setVisible(shouldTextAreaBeVisible());

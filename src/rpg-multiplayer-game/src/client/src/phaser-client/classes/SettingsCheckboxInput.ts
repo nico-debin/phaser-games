@@ -1,6 +1,6 @@
-import CheckboxInput from "./CheckboxInput";
-import SettingsEventKeys from "../consts/SettingsEventKeys";
-import { settingsEvents } from "../events/EventCenter";
+import CheckboxInput from './CheckboxInput';
+import SettingsEventKeys from '../consts/SettingsEventKeys';
+import { settingsEvents } from '../events/EventCenter';
 
 export default class SettingsCheckboxInput extends CheckboxInput {
   check(): void {

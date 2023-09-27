@@ -24,12 +24,14 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     },
   },
   plugins: {
-    scene: [{
-      key: 'rexUI',
-      plugin: RexUIPlugin,
-      mapping: 'rexUI',
-    }]
-  }
+    scene: [
+      {
+        key: 'rexUI',
+        plugin: RexUIPlugin,
+        mapping: 'rexUI',
+      },
+    ],
+  },
 };
 
 export default gameConfig;

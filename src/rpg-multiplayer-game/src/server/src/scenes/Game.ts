@@ -36,8 +36,13 @@ import {
   Position,
   StartFight,
 } from '../types/playerTypes';
-import { MapConfig, mapsConfig, TilemapLayerConfig, TilesetConfig } from '~/mapsConfig';
-import TilemapKeys from '~/consts/TilemapKeys';
+import {
+  MapConfig,
+  mapsConfig,
+  TilemapLayerConfig,
+  TilesetConfig,
+} from '../mapsConfig';
+import TilemapKeys from '../consts/TilemapKeys';
 
 declare global {
   interface Window {
@@ -103,7 +108,9 @@ export default class Game extends Phaser.Scene {
   }
 
   private createTilesets() {
-    const currentMapConfig = mapsConfig.find((mapConfig: MapConfig) => mapConfig.name === TilemapKeys.IslandsTilemap);
+    const currentMapConfig = mapsConfig.find(
+      (mapConfig: MapConfig) => mapConfig.name === TilemapKeys.IslandsTilemap,
+    );
     if (!currentMapConfig) {
       console.error(`Couldn't load map ${TilemapKeys.IslandsTilemap}`);
       return;
@@ -131,11 +138,13 @@ export default class Game extends Phaser.Scene {
       if (tilemapLayerConfig.tilesetNames) {
         this.currentMap.createLayer(
           tilemapLayerConfig.id,
-          tilemapLayerConfig.tilesetNames
+          tilemapLayerConfig.tilesetNames,
         );
-
       } else if (tilemapLayerConfig.group) {
-        tilemapLayerConfig.group.forEach((tilemapLayerConfigGroupChild: TilemapLayerConfig) => createLayerFromConfig(tilemapLayerConfigGroupChild));
+        tilemapLayerConfig.group.forEach(
+          (tilemapLayerConfigGroupChild: TilemapLayerConfig) =>
+            createLayerFromConfig(tilemapLayerConfigGroupChild),
+        );
       }
     };
     currentMapConfig.tilemapLayers.forEach(createLayerFromConfig);
@@ -165,13 +174,17 @@ export default class Game extends Phaser.Scene {
 
     // Tileset colliders
     // Enable collision by property on all layers
-    this.currentMap.layers.forEach((layerData: Phaser.Tilemaps.LayerData) => 
-      layerData.tilemapLayer.setCollisionByProperty({ collides: true })
+    this.currentMap.layers.forEach((layerData: Phaser.Tilemaps.LayerData) =>
+      layerData.tilemapLayer.setCollisionByProperty({ collides: true }),
     );
 
     // Collide players with tiles
     // Enable collission between Cobra and map tiles
-    this.physics.add.collider(this.players, [...this.currentMap.layers.map((layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer)]);
+    this.physics.add.collider(this.players, [
+      ...this.currentMap.layers.map(
+        (layerData: Phaser.Tilemaps.LayerData) => layerData.tilemapLayer,
+      ),
+    ]);
   }
 
   private createWeapons() {
@@ -198,12 +211,14 @@ export default class Game extends Phaser.Scene {
     this.time.addEvent({
       delay: 30 * 1000,
       callback: () => {
-        const data: PlayerId[] = (this.players.getChildren() as Player[]).map((player) => player.id);
+        const data: PlayerId[] = (this.players.getChildren() as Player[]).map(
+          (player) => player.id,
+        );
         io.emit(NetworkEventKeys.PlayersSync, data);
       },
       callbackScope: this,
       loop: true,
-    })
+    });
   }
 
   handleThrowableWeaponPlayerOverlap(

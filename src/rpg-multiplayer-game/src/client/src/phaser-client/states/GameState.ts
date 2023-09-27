@@ -287,7 +287,7 @@ class GameState {
   enableAdminMode(): void {
     this.adminMode = true;
   }
-  
+
   disableAdminMode(): void {
     this.adminMode = false;
   }
