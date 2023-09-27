@@ -264,6 +264,9 @@ export default class Game extends Phaser.Scene {
       this.currentMap.heightInPixels,
     );
 
+    // Bugfix: the texture was randomly rendering with a blue-ish tint
+    this.bloodSplatterRenderTexture.erase([]);
+
     // Illuminate palmtrees and campfires
     const lightsLayer = this.currentMap.getObjectLayer('Lights');
     lightsLayer.objects.forEach((tiledObject) => {
@@ -1200,7 +1203,11 @@ export default class Game extends Phaser.Scene {
 
   private handleFightEffects(): void {
     // Only in fight mode
-    if (!gameState.gameFight.fightMode) return;
+    if (!gameState.gameFight.fightMode) {
+      this.bloodSplatterRenderTexture.visible = false;
+      return;
+    }
+    this.bloodSplatterRenderTexture.visible = true;
 
     // The player that is beeing followed by the camera
     let followedPlayer: Player;

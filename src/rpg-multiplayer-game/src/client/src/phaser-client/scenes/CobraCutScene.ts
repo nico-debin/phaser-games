@@ -25,7 +25,7 @@ export default class CobraCutScene extends Phaser.Scene {
 
   create() {
     // this.startNextScene(); return; // DEBUG
-    
+
     if (this.renderer.type !== Phaser.WEBGL) {
       this.startNextScene();
       return;
