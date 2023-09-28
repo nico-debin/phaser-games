@@ -14,6 +14,12 @@ export const avatarSlides: Slide[] = [
     isAdmin: false,
   },
   {
+    url: 'characters/gabe-palomares2.png',
+    name: 'gabe-palomares',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
     url: 'characters/joe-waller.png',
     name: 'joe-waller',
     isVoter: false,
@@ -34,6 +40,12 @@ export const avatarSlides: Slide[] = [
   {
     url: 'characters/nicolas-debin.png',
     name: 'nicolas-debin',
+    isVoter: true,
+    isAdmin: false,
+  },
+  {
+    url: 'characters/raphael-martins.png',
+    name: 'raphael-martins',
     isVoter: true,
     isAdmin: false,
   },

@@ -7,6 +7,8 @@ enum AvatarKeys {
   MICHAEL_KANTOR = 'michael-kantor',
   NICOLAS_DEBIN = 'nicolas-debin',
   SAMUELE_ARCOLACE = 'samuele-arcolace',
+  GABE_PALOMARES = 'gabe-palomares',
+  RAPHAEL_MARTINS = 'raphael-martins',
 
   // Default Characters
   BOY_01 = 'boy-01',
